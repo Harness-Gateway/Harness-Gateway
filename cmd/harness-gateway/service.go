@@ -26,10 +26,12 @@ const maxUnitBytes = 64 * 1024
 
 func serviceCommand(ctx context.Context, args []string, output io.Writer) error {
 	if len(args) == 0 || args[0] == "--help" || args[0] == "-h" {
-		_, err := fmt.Fprintln(output, "Usage: harness-gateway service install [gateway options] [--dry-run]\n       harness-gateway service <start|stop|restart|status>\n       harness-gateway service <enable|disable> [--now]\n       harness-gateway service uninstall\n\nManage the Linux systemd user service without sudo.\nInstallation does not enable or start it. Enable/disable changes autostart;\n--now also starts/stops the service. Use '<command> --help' for options.")
+		_, err := fmt.Fprintln(output, "Usage: harness-gateway service install [gateway options] [--dry-run]\n       harness-gateway service <start|stop|restart>\n       harness-gateway service status [--raw]\n       harness-gateway service logs [-f] [-n 50] [--raw]\n       harness-gateway service <enable|disable> [--now]\n       harness-gateway service uninstall\n\nManage the Linux systemd user service without sudo.\nInstallation does not enable or start it. Enable/disable changes autostart;\n--now also starts/stops the service. 'status' and 'logs' are also top-level commands.\nUse '<command> --help' for options.")
 		return err
 	}
 	switch args[0] {
+	case "logs":
+		return serviceLogs(ctx, args[1:], output)
 	case "start", "stop", "restart", "status", "enable", "disable":
 		return controlService(ctx, args, output)
 	}
@@ -105,8 +107,11 @@ func controlService(ctx context.Context, args []string, output io.Writer) error 
 	action := args[0]
 	flags := pflag.NewFlagSet("harness-gateway service "+action, pflag.ContinueOnError)
 	flags.SetOutput(output)
-	var help, now bool
+	var help, now, raw bool
 	flags.BoolVarP(&help, "help", "h", false, "show this help")
+	if action == "status" {
+		flags.BoolVar(&raw, "raw", false, "show native systemd status instead of the gateway dashboard")
+	}
 	if action == "enable" || action == "disable" {
 		flags.BoolVar(&now, "now", false, "also start (enable) or stop (disable) the service")
 	}
@@ -124,18 +129,13 @@ func controlService(ctx context.Context, args []string, output io.Writer) error 
 	if flags.NArg() != 0 {
 		return fmt.Errorf("service %s does not accept positional arguments", action)
 	}
-	if runtime.GOOS != "linux" {
-		return errors.New("systemd user services are supported only on Linux")
-	}
-	path, err := userServicePath()
-	if err != nil {
+	if err := requireManagedService(); err != nil {
 		return err
 	}
-	if _, exists, err := managedService(path); err != nil {
-		return err
-	} else if !exists {
-		return errors.New("no managed user service is installed; run 'harness-gateway service install' first")
+	if action == "status" && !raw {
+		return serviceStatus(ctx, output)
 	}
+	var err error
 	arguments := []string{action}
 	if now {
 		arguments = append(arguments, "--now")
@@ -150,6 +150,22 @@ func controlService(ctx context.Context, args []string, output io.Writer) error 
 		_, err = fmt.Fprintf(output, "Service %s completed: %s\n", action, serviceName)
 	}
 	return err
+}
+
+func requireManagedService() error {
+	if runtime.GOOS != "linux" {
+		return errors.New("systemd user services are supported only on Linux")
+	}
+	path, err := userServicePath()
+	if err != nil {
+		return err
+	}
+	if _, exists, err := managedService(path); err != nil {
+		return err
+	} else if !exists {
+		return errors.New("no managed user service is installed; run 'harness-gateway service install' first")
+	}
+	return nil
 }
 
 func userServicePath() (string, error) {
@@ -320,7 +336,7 @@ func installService(ctx context.Context, path string, unit []byte, output io.Wri
 		}
 		return errors.Join(err, restoreErr)
 	}
-	_, err = fmt.Fprintf(output, "Installed user service: %s\nEnable and start: harness-gateway service enable --now\nApply updates to a running service: harness-gateway service restart\nStatus: harness-gateway service status\nLogs: journalctl --user -u %s -f\nBoot before login (optional): loginctl enable-linger\n", path, serviceName)
+	_, err = fmt.Fprintf(output, "Installed user service: %s\nEnable and start: harness-gateway service enable --now\nApply updates to a running service: harness-gateway service restart\nStatus: harness-gateway status\nLogs: harness-gateway logs --follow\nBoot before login (optional): loginctl enable-linger\n", path)
 	return err
 }
 

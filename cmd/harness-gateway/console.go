@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"log/slog"
@@ -36,6 +37,20 @@ type startupStatus struct {
 	harnesses          []harnessStatus
 }
 
+type harnessSnapshot struct {
+	Name       string `json:"name"`
+	Executable string `json:"executable"`
+	Model      string `json:"model"`
+	Version    string `json:"version"`
+}
+
+type panelRow struct{ label, value string }
+
+type panelDetails struct {
+	version, build, repository, platform, state, stateColor, footer string
+	rows                                                            []panelRow
+}
+
 func newLogger(output io.Writer, format string) *slog.Logger {
 	if format == "json" {
 		return slog.New(slog.NewJSONHandler(output, nil))
@@ -55,20 +70,39 @@ func reportStartup(output *os.File, logger *slog.Logger, format string, status s
 	}
 	var harnesses []string
 	versions := make(map[string]string, len(status.harnesses))
+	details := make([]harnessSnapshot, 0, len(status.harnesses))
 	for _, harness := range status.harnesses {
 		harnesses = append(harnesses, harness.name)
 		versions[harness.name] = harness.installedVersion()
+		details = append(details, harnessSnapshot{harness.name, harness.executable, harness.model, harness.installedVersion()})
+	}
+	var detailValue any = details
+	if format == "text" {
+		// Preserve structured details in slog text output as well as JSON output.
+		encoded, err := json.Marshal(details)
+		if err != nil {
+			return err
+		}
+		detailValue = string(encoded)
 	}
 	logger.Info("Harness-Gateway listening",
 		"version", buildinfo.Version, "build", buildinfo.Revision(), "repository", buildinfo.RepositoryURL,
 		"url", status.baseURL, "api", status.baseURL+"/v1", "docs", status.baseURL+"/docs",
 		"openapi", status.baseURL+"/openapi.json", "health", status.baseURL+"/health",
-		"harnesses", strings.Join(harnesses, ","), "harness_versions", versions, "directory", status.directory,
+		"harnesses", strings.Join(harnesses, ","), "harness_versions", versions,
+		"harness_details", detailValue, "platform", runtime.GOOS+"/"+runtime.GOARCH, "directory", status.directory,
 		"concurrency", status.concurrency, "timeout", status.timeout)
 	return nil
 }
 
 func startupPanel(status startupStatus, color bool, width int) string {
+	return gatewayPanel(status, panelDetails{
+		version: buildinfo.Version, build: buildinfo.Revision(), repository: buildinfo.RepositoryURL,
+		platform: runtime.GOOS + "/" + runtime.GOARCH, state: "LISTENING", stateColor: "1;32", footer: "Press Ctrl+C to stop.",
+	}, color, width)
+}
+
+func gatewayPanel(status startupStatus, details panelDetails, color bool, width int) string {
 	style := func(value, code string) string {
 		if !color {
 			return value
@@ -80,27 +114,51 @@ func startupPanel(status startupStatus, color bool, width int) string {
 	row := func(label, value string) {
 		fmt.Fprintf(&panel, "  %s %s\n", style(fmt.Sprintf("%-12s", label), "2"), value)
 	}
-	fmt.Fprintf(&panel, "\n  %s\n", style("Harness-Gateway v"+buildinfo.Version, "1;36"))
-	fmt.Fprintf(&panel, "  Local OpenAI-compatible API  %s\n\n", style("LISTENING", "1;32"))
+	title := "Harness-Gateway"
+	if details.version != "" {
+		title += " v" + details.version
+	}
+	fmt.Fprintf(&panel, "\n  %s\n", style(title, "1;36"))
+	fmt.Fprintf(&panel, "  Local OpenAI-compatible API  %s\n\n", style(details.state, details.stateColor))
+	for _, extra := range details.rows {
+		row(extra.label, extra.value)
+	}
+	if len(details.rows) > 0 {
+		fmt.Fprintln(&panel)
+	}
 	for _, link := range []struct{ label, suffix string }{
 		{"Gateway", ""}, {"API", "/v1"}, {"Docs", "/docs"}, {"OpenAPI", "/openapi.json"}, {"Health", "/health"},
 	} {
-		row(link.label, style(status.baseURL+link.suffix, "36"))
-	}
-	row("Repository", style(buildinfo.RepositoryURL, "36"))
-	fmt.Fprintln(&panel)
-	fmt.Fprintf(&panel, "  %s\n", style("Local harnesses", "1"))
-	for i, line := range harnessTable(status.harnesses, width-2) {
-		if i == 0 {
-			line = style(line, "2")
+		if status.baseURL != "" {
+			row(link.label, style(status.baseURL+link.suffix, "36"))
 		}
-		fmt.Fprintf(&panel, "  %s\n", line)
+	}
+	row("Repository", style(details.repository, "36"))
+	if len(status.harnesses) > 0 {
+		fmt.Fprintln(&panel)
+		fmt.Fprintf(&panel, "  %s\n", style("Local harnesses", "1"))
+		for i, line := range harnessTable(status.harnesses, width-2) {
+			if i == 0 {
+				line = style(line, "2")
+			}
+			fmt.Fprintf(&panel, "  %s\n", line)
+		}
 	}
 	fmt.Fprintln(&panel)
-	row("Directory", status.directory)
-	row("Limits", fmt.Sprintf("%d concurrent requests / %s timeout", status.concurrency, status.timeout))
-	row("Build", fmt.Sprintf("%s (%s/%s)", buildinfo.Revision(), runtime.GOOS, runtime.GOARCH))
-	fmt.Fprintf(&panel, "\n  %s\n\n", style("Press Ctrl+C to stop.", "2"))
+	if status.directory != "" {
+		row("Directory", status.directory)
+	}
+	if status.concurrency > 0 && status.timeout > 0 {
+		row("Limits", fmt.Sprintf("%d concurrent requests / %s timeout", status.concurrency, status.timeout))
+	}
+	if details.build != "" {
+		build := details.build
+		if details.platform != "" {
+			build += " (" + details.platform + ")"
+		}
+		row("Build", build)
+	}
+	fmt.Fprintf(&panel, "\n  %s\n\n", style(details.footer, "2"))
 	return panel.String()
 }
 

@@ -15,7 +15,7 @@ import (
 )
 
 func TestServiceHelpAndPlatform(t *testing.T) {
-	for _, args := range [][]string{nil, {"--help"}, {"install", "--help"}, {"uninstall", "--help"}, {"start", "--help"}, {"stop", "-h"}, {"restart", "--help"}, {"status", "--help"}, {"enable", "--help"}, {"disable", "--help"}} {
+	for _, args := range [][]string{nil, {"--help"}, {"install", "--help"}, {"uninstall", "--help"}, {"start", "--help"}, {"stop", "-h"}, {"restart", "--help"}, {"status", "--help"}, {"logs", "--help"}, {"enable", "--help"}, {"disable", "--help"}} {
 		var output bytes.Buffer
 		_ = serviceCommand(t.Context(), args, &output)
 		if !strings.Contains(output.String(), "harness-gateway service") {
@@ -26,7 +26,7 @@ func TestServiceHelpAndPlatform(t *testing.T) {
 		}
 	}
 	if runtime.GOOS != "linux" {
-		for _, action := range []string{"install", "start", "stop", "restart", "status", "enable", "disable"} {
+		for _, action := range []string{"install", "start", "stop", "restart", "status", "logs", "enable", "disable"} {
 			if err := serviceCommand(t.Context(), []string{action}, io.Discard); err == nil || !strings.Contains(err.Error(), "only on Linux") {
 				t.Fatalf("unsupported service platform (%s): %v", action, err)
 			}
@@ -232,7 +232,7 @@ func TestServiceControlCommands(t *testing.T) {
 		{[]string{"start"}, "start"},
 		{[]string{"stop"}, "stop"},
 		{[]string{"restart"}, "restart"},
-		{[]string{"status"}, "status --no-pager --full"},
+		{[]string{"status", "--raw"}, "status --no-pager --full"},
 		{[]string{"enable"}, "enable"},
 		{[]string{"disable"}, "disable"},
 		{[]string{"enable", "--now"}, "enable --now"},
@@ -286,7 +286,7 @@ func TestServiceControlRefusesUnmanagedUnitsAndInvalidArguments(t *testing.T) {
 					}
 				}
 			}
-			args := [][]string{{"start"}, {"stop"}, {"restart"}, {"status"}, {"enable"}, {"disable", "--now"}}
+			args := [][]string{{"start"}, {"stop"}, {"restart"}, {"status"}, {"logs"}, {"enable"}, {"disable", "--now"}}
 			if state == "invalid-arguments" {
 				args = [][]string{{"start", "other.service"}, {"status", "--now"}, {"restart", "--now"}, {"enable", "--system"}, {"disable", "--now", "other.service"}, {"enable", "--now=invalid"}, {"unknown"}}
 			}
@@ -320,7 +320,11 @@ func TestServiceControlPreservesFailureOutputAndCancellation(t *testing.T) {
 			t.Setenv("SERVICE_TEST_ERROR_OUTPUT", test.message)
 		}
 		var output bytes.Buffer
-		err := serviceCommand(t.Context(), []string{test.action}, &output)
+		args := []string{test.action}
+		if test.action == "status" {
+			args = append(args, "--raw")
+		}
+		err := serviceCommand(t.Context(), args, &output)
 		var exit *exec.ExitError
 		if !errors.As(err, &exit) || strconv.Itoa(exit.ExitCode()) != test.code || output.String() != test.message {
 			t.Fatalf("lost failure details: %v %q", err, &output)

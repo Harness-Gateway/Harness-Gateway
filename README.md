@@ -247,6 +247,7 @@ Manage the installed service directly from the gateway:
 
 ```bash
 harness-gateway service status
+harness-gateway service logs --follow
 harness-gateway service start
 harness-gateway service restart
 harness-gateway service stop
@@ -257,9 +258,29 @@ harness-gateway service disable --now
 `start`, `stop`, and `restart` change the running state. `enable` and `disable`
 change autostart; add `--now` to also start or stop the service. These commands
 use `systemctl --user` internally and require the managed unit to be installed.
-`status` prints systemd's status without a pager and exits nonzero when the
-service is inactive or failed. Use `harness-gateway service --help` for help.
-Follow logs with `journalctl --user -u harness-gateway.service -f`.
+`status` displays a gateway dashboard with service state, autostart, PID, running
+version/build, API/docs links, harness versions/settings, directory, and limits.
+It reads the startup journal record for the service invocation being inspected;
+it does not launch harnesses or report the inspecting CLI's version as the running
+version. Inactive/failed services return a nonzero exit status and identify any
+startup metadata as historical. Missing journal metadata is shown as unavailable.
+Older running versions did not record harness paths/models; these are marked
+`not recorded` until an updated gateway is restarted.
+
+On Linux, `status` and `logs` are also top-level shortcuts:
+
+```bash
+harness-gateway status
+harness-gateway logs                 # Last 50 journal entries, formatted for reading
+harness-gateway logs -f -n 100        # Recent entries, then follow until Ctrl+C
+harness-gateway service status --raw # Native systemd status
+harness-gateway logs --raw           # Original journal messages, including JSON
+```
+
+Readable logs retain timestamps, severity, request IDs, errors, and human-readable
+durations. JSON/text application records and systemd messages are supported.
+`--lines` accepts 0 to 10000 entries; stopping a follower only stops the viewer.
+Use `harness-gateway service --help` or `harness-gateway logs --help` for options.
 
 The service restarts after failure, with a bounded restart rate. A stop or restart
 first signals the gateway so it can cancel requests and reap its CLI processes;
@@ -309,7 +330,8 @@ Linux CI tests both default and explicit working directories using a disposable
 user and real systemd user manager with Go CLI
 fixtures to test install, start, status, enable/disable with and without `--now`,
 buffered/SSE requests, restart, crash recovery, stop, subprocess cleanup, and
-uninstall. It also checks the autostart target link.
+uninstall. It also checks the autostart target link, readable/raw dashboard and
+journal output, current-invocation URLs after restart, and log-follower cleanup.
 Unit generation, special-character paths, ownership protection, and rollback have
 local regressions. An actual host reboot and pre-login credential availability
 require separate manual acceptance; CI does not reboot its runner.

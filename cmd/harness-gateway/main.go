@@ -26,10 +26,14 @@ import (
 )
 
 func main() {
-	if len(os.Args) > 1 && os.Args[1] == "service" {
+	if len(os.Args) > 1 && (os.Args[1] == "service" || os.Args[1] == "status" || os.Args[1] == "logs") {
+		args := os.Args[1:]
+		if args[0] == "service" {
+			args = args[1:]
+		}
 		ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 		defer cancel()
-		if err := serviceCommand(ctx, os.Args[2:], os.Stdout); err != nil && !errors.Is(err, pflag.ErrHelp) {
+		if err := serviceCommand(ctx, args, os.Stdout); err != nil && !errors.Is(err, pflag.ErrHelp) {
 			fmt.Fprintln(os.Stderr, "service:", err)
 			os.Exit(1)
 		}
@@ -79,6 +83,7 @@ func gatewayFlags(options *options, output io.Writer, command, defaultLogFormat 
 		fmt.Fprintf(output, "Usage: %s [options]\n", command)
 		if command == "harness-gateway" {
 			fmt.Fprintln(output, "       harness-gateway service <command> [options]")
+			fmt.Fprintln(output, "       harness-gateway <status|logs> [options]")
 		}
 		fmt.Fprintln(output, "\nOptions:")
 		flags.PrintDefaults()

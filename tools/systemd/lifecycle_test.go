@@ -14,6 +14,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"sync"
 	"syscall"
 	"testing"
 	"time"
@@ -187,8 +188,29 @@ func testSystemdUserService(t *testing.T, explicitDirectory bool) {
 		return base, pid
 	}
 	base, pid := ready()
-	if status := command(paths["gateway"], "service", "status"); !strings.Contains(status, "active (running)") {
-		t.Fatalf("missing active status: %s", status)
+	for _, args := range [][]string{{"service", "status"}, {"status"}} {
+		status := command(paths["gateway"], args...)
+		for _, expected := range []string{"active (running)", base + "/docs", base + "/v1", "HARNESS", "0.0.0-fixture", workspace, "CLI default", paths["codex"], paths["copilot"], "harness-gateway logs --follow"} {
+			if !strings.Contains(status, expected) {
+				t.Fatalf("dashboard missing %q: %s", expected, status)
+			}
+		}
+		if strings.Contains(status, "Press Ctrl+C") || strings.Contains(status, "not recorded") {
+			t.Fatalf("service dashboard used foreground or legacy metadata: %s", status)
+		}
+	}
+	if raw := command(paths["gateway"], "status", "--raw"); !strings.Contains(raw, "Loaded:") {
+		t.Fatalf("raw status lost native systemd details: %s", raw)
+	}
+	if logs := command(paths["gateway"], "logs", "--lines=20"); !strings.Contains(logs, "INFO") || !strings.Contains(logs, "Harness-Gateway listening") || strings.Contains(logs, `"msg":`) {
+		t.Fatalf("journal is not readable: %s", logs)
+	}
+	if raw := command(paths["gateway"], "service", "logs", "--raw", "-n", "20"); !strings.Contains(raw, `"msg":"Harness-Gateway listening"`) {
+		t.Fatalf("raw logs lost the original JSON: %s", raw)
+	}
+	testLogFollower(t, paths["gateway"])
+	if ctl("show", "--property=MainPID", "--value", "harness-gateway.service") != pid {
+		t.Fatal("closing the log viewer interrupted the service")
 	}
 	command(paths["gateway"], "service", "disable")
 	if _, err := os.Lstat(link); !os.IsNotExist(err) {
@@ -298,6 +320,9 @@ func testSystemdUserService(t *testing.T, explicitDirectory bool) {
 					return value != "0" && value != previous
 				})
 				base, pid = ready()
+				if status := command(paths["gateway"], "status"); !strings.Contains(status, base+"/docs") {
+					t.Fatalf("status read a previous invocation's listener after %s: %s", action, status)
+				}
 				entries, err := os.ReadDir(runtimeDirectory)
 				if err != nil {
 					t.Fatal(err)
@@ -337,6 +362,47 @@ func testSystemdUserService(t *testing.T, explicitDirectory bool) {
 	}
 	if _, err := os.Stat(filepath.Join(unit+".d", "fixture.conf")); err != nil {
 		t.Fatal("uninstall removed custom drop-ins")
+	}
+}
+
+type logReadiness struct {
+	once  sync.Once
+	ready chan struct{}
+}
+
+func (writer *logReadiness) Write(data []byte) (int, error) {
+	writer.once.Do(func() { close(writer.ready) })
+	return len(data), nil
+}
+
+func testLogFollower(t *testing.T, gateway string) {
+	t.Helper()
+	ctx, cancel := context.WithTimeout(t.Context(), 10*time.Second)
+	defer cancel()
+	ready := &logReadiness{ready: make(chan struct{})}
+	command := exec.CommandContext(ctx, gateway, "logs", "--follow", "--lines=20")
+	command.WaitDelay = 2 * time.Second
+	command.Stdout = ready
+	var diagnostics strings.Builder
+	command.Stderr = &diagnostics
+	if err := command.Start(); err != nil {
+		t.Fatal(err)
+	}
+	done := make(chan error, 1)
+	go func() { done <- command.Wait() }()
+	select {
+	case <-ready.ready:
+	case err := <-done:
+		t.Fatalf("log follower exited before output: %v %s", err, &diagnostics)
+	case <-ctx.Done():
+		<-done
+		t.Fatal("log follower did not produce output")
+	}
+	if err := command.Process.Signal(os.Interrupt); err != nil {
+		t.Fatal(err)
+	}
+	if err := <-done; err != nil {
+		t.Fatalf("Ctrl+C did not close the viewer cleanly: %v %s", err, &diagnostics)
 	}
 }
 

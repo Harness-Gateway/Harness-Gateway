@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Replace native `service status` output with a gateway dashboard using the
+  inspected service's startup metadata and current systemd state. Add `status`
+  and `logs` shortcuts, readable recent/followed journal output, and raw modes.
+  Record harness paths/model defaults for complete dashboards; retain support
+  for older JSON/text startup records and mark unavailable details explicitly.
 - Change the default loopback listener to `127.0.0.1:8789` to avoid the common
   Spring Boot port 8080. Update CLI help, service generation, and Spring AI
   examples. Explicit listeners and existing installed units keep their settings.
