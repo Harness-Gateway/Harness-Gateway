@@ -11,7 +11,8 @@ cleanup() {
   if "$created"; then
     # The runner owns the artifact file; only journalctl runs as the test user.
     # shellcheck disable=SC2024
-    sudo -u "$test_user" env XDG_RUNTIME_DIR="/run/user/$test_uid" \
+    sudo -u "$test_user" env -i HOME="/home/$test_user" PATH=/usr/bin:/bin \
+      XDG_RUNTIME_DIR="/run/user/$test_uid" \
       DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$test_uid/bus" \
       journalctl --user -u harness-gateway.service --no-pager > "$RUNNER_TEMP/systemd-service-journal.log" || cleanup_status=$?
     sudo loginctl disable-linger "$test_user" || cleanup_status=$?
@@ -33,7 +34,8 @@ test_uid=$(id -u "$test_user")
 sudo chown -R "$test_user:$test_user" "$test_root"
 sudo loginctl enable-linger "$test_user"
 sudo systemctl start "user@$test_uid.service"
-sudo -u "$test_user" env HOME="/home/$test_user" \
+sudo -u "$test_user" env -i HOME="/home/$test_user" \
+  XDG_CONFIG_HOME="/home/$test_user/.config" LANG=C.UTF-8 \
   PATH=/usr/local/bin:/usr/bin:/bin \
   XDG_RUNTIME_DIR="/run/user/$test_uid" \
   DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$test_uid/bus" \
