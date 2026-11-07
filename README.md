@@ -13,7 +13,7 @@ session. No provider API key or gateway authentication is needed.
 Use Go 1.27.3+ and the module package path, without `https://`:
 
 ```bash
-go install github.com/harness-gateway/harness-gateway/cmd/harness-gateway@v0.1.7
+go install github.com/harness-gateway/harness-gateway/cmd/harness-gateway@v0.1.8
 ```
 
 This installs the command **`harness-gateway`** into `GOBIN`, or into
@@ -39,10 +39,10 @@ bash setup.sh
 bash setup.sh --version dev
 
 # Select another module version or destination; avoid editing ~/.bashrc.
-bash setup.sh --version v0.1.7 --bin-dir "$HOME/.local/bin" --no-path
+bash setup.sh --version v0.1.8 --bin-dir "$HOME/.local/bin" --no-path
 ```
 
-Without `--version`, the script selects `v0.1.7`. It requires Go to be installed.
+Without `--version`, the script selects `v0.1.8`. It requires Go to be installed.
 Both `--version` and `--bin-dir` require a value; another option is rejected as
 a missing value before installation. For directory names starting with `-`, use
 an explicit relative or absolute path, such as `./--my-bin`.
@@ -53,13 +53,13 @@ binary, setup prints its location and the export command to select this installa
 Install the release without cloning the repository:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Harness-Gateway/harness-gateway/v0.1.7/setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Harness-Gateway/harness-gateway/v0.1.8/setup.sh | bash
 ```
 
 To download and inspect the script before running it:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Harness-Gateway/harness-gateway/v0.1.7/setup.sh -o /tmp/harness-gateway-setup.sh
+curl -fsSL https://raw.githubusercontent.com/Harness-Gateway/harness-gateway/v0.1.8/setup.sh -o /tmp/harness-gateway-setup.sh
 bash /tmp/harness-gateway-setup.sh
 ```
 
@@ -73,7 +73,7 @@ The integration has been exercised with Codex CLI 0.167.0 and Copilot CLI 1.0.10
 harness-gateway
 ```
 
-The release version is **v0.1.7**. See [release notes](CHANGELOG.md). To build a
+The release version is **v0.1.8**. See [release notes](CHANGELOG.md). To build a
 local executable and inspect its version, source revision, and platform:
 
 ```bash
@@ -202,12 +202,12 @@ events. `harness-gateway --version` prints its build identity to stdout.
 
 ## Linux user service
 
-Systemd user-service support is opt-in and currently available on the development
-branch. Install a persistent executable first; do not use `go run` to install a
+Systemd user-service support is opt-in and available from v0.1.8.
+Install a persistent executable first; do not use `go run` to install a
 service, because its temporary executable will disappear:
 
 ```bash
-GOBIN="$HOME/.local/bin" go install github.com/harness-gateway/harness-gateway/cmd/harness-gateway@dev
+GOBIN="$HOME/.local/bin" go install github.com/harness-gateway/harness-gateway/cmd/harness-gateway@v0.1.8
 "$HOME/.local/bin/harness-gateway" service install --directory "$HOME" --listen 127.0.0.1:8080
 systemctl --user enable --now harness-gateway.service
 ```
@@ -494,7 +494,7 @@ artifacts and when `--output-dir` is supplied locally.
 After publishing a stable tag, run the repository-owned verifier from the root:
 
 ```bash
-go run ./tools/releaseverify --version v0.1.7 --revision "$(git rev-parse 'v0.1.7^{commit}')"
+go run ./tools/releaseverify --version v0.1.8 --revision "$(git rev-parse 'v0.1.8^{commit}')"
 ```
 
 It installs through the public Go proxy and checksum database with a private
@@ -516,7 +516,7 @@ The **Verify public release** workflow runs this check on Linux and macOS after
 publication, then runs the Spring AI fixture suite against the public-installed
 binary. It can also be dispatched manually for an existing stable tag. Java 27
 and Maven are required for that Spring AI step. Reports and diagnostics are retained
-as workflow artifacts. Release titles use only the version tag, such as `v0.1.7`.
+as workflow artifacts. Release titles use only the version tag, such as `v0.1.8`.
 This post-publication workflow supplements pre-release Validate CI; it cannot
 prevent publication of a bad tag and never moves or rewrites a tag.
 

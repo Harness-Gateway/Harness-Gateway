@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.1.8 - 2026-11-07
 
 - Add opt-in Linux systemd user-service install/uninstall commands, dry-run unit
   generation, explicit executable/PATH and working-directory configuration, JSON
