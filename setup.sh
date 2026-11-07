@@ -42,7 +42,14 @@ mkdir -p -- "$bin_dir"
 bin_dir=$(cd -- "$bin_dir" && pwd -P)
 
 printf 'Installing harness-gateway@%s into %s\n' "$version" "$bin_dir"
-GOBIN="$bin_dir" GOWORK=off go install "github.com/harness-gateway/harness-gateway/cmd/harness-gateway@$version"
+(
+  export GOBIN="$bin_dir" GOWORK=off
+  if [[ "$version" == dev ]]; then
+    # Mutable branch queries may resolve to an older snapshot through a proxy.
+    export GOPROXY=direct
+  fi
+  go install "github.com/harness-gateway/harness-gateway/cmd/harness-gateway@$version"
+)
 [[ -x "$bin_dir/harness-gateway" ]] || fail 'Go did not produce the expected harness-gateway executable'
 "$bin_dir/harness-gateway" --version
 

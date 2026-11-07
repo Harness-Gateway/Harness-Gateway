@@ -34,6 +34,7 @@ func newSetupFixture(t *testing.T) setupFixture {
 	goFixture := `#!/usr/bin/env bash
 set -euo pipefail
 printf '%s\n' "$*" >> "$INSTALL_LOG"
+printf '%s\n' "${GOPROXY-<unset>}" >> "$INSTALL_PROXY_LOG"
 [[ "${INSTALL_FAIL:-}" != 1 ]] || exit 9
 mkdir -p -- "$GOBIN"
 cat > "$GOBIN/harness-gateway" <<'BIN'
@@ -48,6 +49,7 @@ chmod +x "$GOBIN/harness-gateway"
 	t.Setenv("HOME", home)
 	t.Setenv("GOBIN", "")
 	t.Setenv("INSTALL_LOG", log)
+	t.Setenv("INSTALL_PROXY_LOG", filepath.Join(home, "go-proxies"))
 	t.Setenv("INSTALL_FAIL", "")
 	t.Setenv("PATH", commands+string(os.PathListSeparator)+os.Getenv("PATH"))
 	return setupFixture{bash, script, home, log}
@@ -115,6 +117,23 @@ func TestSetupQuotesCustomPathsAndVersion(t *testing.T) {
 	calls, err := os.ReadFile(f.log)
 	if err != nil || !strings.Contains(string(calls), "cmd/harness-gateway@dev") {
 		t.Fatalf("version override was lost: %v\n%s", err, calls)
+	}
+}
+
+func TestSetupDevBypassesProxyWithoutChangingTaggedInstalls(t *testing.T) {
+	f := newSetupFixture(t)
+	t.Setenv("GOPROXY", "https://proxy.example.test,direct")
+	for _, version := range []string{"dev", "v" + buildinfo.Version} {
+		if output, err := f.run(t, "--version", version, "--no-path"); err != nil {
+			t.Fatalf("setup %s failed: %v\n%s", version, err, output)
+		}
+	}
+	proxies, err := os.ReadFile(os.Getenv("INSTALL_PROXY_LOG"))
+	if err != nil || string(proxies) != "direct\nhttps://proxy.example.test,direct\n" {
+		t.Fatalf("wrong proxy policy: %q %v", proxies, err)
+	}
+	if got := os.Getenv("GOPROXY"); got != "https://proxy.example.test,direct" {
+		t.Fatalf("setup changed its caller's proxy: %q", got)
 	}
 }
 

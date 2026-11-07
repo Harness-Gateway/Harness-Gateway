@@ -23,11 +23,15 @@ your `PATH`. Use the exact lower-case module path shown above.
 To install a development snapshot:
 
 ```bash
-go install github.com/harness-gateway/harness-gateway/cmd/harness-gateway@dev
+GOPROXY=direct go install github.com/harness-gateway/harness-gateway/cmd/harness-gateway@dev
 ```
 
-Versioned installs require the corresponding Git tag to be published. Use `@dev`
-for the development branch before a release is available.
+Tagged installs require the corresponding Git tag to be published. Development
+installs need no release. `GOPROXY=direct` resolves the moving `dev` branch from
+Git instead of a potentially stale proxy result; it applies only to this command
+and does not disable checksum verification. Git must be installed. Run
+`harness-gateway --version` to see the installed snapshot's commit/pseudo-version.
+Restart a running service after updating its executable.
 
 For Bash, the convenience script installs the command into `GOBIN` or
 `~/.local/bin`, and adds the directory to `~/.bashrc` once if needed:
@@ -43,6 +47,9 @@ bash setup.sh --version v0.1.9 --bin-dir "$HOME/.local/bin" --no-path
 ```
 
 Without `--version`, the script selects `v0.1.9`. It requires Go to be installed.
+With `--version dev`, it also requires Git and bypasses the module proxy for that
+installation so the branch resolves freshly. Tagged installs keep your configured
+proxy settings.
 Both `--version` and `--bin-dir` require a value; another option is rejected as
 a missing value before installation. For directory names starting with `-`, use
 an explicit relative or absolute path, such as `./--my-bin`.

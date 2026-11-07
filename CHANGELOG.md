@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Bypass the module proxy for Bash `--version dev` installs and document direct
+  Go development installs, preventing cached branch queries from silently
+  reinstalling an older snapshot. Keep configured proxies for tagged installs.
 - Replace native `service status` output with a gateway dashboard using the
   inspected service's startup metadata and current systemd state. Add `status`
   and `logs` shortcuts, readable recent/followed journal output, and raw modes.
