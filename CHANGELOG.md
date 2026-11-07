@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Reject missing Bash installer option values before creating directories,
+  invoking Go, or modifying Bash settings; retain explicit paths to directories
+  whose names start with a dash.
+- Preserve stdout diagnostics from failed public-release verification commands
+  while retaining their original exit status.
 - Add public Go/Bash release verification with checksum and tag provenance,
   identical-binary checks, fixture HTTP smoke tests, and a Linux/macOS release
   workflow that also runs Spring AI acceptance against the installed artifact.

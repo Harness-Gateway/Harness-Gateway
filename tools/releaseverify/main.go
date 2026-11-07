@@ -256,6 +256,9 @@ func runCommand(ctx context.Context, directory string, env []string, name string
 	stopOnCancel()
 	err = errors.Join(err, stop(), ctx.Err())
 	if err != nil {
+		if output.Len() != 0 {
+			return nil, fmt.Errorf("%s: %w\nstdout:\n%s", name, err, output.String())
+		}
 		return nil, fmt.Errorf("%s: %w", name, err)
 	}
 	return output.Bytes(), nil

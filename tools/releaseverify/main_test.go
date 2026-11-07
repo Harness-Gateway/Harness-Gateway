@@ -2,12 +2,64 @@ package main
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
 )
+
+const commandFixtureOutput = "{\"Error\":\"fixture module download failed\"}\nsecond line Ω\n"
+
+func TestMain(m *testing.M) {
+	switch os.Getenv("HARNESS_GATEWAY_RELEASEVERIFY_COMMAND_FIXTURE") {
+	case "failed-output":
+		fmt.Print(commandFixtureOutput)
+		os.Exit(23)
+	case "failed-empty":
+		os.Exit(23)
+	case "success":
+		fmt.Print(commandFixtureOutput)
+		os.Exit(0)
+	}
+	os.Exit(m.Run())
+}
+
+func TestCommandFailurePreservesOutputAndExitStatus(t *testing.T) {
+	executable, err := os.Executable()
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, mode := range []string{"failed-output", "failed-empty", "success"} {
+		t.Run(mode, func(t *testing.T) {
+			env := append(os.Environ(), "HARNESS_GATEWAY_RELEASEVERIFY_COMMAND_FIXTURE="+mode)
+			output, err := runCommand(t.Context(), t.TempDir(), env, executable, "-test.run=^$")
+			if mode == "success" {
+				if err != nil || string(output) != commandFixtureOutput {
+					t.Fatalf("successful output changed: %v\n%s", err, output)
+				}
+				return
+			}
+			var exitErr *exec.ExitError
+			if !errors.As(err, &exitErr) || exitErr.ExitCode() != 23 {
+				t.Fatalf("failed command lost its exit status: %v", err)
+			}
+			if len(output) != 0 {
+				t.Fatal("failed command output was returned as successful output")
+			}
+			if mode == "failed-output" && !strings.Contains(err.Error(), commandFixtureOutput) {
+				t.Fatalf("failed command lost its stdout diagnostics: %v", err)
+			}
+			if mode == "failed-empty" && strings.Contains(err.Error(), "stdout:") {
+				t.Fatalf("empty stdout produced a misleading diagnostic section: %v", err)
+			}
+		})
+	}
+}
 
 func TestInvalidReleaseIdentityFailsBeforeInstalling(t *testing.T) {
 	for _, version := range []string{"", "latest", "main", "v1.2.3/../../main", "v01.2.3", "v1.2.3 --help", "v1.2.3-rc.1"} {

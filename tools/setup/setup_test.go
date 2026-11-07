@@ -172,6 +172,56 @@ func TestSetupHelpDoesNotInstall(t *testing.T) {
 	}
 }
 
+func TestSetupMissingValuesHaveNoSideEffects(t *testing.T) {
+	for _, option := range []string{"--version", "--bin-dir"} {
+		for _, test := range []struct {
+			name string
+			tail []string
+		}{
+			{"missing", nil}, {"empty", []string{""}},
+			{"no-path", []string{"--no-path"}}, {"help", []string{"--help"}},
+			{"short-help", []string{"-h"}}, {"version", []string{"--version"}},
+			{"bin-dir", []string{"--bin-dir"}}, {"unknown", []string{"--unknown"}},
+		} {
+			t.Run(option+"/"+test.name, func(t *testing.T) {
+				f := newSetupFixture(t)
+				const original = "# existing Bash settings\nexport SETUP_SENTINEL=keep\n"
+				rc := filepath.Join(f.home, ".bashrc")
+				if err := os.WriteFile(rc, []byte(original), 0600); err != nil {
+					t.Fatal(err)
+				}
+				if output, err := f.run(t, append([]string{option}, test.tail...)...); err == nil || !strings.Contains(output, option+" requires a") {
+					t.Fatalf("missing value was not rejected: %v\n%s", err, output)
+				}
+				if _, err := os.Stat(f.log); !os.IsNotExist(err) {
+					t.Fatal("invalid arguments invoked Go")
+				}
+				contents, err := os.ReadFile(rc)
+				if err != nil || string(contents) != original {
+					t.Fatalf("invalid arguments changed Bash settings: %v\n%s", err, contents)
+				}
+				entries, err := os.ReadDir(f.home)
+				if err != nil || len(entries) != 1 || entries[0].Name() != ".bashrc" {
+					t.Fatalf("invalid arguments created install files or directories: %v %v", entries, err)
+				}
+			})
+		}
+	}
+}
+
+func TestSetupAllowsExplicitPathToDashPrefixedDirectory(t *testing.T) {
+	f := newSetupFixture(t)
+	if output, err := f.run(t, "--bin-dir", "./--no-path", "--no-path"); err != nil {
+		t.Fatalf("explicit relative directory failed: %v\n%s", err, output)
+	}
+	if _, err := os.Stat(filepath.Join(f.home, "--no-path", "harness-gateway")); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := os.Stat(filepath.Join(f.home, ".bashrc")); !os.IsNotExist(err) {
+		t.Fatal("--no-path modified Bash settings")
+	}
+}
+
 func TestSetupWarnsWhenAnotherBinaryShadowsInstallation(t *testing.T) {
 	for _, noPath := range []bool{false, true} {
 		t.Run(fmt.Sprint(noPath), func(t *testing.T) {

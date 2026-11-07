@@ -43,6 +43,9 @@ bash setup.sh --version v0.1.7 --bin-dir "$HOME/.local/bin" --no-path
 ```
 
 Without `--version`, the script selects `v0.1.7`. It requires Go to be installed.
+Both `--version` and `--bin-dir` require a value; another option is rejected as
+a missing value before installation. For directory names starting with `-`, use
+an explicit relative or absolute path, such as `./--my-bin`.
 It prints an export command for the current terminal; changing `~/.bashrc`
 affects future Bash sessions. Existing CLI authentication stays managed by Codex
 and Copilot. If another `harness-gateway` earlier on `PATH` shadows the installed

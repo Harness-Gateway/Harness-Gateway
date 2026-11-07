@@ -10,6 +10,8 @@ Install harness-gateway with Go (Go 1.27.3+ required).
   --bin-dir DIRECTORY  Installation directory (default: GOBIN or ~/.local/bin)
   --no-path            Leave ~/.bashrc unchanged
   -h, --help           Show this help
+
+Prefix directory names starting with '-' with './'.
 USAGE
 }
 
@@ -23,6 +25,7 @@ while (($#)); do
     --version|--bin-dir)
       (($# >= 2)) || fail "$1 requires a value"
       [[ -n "$2" ]] || fail "$1 requires a nonempty value"
+      [[ "$2" != -* ]] || fail "$1 requires a value; got option-like argument: $2"
       if [[ "$1" == --version ]]; then version=$2; else bin_dir=$2; fi
       shift 2
       ;;
