@@ -99,7 +99,7 @@ func TestServiceUnitPassesSystemdVerification(t *testing.T) {
 	if err != nil {
 		t.Skip("systemd-analyze is not installed")
 	}
-	directory := filepath.Join(t.TempDir(), "literal $HOME %u space")
+	directory := filepath.Join(t.TempDir(), `literal $HOME %u space "quote" \backslash = Ω `)
 	if err := os.Mkdir(directory, 0700); err != nil {
 		t.Fatal(err)
 	}

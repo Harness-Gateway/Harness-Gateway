@@ -98,7 +98,10 @@ func renderService(executable, directory, path string, options options, harnesse
 	if !filepath.IsAbs(executable) || !filepath.IsAbs(directory) {
 		return nil, errors.New("service executable and directory must be absolute")
 	}
-	arguments := []string{executable, "--listen", options.address, "--directory", directory,
+	// systemd rejects some characters in the executable position even when
+	// quoted. A fixed POSIX exec trampoline accepts the path as an argument;
+	// user-controlled paths/settings are never interpolated into shell code.
+	arguments := []string{"/bin/sh", "-c", `exec "$@"`, "harness-gateway", executable, "--listen", options.address, "--directory", directory,
 		"--harnesses", options.harnesses, "--timeout", options.timeout.String(),
 		"--concurrency", strconv.Itoa(options.concurrency), "--log-format", options.logFormat}
 	for _, harness := range harnesses {
