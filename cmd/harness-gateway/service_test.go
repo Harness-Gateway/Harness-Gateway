@@ -2,6 +2,8 @@ package main
 
 import (
 	"bytes"
+	"context"
+	"errors"
 	"io"
 	"os"
 	"os/exec"
@@ -13,7 +15,7 @@ import (
 )
 
 func TestServiceHelpAndPlatform(t *testing.T) {
-	for _, args := range [][]string{nil, {"--help"}, {"install", "--help"}, {"uninstall", "--help"}} {
+	for _, args := range [][]string{nil, {"--help"}, {"install", "--help"}, {"uninstall", "--help"}, {"start", "--help"}, {"stop", "-h"}, {"restart", "--help"}, {"status", "--help"}, {"enable", "--help"}, {"disable", "--help"}} {
 		var output bytes.Buffer
 		_ = serviceCommand(t.Context(), args, &output)
 		if !strings.Contains(output.String(), "harness-gateway service") {
@@ -24,8 +26,10 @@ func TestServiceHelpAndPlatform(t *testing.T) {
 		}
 	}
 	if runtime.GOOS != "linux" {
-		if err := serviceCommand(t.Context(), []string{"install"}, io.Discard); err == nil || !strings.Contains(err.Error(), "only on Linux") {
-			t.Fatalf("unsupported service platform: %v", err)
+		for _, action := range []string{"install", "start", "stop", "restart", "status", "enable", "disable"} {
+			if err := serviceCommand(t.Context(), []string{action}, io.Discard); err == nil || !strings.Contains(err.Error(), "only on Linux") {
+				t.Fatalf("unsupported service platform (%s): %v", action, err)
+			}
 		}
 	}
 }
@@ -198,21 +202,139 @@ func serviceControllerFixture(t *testing.T) (string, string) {
 		t.Skip("systemd service installation targets Linux")
 	}
 	directory, log := t.TempDir(), filepath.Join(t.TempDir(), "systemctl.log")
-	script := "#!/bin/sh\nprintf '%s\\n' \"$*\" >> \"$SERVICE_TEST_LOG\"\nif [ \"${SERVICE_TEST_FAIL_RELOAD:-}\" = 1 ] && [ \"$2\" = daemon-reload ]; then echo 'fixture reload failure' >&2; exit 17; fi\n"
+	script := "#!/bin/sh\nprintf '%s\\n' \"$*\" >> \"$SERVICE_TEST_LOG\"\nif [ \"${SERVICE_TEST_FAIL_RELOAD:-}\" = 1 ] && [ \"$2\" = daemon-reload ]; then echo 'fixture reload failure' >&2; exit 17; fi\nprintf '%s' \"$SERVICE_TEST_OUTPUT\"\nprintf '%s' \"$SERVICE_TEST_ERROR_OUTPUT\" >&2\nexit \"${SERVICE_TEST_EXIT_CODE:-0}\"\n"
 	if err := os.WriteFile(filepath.Join(directory, "systemctl"), []byte(script), 0700); err != nil {
 		t.Fatal(err)
 	}
 	t.Setenv("PATH", directory+string(os.PathListSeparator)+os.Getenv("PATH"))
 	t.Setenv("SERVICE_TEST_LOG", log)
 	t.Setenv("SERVICE_TEST_FAIL_RELOAD", "")
-	return filepath.Join(t.TempDir(), "systemd", "user", serviceName), log
+	t.Setenv("SERVICE_TEST_OUTPUT", "")
+	t.Setenv("SERVICE_TEST_ERROR_OUTPUT", "")
+	t.Setenv("SERVICE_TEST_EXIT_CODE", "0")
+	config := t.TempDir()
+	t.Setenv("XDG_CONFIG_HOME", config)
+	return filepath.Join(config, "systemd", "user", serviceName), log
+}
+
+func TestServiceControlCommands(t *testing.T) {
+	for _, test := range []struct {
+		args []string
+		want string
+	}{
+		{[]string{"start"}, "start"},
+		{[]string{"stop"}, "stop"},
+		{[]string{"restart"}, "restart"},
+		{[]string{"status"}, "status --no-pager --full"},
+		{[]string{"enable"}, "enable"},
+		{[]string{"disable"}, "disable"},
+		{[]string{"enable", "--now"}, "enable --now"},
+		{[]string{"disable", "--now"}, "disable --now"},
+		{[]string{"enable", "--now=false"}, "enable"},
+	} {
+		t.Run(strings.Join(test.args, " "), func(t *testing.T) {
+			path, log := serviceControllerFixture(t)
+			unit := []byte(serviceMarker + "# user settings\n")
+			if err := writeService(path, unit); err != nil {
+				t.Fatal(err)
+			}
+			t.Setenv("SERVICE_TEST_OUTPUT", "controller output\n")
+			var output bytes.Buffer
+			if err := serviceCommand(t.Context(), test.args, &output); err != nil {
+				t.Fatal(err)
+			}
+			calls, err := os.ReadFile(log)
+			if err != nil || string(calls) != "--user "+test.want+" "+serviceName+"\n" {
+				t.Fatalf("wrong controller invocation: %s %v", calls, err)
+			}
+			if !strings.Contains(output.String(), "controller output") {
+				t.Fatalf("lost controller output: %s", &output)
+			}
+			contents, err := os.ReadFile(path)
+			if err != nil || !bytes.Equal(contents, unit) {
+				t.Fatalf("service control rewrote the unit: %s %v", contents, err)
+			}
+		})
+	}
+}
+
+func TestServiceControlRefusesUnmanagedUnitsAndInvalidArguments(t *testing.T) {
+	for _, state := range []string{"missing", "foreign", "symlink", "invalid-arguments"} {
+		t.Run(state, func(t *testing.T) {
+			path, log := serviceControllerFixture(t)
+			if state != "missing" {
+				unit := []byte(serviceMarker)
+				if state == "foreign" {
+					unit = []byte("# unrelated unit\n")
+				}
+				if err := writeService(path, unit); err != nil {
+					t.Fatal(err)
+				}
+				if state == "symlink" {
+					if err := os.Rename(path, path+".real"); err != nil {
+						t.Fatal(err)
+					}
+					if err := os.Symlink(path+".real", path); err != nil {
+						t.Fatal(err)
+					}
+				}
+			}
+			args := [][]string{{"start"}, {"stop"}, {"restart"}, {"status"}, {"enable"}, {"disable", "--now"}}
+			if state == "invalid-arguments" {
+				args = [][]string{{"start", "other.service"}, {"status", "--now"}, {"restart", "--now"}, {"enable", "--system"}, {"disable", "--now", "other.service"}, {"enable", "--now=invalid"}, {"unknown"}}
+			}
+			for _, arguments := range args {
+				if err := serviceCommand(t.Context(), arguments, io.Discard); err == nil {
+					t.Fatalf("accepted %v for %s", arguments, state)
+				}
+			}
+			if _, err := os.Stat(log); !os.IsNotExist(err) {
+				t.Fatal("invalid control request invoked systemctl")
+			}
+		})
+	}
+}
+
+func TestServiceControlPreservesFailureOutputAndCancellation(t *testing.T) {
+	path, _ := serviceControllerFixture(t)
+	if err := writeService(path, []byte(serviceMarker)); err != nil {
+		t.Fatal(err)
+	}
+	for _, test := range []struct{ action, code, message string }{
+		{"status", "3", "Active: inactive (dead)\n"},
+		{"restart", "1", "Failed to connect to bus\n"},
+	} {
+		t.Setenv("SERVICE_TEST_EXIT_CODE", test.code)
+		t.Setenv("SERVICE_TEST_OUTPUT", "")
+		t.Setenv("SERVICE_TEST_ERROR_OUTPUT", "")
+		if test.action == "status" {
+			t.Setenv("SERVICE_TEST_OUTPUT", test.message)
+		} else {
+			t.Setenv("SERVICE_TEST_ERROR_OUTPUT", test.message)
+		}
+		var output bytes.Buffer
+		err := serviceCommand(t.Context(), []string{test.action}, &output)
+		var exit *exec.ExitError
+		if !errors.As(err, &exit) || strconv.Itoa(exit.ExitCode()) != test.code || output.String() != test.message {
+			t.Fatalf("lost failure details: %v %q", err, &output)
+		}
+	}
+	ctx, cancel := context.WithCancel(t.Context())
+	cancel()
+	if err := serviceCommand(ctx, []string{"restart"}, io.Discard); !errors.Is(err, context.Canceled) {
+		t.Fatalf("lost cancellation: %v", err)
+	}
 }
 
 func TestServiceInstallUpdateAndUninstall(t *testing.T) {
 	path, log := serviceControllerFixture(t)
 	unit := []byte(serviceMarker + "[Service]\nExecStart=/bin/true\n")
-	if err := installService(t.Context(), path, unit, io.Discard); err != nil {
+	var instructions bytes.Buffer
+	if err := installService(t.Context(), path, unit, &instructions); err != nil {
 		t.Fatal(err)
+	}
+	if !strings.Contains(instructions.String(), "harness-gateway service enable --now") || !strings.Contains(instructions.String(), "harness-gateway service restart") {
+		t.Fatalf("missing native service instructions: %s", &instructions)
 	}
 	info, err := os.Stat(path)
 	if err != nil || info.Mode().Perm() != 0600 {

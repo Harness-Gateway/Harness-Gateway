@@ -78,7 +78,7 @@ func gatewayFlags(options *options, output io.Writer, command, defaultLogFormat 
 	flags.Usage = func() {
 		fmt.Fprintf(output, "Usage: %s [options]\n", command)
 		if command == "harness-gateway" {
-			fmt.Fprintln(output, "       harness-gateway service <install|uninstall> [options]")
+			fmt.Fprintln(output, "       harness-gateway service <command> [options]")
 		}
 		fmt.Fprintln(output, "\nOptions:")
 		flags.PrintDefaults()

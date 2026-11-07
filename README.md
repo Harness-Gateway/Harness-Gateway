@@ -203,13 +203,15 @@ events. `harness-gateway --version` prints its build identity to stdout.
 ## Linux user service
 
 Systemd user-service support is opt-in and available from v0.1.8.
+The lifecycle commands and runtime workspace default below currently require
+`dev`; v0.1.8 provides install/uninstall and records the install directory.
 Install a persistent executable first; do not use `go run` to install a
 service, because its temporary executable will disappear:
 
 ```bash
-GOBIN="$HOME/.local/bin" go install github.com/harness-gateway/harness-gateway/cmd/harness-gateway@v0.1.8
+GOBIN="$HOME/.local/bin" go install github.com/harness-gateway/harness-gateway/cmd/harness-gateway@dev
 "$HOME/.local/bin/harness-gateway" service install --listen 127.0.0.1:8080
-systemctl --user enable --now harness-gateway.service
+"$HOME/.local/bin/harness-gateway" service enable --now
 ```
 
 Run these commands as the same user that logged in to Codex/Copilot, without
@@ -226,7 +228,6 @@ CLI credentials remain in their usual user profile locations. To use a persisten
 project directory instead, install with `--directory /absolute/path/to/project`.
 An explicit `--directory .` records the install command's current directory.
 Running the gateway directly continues to use the current directory by default.
-This workspace default is currently on `dev`; v0.1.8 records the install directory.
 
 The install command accepts the gateway's normal options: listener, harnesses,
 working directory, executable paths, model defaults, timeout, and concurrency.
@@ -240,21 +241,36 @@ files or contacting systemd:
 harness-gateway service install --dry-run
 ```
 
-Use standard systemd commands to operate it:
+Manage the installed service directly from the gateway:
 
 ```bash
-systemctl --user status harness-gateway.service
-journalctl --user -u harness-gateway.service -f
-systemctl --user restart harness-gateway.service
-systemctl --user stop harness-gateway.service
-systemctl --user disable --now harness-gateway.service
+harness-gateway service status
+harness-gateway service start
+harness-gateway service restart
+harness-gateway service stop
+harness-gateway service enable --now
+harness-gateway service disable --now
 ```
+
+`start`, `stop`, and `restart` change the running state. `enable` and `disable`
+change autostart; add `--now` to also start or stop the service. These commands
+use `systemctl --user` internally and require the managed unit to be installed.
+`status` prints systemd's status without a pager and exits nonzero when the
+service is inactive or failed. Use `harness-gateway service --help` for help.
+Follow logs with `journalctl --user -u harness-gateway.service -f`.
 
 The service restarts after failure, with a bounded restart rate. A stop or restart
 first signals the gateway so it can cancel requests and reap its CLI processes;
 systemd forcibly removes any remaining processes after the stop budget. An
 explicit stop does not trigger automatic restart. Re-run `service install` to
 update settings or executable locations, then explicitly restart the service.
+For example:
+
+```bash
+harness-gateway service install
+harness-gateway service restart
+```
+
 Existing installed units retain their configured directory; to adopt the runtime
 workspace, re-run `service install` without `--directory`, then restart.
 Application upgrades at the same executable path also require a restart.
@@ -288,8 +304,9 @@ the manager. Custom drop-ins, binaries, CLI profiles and lingering are preserved
 
 Linux CI tests both default and explicit working directories using a disposable
 user and real systemd user manager with Go CLI
-fixtures to test install, enable, buffered/SSE requests, restart, crash recovery,
-stop, subprocess cleanup, and uninstall. It also checks the autostart target link.
+fixtures to test install, start, status, enable/disable with and without `--now`,
+buffered/SSE requests, restart, crash recovery, stop, subprocess cleanup, and
+uninstall. It also checks the autostart target link.
 Unit generation, special-character paths, ownership protection, and rollback have
 local regressions. An actual host reboot and pre-login credential availability
 require separate manual acceptance; CI does not reboot its runner.

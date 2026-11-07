@@ -140,11 +140,15 @@ func testSystemdUserService(t *testing.T, explicitDirectory bool) {
 		t.Fatal(err)
 	}
 	ctl("daemon-reload")
-	ctl("enable", "--now", "harness-gateway.service")
+	command(paths["gateway"], "service", "enable")
+	if ctl("show", "--property=ActiveState", "--value", "harness-gateway.service") != "inactive" {
+		t.Fatal("enable without --now started the service")
+	}
 	link := filepath.Join(filepath.Dir(unit), "default.target.wants", filepath.Base(unit))
 	if target, err := filepath.EvalSymlinks(link); err != nil || target != unit {
 		t.Fatalf("autostart target link: %s %v", target, err)
 	}
+	command(paths["gateway"], "service", "start")
 	client := &http.Client{Timeout: 25 * time.Second}
 	defer client.CloseIdleConnections()
 	urlPattern := regexp.MustCompile(`"url":"(http://127\.0\.0\.1:[0-9]+)"`)
@@ -183,6 +187,17 @@ func testSystemdUserService(t *testing.T, explicitDirectory bool) {
 		return base, pid
 	}
 	base, pid := ready()
+	if status := command(paths["gateway"], "service", "status"); !strings.Contains(status, "active (running)") {
+		t.Fatalf("missing active status: %s", status)
+	}
+	command(paths["gateway"], "service", "disable")
+	if _, err := os.Lstat(link); !os.IsNotExist(err) {
+		t.Fatal("disable left the autostart link")
+	}
+	if ctl("show", "--property=MainPID", "--value", "harness-gateway.service") != pid {
+		t.Fatal("disable without --now interrupted the running service")
+	}
+	command(paths["gateway"], "service", "enable", "--now")
 	catalog, err := client.Get(base + "/v1/models")
 	if err != nil {
 		t.Fatal(err)
@@ -258,7 +273,7 @@ func testSystemdUserService(t *testing.T, explicitDirectory bool) {
 			if action == "crash" {
 				ctl("kill", "--signal=SIGKILL", "--kill-whom=main", "harness-gateway.service")
 			} else {
-				ctl(action, "harness-gateway.service")
+				command(paths["gateway"], "service", action)
 			}
 			for _, stream := range streams {
 				data, err := io.ReadAll(stream.reader)
@@ -297,6 +312,22 @@ func testSystemdUserService(t *testing.T, explicitDirectory bool) {
 			}
 		})
 	}
+	// Status must remain useful when inactive, while retaining a failure status.
+	status := exec.CommandContext(t.Context(), paths["gateway"], "service", "status")
+	if output, err := status.CombinedOutput(); err == nil || !strings.Contains(string(output), "inactive (dead)") {
+		t.Fatalf("inactive service status: %v\n%s", err, output)
+	}
+	command(paths["gateway"], "service", "enable", "--now")
+	ready()
+	command(paths["gateway"], "service", "disable", "--now")
+	if ctl("show", "--property=ActiveState", "--value", "harness-gateway.service") != "inactive" {
+		t.Fatal("disable --now did not stop the service")
+	}
+	if _, err := os.Lstat(link); !os.IsNotExist(err) {
+		t.Fatal("disable --now left the autostart link")
+	}
+	// Leave an autostart link to exercise uninstall's existing disable behavior.
+	command(paths["gateway"], "service", "enable")
 	command(paths["gateway"], "service", "uninstall")
 	if _, err := os.Lstat(unit); !os.IsNotExist(err) {
 		t.Fatal("uninstall left unit file")

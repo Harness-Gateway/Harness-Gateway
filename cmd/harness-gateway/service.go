@@ -17,6 +17,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/harness-gateway/harness-gateway/internal/buildinfo"
+	"github.com/spf13/pflag"
 )
 
 const serviceName = "harness-gateway.service"
@@ -25,8 +26,12 @@ const maxUnitBytes = 64 * 1024
 
 func serviceCommand(ctx context.Context, args []string, output io.Writer) error {
 	if len(args) == 0 || args[0] == "--help" || args[0] == "-h" {
-		_, err := fmt.Fprintln(output, "Usage: harness-gateway service install [gateway options] [--dry-run]\n       harness-gateway service uninstall\n\nInstall a Linux systemd user unit. Installation does not enable or start it.\nUse 'service install --help' for options. Run these commands without sudo.")
+		_, err := fmt.Fprintln(output, "Usage: harness-gateway service install [gateway options] [--dry-run]\n       harness-gateway service <start|stop|restart|status>\n       harness-gateway service <enable|disable> [--now]\n       harness-gateway service uninstall\n\nManage the Linux systemd user service without sudo.\nInstallation does not enable or start it. Enable/disable changes autostart;\n--now also starts/stops the service. Use '<command> --help' for options.")
 		return err
+	}
+	switch args[0] {
+	case "start", "stop", "restart", "status", "enable", "disable":
+		return controlService(ctx, args, output)
 	}
 	if args[0] != "install" && args[0] != "uninstall" {
 		return fmt.Errorf("unknown service command %q; use 'harness-gateway service --help'", args[0])
@@ -94,6 +99,57 @@ func serviceCommand(ctx context.Context, args []string, output io.Writer) error 
 		return err
 	}
 	return installService(ctx, path, unit, output)
+}
+
+func controlService(ctx context.Context, args []string, output io.Writer) error {
+	action := args[0]
+	flags := pflag.NewFlagSet("harness-gateway service "+action, pflag.ContinueOnError)
+	flags.SetOutput(output)
+	var help, now bool
+	flags.BoolVarP(&help, "help", "h", false, "show this help")
+	if action == "enable" || action == "disable" {
+		flags.BoolVar(&now, "now", false, "also start (enable) or stop (disable) the service")
+	}
+	flags.Usage = func() {
+		fmt.Fprintf(output, "Usage: harness-gateway service %s [options]\n\nOptions:\n", action)
+		flags.PrintDefaults()
+	}
+	if err := flags.Parse(args[1:]); err != nil {
+		return err
+	}
+	if help {
+		flags.Usage()
+		return pflag.ErrHelp
+	}
+	if flags.NArg() != 0 {
+		return fmt.Errorf("service %s does not accept positional arguments", action)
+	}
+	if runtime.GOOS != "linux" {
+		return errors.New("systemd user services are supported only on Linux")
+	}
+	path, err := userServicePath()
+	if err != nil {
+		return err
+	}
+	if _, exists, err := managedService(path); err != nil {
+		return err
+	} else if !exists {
+		return errors.New("no managed user service is installed; run 'harness-gateway service install' first")
+	}
+	arguments := []string{action}
+	if now {
+		arguments = append(arguments, "--now")
+	}
+	if action == "status" {
+		arguments = append(arguments, "--no-pager", "--full")
+	}
+	if err := runSystemctl(ctx, output, append(arguments, serviceName)...); err != nil {
+		return err
+	}
+	if action != "status" {
+		_, err = fmt.Fprintf(output, "Service %s completed: %s\n", action, serviceName)
+	}
+	return err
 }
 
 func userServicePath() (string, error) {
@@ -224,13 +280,22 @@ func writeService(path string, contents []byte) error {
 }
 
 func systemctl(ctx context.Context, args ...string) error {
+	var output bytes.Buffer
+	if err := runSystemctl(ctx, &output, args...); err != nil {
+		return fmt.Errorf("%w\n%s", err, &output)
+	}
+	return nil
+}
+
+func runSystemctl(ctx context.Context, output io.Writer, args ...string) error {
 	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
 	command := exec.CommandContext(ctx, "systemctl", append([]string{"--user"}, args...)...)
 	command.WaitDelay = 2 * time.Second
-	output, err := command.CombinedOutput()
-	if err != nil {
-		return fmt.Errorf("systemctl --user %s: %w\n%s", strings.Join(args, " "), errors.Join(err, ctx.Err()), output)
+	command.Stdout = output
+	command.Stderr = output
+	if err := command.Run(); err != nil {
+		return fmt.Errorf("systemctl --user %s: %w", strings.Join(args, " "), errors.Join(err, ctx.Err()))
 	}
 	return nil
 }
@@ -255,7 +320,7 @@ func installService(ctx context.Context, path string, unit []byte, output io.Wri
 		}
 		return errors.Join(err, restoreErr)
 	}
-	_, err = fmt.Fprintf(output, "Installed user service: %s\nEnable and start: systemctl --user enable --now %s\nApply updates to a running service: systemctl --user restart %s\nLogs: journalctl --user -u %s -f\nBoot before login (optional): loginctl enable-linger\n", path, serviceName, serviceName, serviceName)
+	_, err = fmt.Fprintf(output, "Installed user service: %s\nEnable and start: harness-gateway service enable --now\nApply updates to a running service: harness-gateway service restart\nStatus: harness-gateway service status\nLogs: journalctl --user -u %s -f\nBoot before login (optional): loginctl enable-linger\n", path, serviceName)
 	return err
 }
 

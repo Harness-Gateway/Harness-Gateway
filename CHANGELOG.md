@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Add `service start`, `stop`, `restart`, `status`, `enable`, and `disable`
+  commands for the managed systemd user unit, with `--now` for enable/disable.
+  Preserve status/error output and exercise the commands in real service CI.
 - Default Linux service installations to a private systemd runtime workspace
   at `%t/harness-gateway/work`, cleaned on stop, restart, and crash recovery.
   Preserve explicit service directories and the foreground current-directory
