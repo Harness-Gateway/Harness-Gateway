@@ -33,12 +33,16 @@ func serviceCommand(ctx context.Context, args []string, output io.Writer) error 
 	}
 	var options options
 	dryRun := false
+	explicitDirectory := false
 	if args[0] == "install" {
 		flags := gatewayFlags(&options, output, "harness-gateway service install", "json")
+		flags.Lookup("directory").Usage = "working directory for CLI requests (default: private systemd runtime workspace)"
+		flags.Lookup("directory").DefValue = ""
 		flags.BoolVar(&dryRun, "dry-run", false, "print the unit without changing files or contacting systemd")
 		if err := parseGatewayFlags(flags, &options, args[1:]); err != nil {
 			return err
 		}
+		explicitDirectory = flags.Changed("directory")
 		if options.version {
 			_, err := fmt.Fprintln(output, buildinfo.String())
 			return err
@@ -60,7 +64,16 @@ func serviceCommand(ctx context.Context, args []string, output io.Writer) error 
 		}
 		return uninstallService(ctx, path, output)
 	}
-	directory, _, harnesses, err := prepareGateway(options)
+	// An empty directory selects the workspace created by systemd at startup;
+	// installation must not depend on that directory already existing.
+	directory := ""
+	var harnesses []harnessStatus
+	var err error
+	if explicitDirectory {
+		directory, _, harnesses, err = prepareGateway(options)
+	} else {
+		_, harnesses, err = prepareBackends(options, directory)
+	}
 	if err != nil {
 		return err
 	}
@@ -94,16 +107,27 @@ func userServicePath() (string, error) {
 	return filepath.Join(directory, "systemd", "user", serviceName), nil
 }
 
+// An empty directory selects systemd's runtime workspace. Omitting --directory
+// lets the gateway resolve its normal "." default after systemd changes cwd.
 func renderService(executable, directory, path string, options options, harnesses []harnessStatus) ([]byte, error) {
-	if !filepath.IsAbs(executable) || !filepath.IsAbs(directory) {
+	if !filepath.IsAbs(executable) || (directory != "" && !filepath.IsAbs(directory)) {
 		return nil, errors.New("service executable and directory must be absolute")
 	}
 	// systemd rejects some characters in the executable position even when
 	// quoted. A fixed POSIX exec trampoline accepts the path as an argument;
 	// user-controlled paths/settings are never interpolated into shell code.
-	arguments := []string{"/bin/sh", "-c", `exec "$@"`, "harness-gateway", executable, "--listen", options.address, "--directory", directory,
+	arguments := []string{"/bin/sh", "-c", `exec "$@"`, "harness-gateway", executable, "--listen", options.address,
 		"--harnesses", options.harnesses, "--timeout", options.timeout.String(),
 		"--concurrency", strconv.Itoa(options.concurrency), "--log-format", options.logFormat}
+	workingDirectory := "%t/harness-gateway/work"
+	runtimeDirectories := "harness-gateway harness-gateway/work"
+	if directory != "" {
+		arguments = append(arguments, "--directory", directory)
+		// WorkingDirectory takes a literal path, not a quoted argument. The
+		// final '/.' preserves trailing spaces/backslashes in the INI parser.
+		workingDirectory = strings.ReplaceAll(directory, "%", "%%") + "/."
+		runtimeDirectories = "harness-gateway"
+	}
 	for _, harness := range harnesses {
 		arguments = append(arguments, "--"+harness.name+"-path", harness.executable)
 		if harness.model != "" {
@@ -118,9 +142,6 @@ func renderService(executable, directory, path string, options options, harnesse
 		}
 		command = append(command, quoted)
 	}
-	// WorkingDirectory takes a literal path, not a quoted argument. The final
-	// '/.' preserves trailing spaces/backslashes through the INI line parser.
-	workingDirectory := strings.ReplaceAll(directory, "%", "%%") + "/."
 	environment, err := quoteUnitValue("PATH=" + path)
 	if err != nil {
 		return nil, err
@@ -137,7 +158,7 @@ StartLimitBurst=5
 Type=exec
 WorkingDirectory=` + workingDirectory + `
 Environment=` + environment + `
-RuntimeDirectory=harness-gateway
+RuntimeDirectory=` + runtimeDirectories + `
 RuntimeDirectoryMode=0700
 Environment=TMPDIR=%t/harness-gateway
 ExecStart=:` + strings.Join(command, " ") + `

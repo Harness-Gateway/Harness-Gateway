@@ -117,12 +117,6 @@ func parseGatewayFlags(flags *pflag.FlagSet, options *options, args []string) er
 
 // prepareGateway resolves configuration without starting CLIs or using credentials.
 func prepareGateway(options options) (string, []application.Backend, []harnessStatus, error) {
-	if err := loopbackAddress(options.address); err != nil {
-		return "", nil, nil, err
-	}
-	if options.timeout <= 0 || options.concurrency < 1 {
-		return "", nil, nil, errors.New("timeout and concurrency must be positive")
-	}
 	directory, err := filepath.Abs(options.directory)
 	if err != nil {
 		return "", nil, nil, err
@@ -134,43 +128,56 @@ func prepareGateway(options options) (string, []application.Backend, []harnessSt
 	if !info.IsDir() {
 		return "", nil, nil, errors.New("directory must be a directory")
 	}
+	backends, harnesses, err := prepareBackends(options, directory)
+	return directory, backends, harnesses, err
+}
+
+// prepareBackends also supports service installation before systemd creates its
+// runtime workspace. No harness is started while resolving this configuration.
+func prepareBackends(options options, directory string) ([]application.Backend, []harnessStatus, error) {
+	if err := loopbackAddress(options.address); err != nil {
+		return nil, nil, err
+	}
+	if options.timeout <= 0 || options.concurrency < 1 {
+		return nil, nil, errors.New("timeout and concurrency must be positive")
+	}
 	var backends []application.Backend
 	var harnesses []harnessStatus
 	seen := map[string]bool{}
 	for _, name := range strings.Split(options.harnesses, ",") {
 		name = strings.TrimSpace(name)
 		if seen[name] {
-			return "", nil, nil, fmt.Errorf("duplicate harness %q", name)
+			return nil, nil, fmt.Errorf("duplicate harness %q", name)
 		}
 		seen[name] = true
 		switch name {
 		case "codex":
 			path, err := exec.LookPath(options.codexPath)
 			if err != nil {
-				return "", nil, nil, fmt.Errorf("find codex CLI: %w", err)
+				return nil, nil, fmt.Errorf("find codex CLI: %w", err)
 			}
 			path, err = filepath.Abs(path)
 			if err != nil {
-				return "", nil, nil, err
+				return nil, nil, err
 			}
 			backends = append(backends, application.Backend{Model: application.Model{ID: name, Provider: name}, Harness: &codex.Harness{Path: path, Model: options.codexModel, Directory: directory}})
 			harnesses = append(harnesses, harnessStatus{name: name, executable: path, model: options.codexModel})
 		case "copilot":
 			path, err := exec.LookPath(options.copilotPath)
 			if err != nil {
-				return "", nil, nil, fmt.Errorf("find copilot CLI: %w", err)
+				return nil, nil, fmt.Errorf("find copilot CLI: %w", err)
 			}
 			path, err = filepath.Abs(path)
 			if err != nil {
-				return "", nil, nil, err
+				return nil, nil, err
 			}
 			backends = append(backends, application.Backend{Model: application.Model{ID: name, Provider: name}, Harness: &copilot.Harness{Path: path, Model: options.copilotModel, Directory: directory}})
 			harnesses = append(harnesses, harnessStatus{name: name, executable: path, model: options.copilotModel})
 		default:
-			return "", nil, nil, fmt.Errorf("unknown harness %q", name)
+			return nil, nil, fmt.Errorf("unknown harness %q", name)
 		}
 	}
-	return directory, backends, harnesses, nil
+	return backends, harnesses, nil
 }
 
 func run(options options, logger *slog.Logger) error {

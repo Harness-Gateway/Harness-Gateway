@@ -25,6 +25,19 @@ func TestSystemdUserService(t *testing.T) {
 	if os.Getenv("HARNESS_GATEWAY_TEST_SYSTEMD") != "1" {
 		t.Skip("requires an isolated systemd user manager; see ci.sh")
 	}
+	for _, explicit := range []bool{false, true} {
+		t.Run(fmt.Sprintf("explicit-directory=%t", explicit), func(t *testing.T) {
+			testSystemdUserService(t, explicit)
+		})
+	}
+}
+
+func testSystemdUserService(t *testing.T, explicitDirectory bool) {
+	runtimeRoot := os.Getenv("XDG_RUNTIME_DIR")
+	if !filepath.IsAbs(runtimeRoot) {
+		t.Fatal("test requires an absolute XDG_RUNTIME_DIR")
+	}
+	runtimeDirectory := filepath.Join(runtimeRoot, "harness-gateway")
 	config, err := os.UserConfigDir()
 	if err != nil {
 		t.Fatal(err)
@@ -74,6 +87,7 @@ func TestSystemdUserService(t *testing.T) {
 		ctx, cancel := context.WithTimeout(t.Context(), 30*time.Second)
 		defer cancel()
 		cmd := exec.CommandContext(ctx, name, args...)
+		cmd.Dir = directory
 		cmd.WaitDelay = 2 * time.Second
 		output, err := cmd.CombinedOutput()
 		if err != nil {
@@ -82,8 +96,17 @@ func TestSystemdUserService(t *testing.T) {
 		return strings.TrimSpace(string(output))
 	}
 	ctl := func(args ...string) string { return command("systemctl", append([]string{"--user"}, args...)...) }
-	command(paths["gateway"], "service", "install", "--listen=127.0.0.1:0", "--directory="+directory,
-		"--codex-path="+paths["codex"], "--copilot-path="+paths["copilot"])
+	installArgs := []string{"service", "install", "--listen=127.0.0.1:0",
+		"--codex-path=" + paths["codex"], "--copilot-path=" + paths["copilot"]}
+	workspace := filepath.Join(runtimeDirectory, "work")
+	if explicitDirectory {
+		installArgs = append(installArgs, "--directory="+directory)
+		workspace = directory
+	}
+	command(paths["gateway"], installArgs...)
+	if _, err := os.Stat(runtimeDirectory); !os.IsNotExist(err) {
+		t.Fatalf("installation created runtime state before service start: %v", err)
+	}
 	t.Cleanup(func() {
 		if _, err := os.Lstat(unit); err == nil {
 			ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
@@ -147,6 +170,16 @@ func TestSystemdUserService(t *testing.T) {
 			defer response.Body.Close()
 			return response.StatusCode == 200
 		})
+		cwd, err := os.Readlink(filepath.Join("/proc", pid, "cwd"))
+		if err != nil || cwd != workspace {
+			t.Fatalf("service working directory: got %q, want %q (%v)", cwd, workspace, err)
+		}
+		for _, path := range []string{runtimeDirectory, workspace} {
+			info, err := os.Stat(path)
+			if err != nil || !info.IsDir() || info.Mode().Perm() != 0700 {
+				t.Fatalf("workspace privacy: %s %v %v", path, info, err)
+			}
+		}
 		return base, pid
 	}
 	base, pid := ready()
@@ -185,6 +218,12 @@ func TestSystemdUserService(t *testing.T) {
 	}
 	for _, action := range []string{"restart", "crash", "stop"} {
 		t.Run(action, func(t *testing.T) {
+			marker := filepath.Join(workspace, "workspace-state")
+			for _, path := range []string{marker, filepath.Join(runtimeDirectory, "temporary-state")} {
+				if err := os.WriteFile(path, []byte("previous invocation"), 0600); err != nil {
+					t.Fatal(err)
+				}
+			}
 			type held struct {
 				body   io.ReadCloser
 				reader *bufio.Reader
@@ -234,20 +273,27 @@ func TestSystemdUserService(t *testing.T) {
 				if ctl("show", "--property=ActiveState", "--value", "harness-gateway.service") != "inactive" {
 					t.Fatal("explicit stop was automatically restarted")
 				}
-				if _, err := os.Stat(filepath.Join(os.Getenv("XDG_RUNTIME_DIR"), "harness-gateway")); !os.IsNotExist(err) {
+				if _, err := os.Stat(runtimeDirectory); !os.IsNotExist(err) {
 					t.Fatal("service temporary directory remains after stop")
 				}
-				return
+			} else {
+				previous := pid
+				poll(t, 25*time.Second, func() bool {
+					value := ctl("show", "--property=MainPID", "--value", "harness-gateway.service")
+					return value != "0" && value != previous
+				})
+				base, pid = ready()
+				entries, err := os.ReadDir(runtimeDirectory)
+				if err != nil {
+					t.Fatal(err)
+				}
+				if explicitDirectory && len(entries) != 0 || !explicitDirectory && (len(entries) != 1 || entries[0].Name() != "work") {
+					t.Fatalf("previous invocation left temporary state: %v", entries)
+				}
 			}
-			previous := pid
-			poll(t, 25*time.Second, func() bool {
-				value := ctl("show", "--property=MainPID", "--value", "harness-gateway.service")
-				return value != "0" && value != previous
-			})
-			base, pid = ready()
-			entries, err := os.ReadDir(filepath.Join(os.Getenv("XDG_RUNTIME_DIR"), "harness-gateway"))
-			if err != nil || len(entries) != 0 {
-				t.Fatalf("previous invocation left temporary state: %v %v", entries, err)
+			_, err := os.Stat(marker)
+			if explicitDirectory && err != nil || !explicitDirectory && !os.IsNotExist(err) {
+				t.Fatalf("workspace persistence: explicit=%t, marker error=%v", explicitDirectory, err)
 			}
 		})
 	}

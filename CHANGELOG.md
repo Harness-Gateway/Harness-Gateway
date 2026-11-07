@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Default Linux service installations to a private systemd runtime workspace
+  at `%t/harness-gateway/work`, cleaned on stop, restart, and crash recovery.
+  Preserve explicit service directories and the foreground current-directory
+  default. Validate both service modes through real systemd lifecycle tests.
+
 ## v0.1.8 - 2026-11-07
 
 - Add opt-in Linux systemd user-service install/uninstall commands, dry-run unit

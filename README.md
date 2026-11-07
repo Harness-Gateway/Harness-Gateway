@@ -208,7 +208,7 @@ service, because its temporary executable will disappear:
 
 ```bash
 GOBIN="$HOME/.local/bin" go install github.com/harness-gateway/harness-gateway/cmd/harness-gateway@v0.1.8
-"$HOME/.local/bin/harness-gateway" service install --directory "$HOME" --listen 127.0.0.1:8080
+"$HOME/.local/bin/harness-gateway" service install --listen 127.0.0.1:8080
 systemctl --user enable --now harness-gateway.service
 ```
 
@@ -217,6 +217,16 @@ Run these commands as the same user that logged in to Codex/Copilot, without
 (`$XDG_CONFIG_HOME/systemd/user` if configured) and reloads the user manager.
 It does not enable or start the service. Existing foreign unit files and symlinks
 are never overwritten. If reloading fails, the previous managed file is restored.
+
+Without `--directory`, the service uses `%t/harness-gateway/work`, normally
+`/run/user/<uid>/harness-gateway/work`. Systemd creates this private directory
+with mode `0700` before starting the gateway and removes it when the service
+stops, including on restart or crash recovery. Treat its contents as temporary;
+CLI credentials remain in their usual user profile locations. To use a persistent
+project directory instead, install with `--directory /absolute/path/to/project`.
+An explicit `--directory .` records the install command's current directory.
+Running the gateway directly continues to use the current directory by default.
+This workspace default is currently on `dev`; v0.1.8 records the install directory.
 
 The install command accepts the gateway's normal options: listener, harnesses,
 working directory, executable paths, model defaults, timeout, and concurrency.
@@ -227,7 +237,7 @@ also supported. The listener remains loopback-only. Preview without writing
 files or contacting systemd:
 
 ```bash
-harness-gateway service install --dry-run --directory "$HOME"
+harness-gateway service install --dry-run
 ```
 
 Use standard systemd commands to operate it:
@@ -245,6 +255,8 @@ first signals the gateway so it can cancel requests and reap its CLI processes;
 systemd forcibly removes any remaining processes after the stop budget. An
 explicit stop does not trigger automatic restart. Re-run `service install` to
 update settings or executable locations, then explicitly restart the service.
+Existing installed units retain their configured directory; to adopt the runtime
+workspace, re-run `service install` without `--directory`, then restart.
 Application upgrades at the same executable path also require a restart.
 An owned runtime directory supplies `TMPDIR`; systemd removes it after service
 termination, including temporary Copilot state left by a gateway crash.
@@ -274,7 +286,8 @@ harness-gateway service uninstall
 Uninstall stops and disables the service, removes its managed unit, and reloads
 the manager. Custom drop-ins, binaries, CLI profiles and lingering are preserved.
 
-Linux CI uses a disposable user and real systemd user manager with Go CLI
+Linux CI tests both default and explicit working directories using a disposable
+user and real systemd user manager with Go CLI
 fixtures to test install, enable, buffered/SSE requests, restart, crash recovery,
 stop, subprocess cleanup, and uninstall. It also checks the autostart target link.
 Unit generation, special-character paths, ownership protection, and rollback have

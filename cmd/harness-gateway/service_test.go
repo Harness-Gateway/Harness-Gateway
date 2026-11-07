@@ -19,6 +19,9 @@ func TestServiceHelpAndPlatform(t *testing.T) {
 		if !strings.Contains(output.String(), "harness-gateway service") {
 			t.Fatalf("missing service help: %s", &output)
 		}
+		if len(args) == 2 && args[0] == "install" && (!strings.Contains(output.String(), "private systemd runtime workspace") || strings.Contains(output.String(), `(default ".")`)) {
+			t.Fatalf("incorrect service directory default in help: %s", &output)
+		}
 	}
 	if runtime.GOOS != "linux" {
 		if err := serviceCommand(t.Context(), []string{"install"}, io.Discard); err == nil || !strings.Contains(err.Error(), "only on Linux") {
@@ -55,6 +58,68 @@ func TestServiceDryRunDoesNotContactManagerOrWriteFiles(t *testing.T) {
 	args = append(args, "--listen=0.0.0.0:8080")
 	if err := serviceCommand(t.Context(), args, io.Discard); err == nil {
 		t.Fatal("service accepted a non-loopback address")
+	}
+}
+
+func TestServiceWorkingDirectoryDefaultsAndOverrides(t *testing.T) {
+	if runtime.GOOS != "linux" {
+		t.Skip("systemd user units target Linux")
+	}
+	config, cwd := t.TempDir(), t.TempDir()
+	t.Chdir(cwd)
+	t.Setenv("XDG_CONFIG_HOME", config)
+	t.Setenv("XDG_RUNTIME_DIR", filepath.Join(config, "not-created"))
+	t.Setenv("PATH", "") // No systemctl: dry-run must not contact the manager.
+	executable, err := os.Executable()
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, test := range []struct {
+		name string
+		args []string
+		want string
+	}{
+		{"runtime", nil, ""},
+		{"explicit-dot", []string{"--directory", "."}, cwd},
+		{"short-dot", []string{"-d", "."}, cwd},
+		{"explicit-absolute", []string{"--directory=" + config}, config},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			var output bytes.Buffer
+			args := append([]string{"install", "--dry-run", "--harnesses=codex", "--codex-path=" + executable}, test.args...)
+			if err := serviceCommand(t.Context(), args, &output); err != nil {
+				t.Fatal(err)
+			}
+			unit := output.String()
+			if test.want == "" {
+				for _, expected := range []string{"WorkingDirectory=%t/harness-gateway/work\n", "RuntimeDirectory=harness-gateway harness-gateway/work\n", "RuntimeDirectoryMode=0700\n"} {
+					if !strings.Contains(unit, expected) {
+						t.Fatalf("missing %q: %s", expected, unit)
+					}
+				}
+				if strings.Contains(unit, `"--directory"`) || strings.Contains(unit, cwd) || strings.Contains(unit, config) {
+					t.Fatalf("default workspace captured installer environment: %s", unit)
+				}
+			} else {
+				quoted, err := quoteUnitValue(test.want)
+				if err != nil {
+					t.Fatal(err)
+				}
+				if !strings.Contains(unit, "WorkingDirectory="+test.want+"/.\n") || !strings.Contains(unit, `"--directory" `+quoted) || !strings.Contains(unit, "RuntimeDirectory=harness-gateway\n") {
+					t.Fatalf("explicit directory not preserved: %s", unit)
+				}
+			}
+		})
+	}
+	for _, args := range [][]string{{"--directory=" + filepath.Join(config, "missing")}, {"--concurrency=0"}, {"--timeout=0s"}, {"--harnesses=unknown"}} {
+		args = append([]string{"install", "--dry-run", "--harnesses=codex", "--codex-path=" + executable}, args...)
+		if err := serviceCommand(t.Context(), args, io.Discard); err == nil {
+			t.Fatalf("invalid service settings accepted: %v", args)
+		}
+	}
+	entries, err := os.ReadDir(config)
+	if err != nil || len(entries) != 0 {
+		t.Fatalf("dry-run created service/runtime state: %v %v", entries, err)
 	}
 }
 
@@ -111,17 +176,19 @@ func TestServiceUnitPassesSystemdVerification(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	unit, err := renderService(executable, directory, os.Getenv("PATH"), options, nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	file := filepath.Join(t.TempDir(), serviceName)
-	if err := os.WriteFile(file, unit, 0600); err != nil {
-		t.Fatal(err)
-	}
-	command := exec.CommandContext(t.Context(), analyze, "--user", "verify", "--man=no", file)
-	if output, err := command.CombinedOutput(); err != nil {
-		t.Fatalf("systemd rejected the unit: %v\n%s\n%s", err, output, unit)
+	for _, workspace := range []string{directory, ""} {
+		unit, err := renderService(executable, workspace, os.Getenv("PATH"), options, nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		file := filepath.Join(t.TempDir(), serviceName)
+		if err := os.WriteFile(file, unit, 0600); err != nil {
+			t.Fatal(err)
+		}
+		command := exec.CommandContext(t.Context(), analyze, "--user", "verify", "--man=no", file)
+		if output, err := command.CombinedOutput(); err != nil {
+			t.Fatalf("systemd rejected the unit: %v\n%s\n%s", err, output, unit)
+		}
 	}
 }
 
