@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.1.9 - 2026-11-07
 
 - Add `service start`, `stop`, `restart`, `status`, `enable`, and `disable`
   commands for the managed systemd user unit, with `--now` for enable/disable.
