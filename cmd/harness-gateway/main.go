@@ -26,6 +26,15 @@ import (
 )
 
 func main() {
+	if len(os.Args) > 1 && os.Args[1] == "service" {
+		ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+		defer cancel()
+		if err := serviceCommand(ctx, os.Args[2:], os.Stdout); err != nil && !errors.Is(err, pflag.ErrHelp) {
+			fmt.Fprintln(os.Stderr, "service:", err)
+			os.Exit(1)
+		}
+		return
+	}
 	options, err := parseOptions(os.Args[1:], os.Stderr)
 	if errors.Is(err, pflag.ErrHelp) {
 		return
@@ -53,63 +62,77 @@ type options struct {
 	timeout                       time.Duration
 	concurrency                   int
 	version                       bool
+	help                          bool
 }
 
 func parseOptions(args []string, output io.Writer) (options, error) {
 	var options options
-	flags := pflag.NewFlagSet("harness-gateway", pflag.ContinueOnError)
+	flags := gatewayFlags(&options, output, "harness-gateway", "text")
+	err := parseGatewayFlags(flags, &options, args)
+	return options, err
+}
+
+func gatewayFlags(options *options, output io.Writer, command, defaultLogFormat string) *pflag.FlagSet {
+	flags := pflag.NewFlagSet(command, pflag.ContinueOnError)
 	flags.SetOutput(output)
 	flags.Usage = func() {
-		fmt.Fprintln(output, "Usage: harness-gateway [options]\n\nOptions:")
+		fmt.Fprintf(output, "Usage: %s [options]\n", command)
+		if command == "harness-gateway" {
+			fmt.Fprintln(output, "       harness-gateway service <install|uninstall> [options]")
+		}
+		fmt.Fprintln(output, "\nOptions:")
 		flags.PrintDefaults()
 	}
-	help := flags.BoolP("help", "h", false, "show this help")
+	flags.BoolVarP(&options.help, "help", "h", false, "show this help")
 	flags.BoolVarP(&options.version, "version", "v", false, "print version and build identity")
 	flags.StringVarP(&options.address, "listen", "l", "127.0.0.1:8080", "loopback HTTP listen address")
 	flags.StringVarP(&options.harnesses, "harnesses", "H", "codex,copilot", "comma-separated enabled harnesses")
 	flags.StringVarP(&options.directory, "directory", "d", ".", "working directory for CLI requests")
 	flags.DurationVarP(&options.timeout, "timeout", "t", 3*time.Minute, "maximum duration of a completion")
 	flags.IntVarP(&options.concurrency, "concurrency", "c", 2, "maximum simultaneous completions")
-	flags.StringVar(&options.logFormat, "log-format", "text", "log format: text or json (JSON disables the terminal startup panel)")
+	flags.StringVar(&options.logFormat, "log-format", defaultLogFormat, "log format: text or json (JSON disables the terminal startup panel)")
 	flags.StringVar(&options.codexPath, "codex-path", "codex", "Codex CLI executable")
 	flags.StringVar(&options.copilotPath, "copilot-path", "copilot", "Copilot CLI executable")
 	flags.StringVar(&options.codexModel, "codex-model", "", "native Codex model (empty uses CLI default)")
 	flags.StringVar(&options.copilotModel, "copilot-model", "", "native Copilot model (empty uses CLI default)")
-	if err := flags.Parse(args); err != nil {
-		return options, err
-	}
-	if *help {
-		flags.Usage()
-		return options, pflag.ErrHelp
-	}
-	if flags.NArg() != 0 {
-		return options, fmt.Errorf("unexpected arguments: %s", strings.Join(flags.Args(), " "))
-	}
-	if options.logFormat != "text" && options.logFormat != "json" {
-		return options, errors.New("log-format must be text or json")
-	}
-	return options, nil
+	return flags
 }
 
-func run(options options, logger *slog.Logger) error {
-	restoreDiagnostics := routeLibraryDiagnostics(logger)
-	defer restoreDiagnostics()
-	if err := loopbackAddress(options.address); err != nil {
+func parseGatewayFlags(flags *pflag.FlagSet, options *options, args []string) error {
+	if err := flags.Parse(args); err != nil {
 		return err
 	}
+	if options.help {
+		flags.Usage()
+		return pflag.ErrHelp
+	}
+	if flags.NArg() != 0 {
+		return fmt.Errorf("unexpected arguments: %s", strings.Join(flags.Args(), " "))
+	}
+	if options.logFormat != "text" && options.logFormat != "json" {
+		return errors.New("log-format must be text or json")
+	}
+	return nil
+}
+
+// prepareGateway resolves configuration without starting CLIs or using credentials.
+func prepareGateway(options options) (string, []application.Backend, []harnessStatus, error) {
+	if err := loopbackAddress(options.address); err != nil {
+		return "", nil, nil, err
+	}
 	if options.timeout <= 0 || options.concurrency < 1 {
-		return errors.New("timeout and concurrency must be positive")
+		return "", nil, nil, errors.New("timeout and concurrency must be positive")
 	}
 	directory, err := filepath.Abs(options.directory)
 	if err != nil {
-		return err
+		return "", nil, nil, err
 	}
 	info, err := os.Stat(directory)
 	if err != nil {
-		return err
+		return "", nil, nil, err
 	}
 	if !info.IsDir() {
-		return errors.New("directory must be a directory")
+		return "", nil, nil, errors.New("directory must be a directory")
 	}
 	var backends []application.Backend
 	var harnesses []harnessStatus
@@ -117,35 +140,45 @@ func run(options options, logger *slog.Logger) error {
 	for _, name := range strings.Split(options.harnesses, ",") {
 		name = strings.TrimSpace(name)
 		if seen[name] {
-			return fmt.Errorf("duplicate harness %q", name)
+			return "", nil, nil, fmt.Errorf("duplicate harness %q", name)
 		}
 		seen[name] = true
 		switch name {
 		case "codex":
 			path, err := exec.LookPath(options.codexPath)
 			if err != nil {
-				return fmt.Errorf("find codex CLI: %w", err)
+				return "", nil, nil, fmt.Errorf("find codex CLI: %w", err)
 			}
 			path, err = filepath.Abs(path)
 			if err != nil {
-				return err
+				return "", nil, nil, err
 			}
 			backends = append(backends, application.Backend{Model: application.Model{ID: name, Provider: name}, Harness: &codex.Harness{Path: path, Model: options.codexModel, Directory: directory}})
 			harnesses = append(harnesses, harnessStatus{name: name, executable: path, model: options.codexModel})
 		case "copilot":
 			path, err := exec.LookPath(options.copilotPath)
 			if err != nil {
-				return fmt.Errorf("find copilot CLI: %w", err)
+				return "", nil, nil, fmt.Errorf("find copilot CLI: %w", err)
 			}
 			path, err = filepath.Abs(path)
 			if err != nil {
-				return err
+				return "", nil, nil, err
 			}
 			backends = append(backends, application.Backend{Model: application.Model{ID: name, Provider: name}, Harness: &copilot.Harness{Path: path, Model: options.copilotModel, Directory: directory}})
 			harnesses = append(harnesses, harnessStatus{name: name, executable: path, model: options.copilotModel})
 		default:
-			return fmt.Errorf("unknown harness %q", name)
+			return "", nil, nil, fmt.Errorf("unknown harness %q", name)
 		}
+	}
+	return directory, backends, harnesses, nil
+}
+
+func run(options options, logger *slog.Logger) error {
+	restoreDiagnostics := routeLibraryDiagnostics(logger)
+	defer restoreDiagnostics()
+	directory, backends, harnesses, err := prepareGateway(options)
+	if err != nil {
+		return err
 	}
 	signals, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()

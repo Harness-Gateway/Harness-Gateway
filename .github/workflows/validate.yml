@@ -73,6 +73,30 @@ jobs:
         run: go test -race -p 1 ./...
       - run: go build ./...
 
+  systemd-service:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@v7.0.0
+        with:
+          go-version: '1.27.x'
+          check-latest: true
+      - name: Test a real systemd user service in a disposable account
+        run: bash tools/systemd/ci.sh
+      - name: Retain service lifecycle and journal diagnostics
+        if: always()
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: systemd-user-service
+          path: |
+            ${{ runner.temp }}/systemd-service.log
+            ${{ runner.temp }}/systemd-service-journal.log
+          if-no-files-found: warn
+          retention-days: 14
+
   vulnerabilities:
     runs-on: ubuntu-latest
     timeout-minutes: 10

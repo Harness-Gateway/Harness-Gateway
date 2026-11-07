@@ -200,6 +200,87 @@ harness-gateway --log-format json
 Logs go to stderr, including request IDs, durations, failures, and shutdown
 events. `harness-gateway --version` prints its build identity to stdout.
 
+## Linux user service
+
+Systemd user-service support is opt-in and currently available on the development
+branch. Install a persistent executable first; do not use `go run` to install a
+service, because its temporary executable will disappear:
+
+```bash
+GOBIN="$HOME/.local/bin" go install github.com/harness-gateway/harness-gateway/cmd/harness-gateway@dev
+"$HOME/.local/bin/harness-gateway" service install --directory "$HOME" --listen 127.0.0.1:8080
+systemctl --user enable --now harness-gateway.service
+```
+
+Run these commands as the same user that logged in to Codex/Copilot, without
+`sudo`. Installation writes `~/.config/systemd/user/harness-gateway.service`
+(`$XDG_CONFIG_HOME/systemd/user` if configured) and reloads the user manager.
+It does not enable or start the service. Existing foreign unit files and symlinks
+are never overwritten. If reloading fails, the previous managed file is restored.
+
+The install command accepts the gateway's normal options: listener, harnesses,
+working directory, executable paths, model defaults, timeout, and concurrency.
+It resolves enabled CLI executable paths and records the current `PATH`, including
+Node.js for npm-based launchers. It does not read `.bashrc` at service startup or
+copy credentials. JSON logging is the service default; `--log-format text` is
+also supported. The listener remains loopback-only. Preview without writing
+files or contacting systemd:
+
+```bash
+harness-gateway service install --dry-run --directory "$HOME"
+```
+
+Use standard systemd commands to operate it:
+
+```bash
+systemctl --user status harness-gateway.service
+journalctl --user -u harness-gateway.service -f
+systemctl --user restart harness-gateway.service
+systemctl --user stop harness-gateway.service
+systemctl --user disable --now harness-gateway.service
+```
+
+The service restarts after failure, with a bounded restart rate. A stop or restart
+first signals the gateway so it can cancel requests and reap its CLI processes;
+systemd forcibly removes any remaining processes after the stop budget. An
+explicit stop does not trigger automatic restart. Re-run `service install` to
+update settings or executable locations, then explicitly restart the service.
+Application upgrades at the same executable path also require a restart.
+An owned runtime directory supplies `TMPDIR`; systemd removes it after service
+termination, including temporary Copilot state left by a gateway crash.
+
+Enabling the unit starts it with the user manager, normally at login. To start
+the user manager at boot before login and retain it after logout, separately opt
+in to lingering (host policy may require administrator authorization):
+
+```bash
+loginctl enable-linger "$USER"
+loginctl show-user "$USER" --property=Linger
+```
+
+The installer never changes lingering. Boot-time operation also requires the
+home/project directories, CLI executables, and credential stores to be available;
+a locked desktop keyring may still require login/unlocking before inference.
+Use `systemctl --user edit harness-gateway.service` for custom environment/profile
+settings; match a custom `XDG_CONFIG_HOME` to the user manager's configuration.
+No root service, authentication changes, or network exposure is enabled.
+
+Remove the managed unit and its autostart link with:
+
+```bash
+harness-gateway service uninstall
+```
+
+Uninstall stops and disables the service, removes its managed unit, and reloads
+the manager. Custom drop-ins, binaries, CLI profiles and lingering are preserved.
+
+Linux CI uses a disposable user and real systemd user manager with Go CLI
+fixtures to test install, enable, buffered/SSE requests, restart, crash recovery,
+stop, subprocess cleanup, and uninstall. It also checks the autostart target link.
+Unit generation, special-character paths, ownership protection, and rollback have
+local regressions. An actual host reboot and pre-login credential availability
+require separate manual acceptance; CI does not reboot its runner.
+
 ## Interactive API
 
 Open **<http://127.0.0.1:8080/docs>** to explore and test the API with the embedded

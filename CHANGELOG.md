@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Add opt-in Linux systemd user-service install/uninstall commands, dry-run unit
+  generation, explicit executable/PATH and working-directory configuration, JSON
+  journal logging, bounded restart, and graceful cgroup cleanup. Protect foreign
+  units and preserve user drop-ins; enablement and lingering remain explicit.
+- Exercise real service start, stop, restart, crash recovery, buffered/SSE
+  requests, and CLI cleanup in an isolated GitHub Actions user account.
 - Reject missing Bash installer option values before creating directories,
   invoking Go, or modifying Bash settings; retain explicit paths to directories
   whose names start with a dash.
