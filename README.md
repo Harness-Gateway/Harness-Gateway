@@ -13,7 +13,7 @@ session. No provider API key or gateway authentication is needed.
 Use Go 1.27.3+ and the module package path, without `https://`:
 
 ```bash
-go install github.com/harness-gateway/harness-gateway/cmd/harness-gateway@v0.1.9
+go install github.com/harness-gateway/harness-gateway/cmd/harness-gateway@v0.1.10
 ```
 
 This installs the command **`harness-gateway`** into `GOBIN`, or into
@@ -43,10 +43,10 @@ bash setup.sh
 bash setup.sh --version dev
 
 # Select another module version or destination; avoid editing ~/.bashrc.
-bash setup.sh --version v0.1.9 --bin-dir "$HOME/.local/bin" --no-path
+bash setup.sh --version v0.1.10 --bin-dir "$HOME/.local/bin" --no-path
 ```
 
-Without `--version`, the script selects `v0.1.9`. It requires Go to be installed.
+Without `--version`, the script selects `v0.1.10`. It requires Go to be installed.
 With `--version dev`, it also requires Git and bypasses the module proxy for that
 installation so the branch resolves freshly. Tagged installs keep your configured
 proxy settings.
@@ -60,13 +60,13 @@ binary, setup prints its location and the export command to select this installa
 Install the release without cloning the repository:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Harness-Gateway/harness-gateway/v0.1.9/setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Harness-Gateway/harness-gateway/v0.1.10/setup.sh | bash
 ```
 
 To download and inspect the script before running it:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Harness-Gateway/harness-gateway/v0.1.9/setup.sh -o /tmp/harness-gateway-setup.sh
+curl -fsSL https://raw.githubusercontent.com/Harness-Gateway/harness-gateway/v0.1.10/setup.sh -o /tmp/harness-gateway-setup.sh
 bash /tmp/harness-gateway-setup.sh
 ```
 
@@ -77,10 +77,10 @@ needed for installation from source and development, not for a prebuilt binary.
 The integration has been exercised with Codex CLI 0.167.0 and Copilot CLI 1.0.105.
 
 ```bash
-harness-gateway --listen 127.0.0.1:8789
+harness-gateway
 ```
 
-The release version is **v0.1.9**. See [release notes](CHANGELOG.md). To build a
+The release version is **v0.1.10**. See [release notes](CHANGELOG.md). To build a
 local executable and inspect its version, source revision, and platform:
 
 ```bash
@@ -91,11 +91,10 @@ go build -o harness-gateway ./cmd/harness-gateway
 Version output works without either harness CLI installed. Builds from modified
 sources include `+dirty` in their revision; release binaries use a clean checkout.
 
-The development default listener is `http://127.0.0.1:8789`; v0.1.9 uses port
-8080. Pass `--listen 127.0.0.1:8789` to select the new port with that release.
-Only loopback listen addresses are accepted. `GET /v1/models` discovers the CLIs'
-native model catalogs and
-returns IDs such as `codex/<native-model-id>` and `copilot/<native-model-id>`.
+The default listener is `http://127.0.0.1:8789` from v0.1.10; earlier releases
+used port 8080. Only loopback listen addresses are accepted. `GET /v1/models`
+discovers the CLIs' native model catalogs and returns IDs such as
+`codex/<native-model-id>` and `copilot/<native-model-id>`.
 Use one of these IDs in a completion's `model` field to select that exact model.
 The short aliases `codex` and `copilot` remain available for each CLI's configured
 default. CLI authentication remains managed by the CLI.
@@ -218,7 +217,7 @@ Install a persistent executable first; do not use `go run` to install a
 service, because its temporary executable will disappear:
 
 ```bash
-GOBIN="$HOME/.local/bin" go install github.com/harness-gateway/harness-gateway/cmd/harness-gateway@v0.1.9
+GOBIN="$HOME/.local/bin" go install github.com/harness-gateway/harness-gateway/cmd/harness-gateway@v0.1.10
 "$HOME/.local/bin/harness-gateway" service install --listen 127.0.0.1:8789
 "$HOME/.local/bin/harness-gateway" service enable --now
 ```
@@ -265,8 +264,9 @@ harness-gateway service disable --now
 `start`, `stop`, and `restart` change the running state. `enable` and `disable`
 change autostart; add `--now` to also start or stop the service. These commands
 use `systemctl --user` internally and require the managed unit to be installed.
-`status` displays a gateway dashboard with service state, autostart, PID, running
-version/build, API/docs links, harness versions/settings, directory, and limits.
+From v0.1.10, `status` displays a gateway dashboard with service state, autostart,
+PID, running version/build, API/docs links, harness versions/settings, directory,
+and limits.
 It reads the startup journal record for the service invocation being inspected;
 it does not launch harnesses or report the inspecting CLI's version as the running
 version. Inactive/failed services return a nonzero exit status and identify any
@@ -556,7 +556,7 @@ artifacts and when `--output-dir` is supplied locally.
 After publishing a stable tag, run the repository-owned verifier from the root:
 
 ```bash
-go run ./tools/releaseverify --version v0.1.9 --revision "$(git rev-parse 'v0.1.9^{commit}')"
+go run ./tools/releaseverify --version v0.1.10 --revision "$(git rev-parse 'v0.1.10^{commit}')"
 ```
 
 It installs through the public Go proxy and checksum database with a private
@@ -578,7 +578,7 @@ The **Verify public release** workflow runs this check on Linux and macOS after
 publication, then runs the Spring AI fixture suite against the public-installed
 binary. It can also be dispatched manually for an existing stable tag. Java 27
 and Maven are required for that Spring AI step. Reports and diagnostics are retained
-as workflow artifacts. Release titles use only the version tag, such as `v0.1.9`.
+as workflow artifacts. Release titles use only the version tag, such as `v0.1.10`.
 This post-publication workflow supplements pre-release Validate CI; it cannot
 prevent publication of a bad tag and never moves or rewrites a tag.
 

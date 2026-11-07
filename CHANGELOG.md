@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.1.10 - 2026-11-07
 
 - Bypass the module proxy for Bash `--version dev` installs and document direct
   Go development installs, preventing cached branch queries from silently
