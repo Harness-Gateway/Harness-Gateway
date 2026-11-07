@@ -50,7 +50,7 @@ func TestServiceDryRunDoesNotContactManagerOrWriteFiles(t *testing.T) {
 	if err := serviceCommand(t.Context(), args, &output); err != nil {
 		t.Fatal(err)
 	}
-	for _, expected := range []string{serviceMarker, "ExecStart=:", `"--log-format" "json"`, "WantedBy=default.target", "KillMode=mixed"} {
+	for _, expected := range []string{serviceMarker, "ExecStart=:", `"--listen" "127.0.0.1:8789"`, `"--log-format" "json"`, "WantedBy=default.target", "KillMode=mixed"} {
 		if !strings.Contains(output.String(), expected) {
 			t.Fatalf("unit missing %q: %s", expected, &output)
 		}
@@ -58,6 +58,13 @@ func TestServiceDryRunDoesNotContactManagerOrWriteFiles(t *testing.T) {
 	entries, err := os.ReadDir(config)
 	if err != nil || len(entries) != 0 {
 		t.Fatalf("dry-run changed files: %v %v", entries, err)
+	}
+	output.Reset()
+	if err := serviceCommand(t.Context(), append(args, "--listen=127.0.0.1:8080"), &output); err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(output.String(), `"--listen" "127.0.0.1:8080"`) {
+		t.Fatalf("explicit listener was replaced by the default: %s", &output)
 	}
 	args = append(args, "--listen=0.0.0.0:8080")
 	if err := serviceCommand(t.Context(), args, io.Discard); err == nil {

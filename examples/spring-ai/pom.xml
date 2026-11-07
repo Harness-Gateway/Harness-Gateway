@@ -17,7 +17,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <spring-ai.version>2.0.2</spring-ai.version>
     <spring-boot.version>4.1.2</spring-boot.version>
-    <gateway.url>http://127.0.0.1:8080/v1</gateway.url>
+    <gateway.url>http://127.0.0.1:8789/v1</gateway.url>
     <gateway.models>codex,copilot</gateway.models>
   </properties>
   <dependencyManagement>

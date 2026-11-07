@@ -85,7 +85,7 @@ func gatewayFlags(options *options, output io.Writer, command, defaultLogFormat 
 	}
 	flags.BoolVarP(&options.help, "help", "h", false, "show this help")
 	flags.BoolVarP(&options.version, "version", "v", false, "print version and build identity")
-	flags.StringVarP(&options.address, "listen", "l", "127.0.0.1:8080", "loopback HTTP listen address")
+	flags.StringVarP(&options.address, "listen", "l", "127.0.0.1:8789", "loopback HTTP listen address")
 	flags.StringVarP(&options.harnesses, "harnesses", "H", "codex,copilot", "comma-separated enabled harnesses")
 	flags.StringVarP(&options.directory, "directory", "d", ".", "working directory for CLI requests")
 	flags.DurationVarP(&options.timeout, "timeout", "t", 3*time.Minute, "maximum duration of a completion")

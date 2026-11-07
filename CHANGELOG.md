@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Change the default loopback listener to `127.0.0.1:8789` to avoid the common
+  Spring Boot port 8080. Update CLI help, service generation, and Spring AI
+  examples. Explicit listeners and existing installed units keep their settings.
+
 ## v0.1.9 - 2026-11-07
 
 - Add `service start`, `stop`, `restart`, `status`, `enable`, and `disable`

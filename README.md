@@ -70,7 +70,7 @@ needed for installation from source and development, not for a prebuilt binary.
 The integration has been exercised with Codex CLI 0.167.0 and Copilot CLI 1.0.105.
 
 ```bash
-harness-gateway
+harness-gateway --listen 127.0.0.1:8789
 ```
 
 The release version is **v0.1.9**. See [release notes](CHANGELOG.md). To build a
@@ -84,8 +84,10 @@ go build -o harness-gateway ./cmd/harness-gateway
 Version output works without either harness CLI installed. Builds from modified
 sources include `+dirty` in their revision; release binaries use a clean checkout.
 
-The default listener is `http://127.0.0.1:8080`. Only loopback listen addresses
-are accepted. `GET /v1/models` discovers the CLIs' native model catalogs and
+The development default listener is `http://127.0.0.1:8789`; v0.1.9 uses port
+8080. Pass `--listen 127.0.0.1:8789` to select the new port with that release.
+Only loopback listen addresses are accepted. `GET /v1/models` discovers the CLIs'
+native model catalogs and
 returns IDs such as `codex/<native-model-id>` and `copilot/<native-model-id>`.
 Use one of these IDs in a completion's `model` field to select that exact model.
 The short aliases `codex` and `copilot` remain available for each CLI's configured
@@ -144,11 +146,11 @@ has its own 20-second deadline, even if new callers keep joining it. Responses
 use `Cache-Control: no-store` to prevent additional caching by HTTP clients.
 
 ```bash
-curl http://127.0.0.1:8080/v1/models
+curl http://127.0.0.1:8789/v1/models
 
-curl --fail-with-body --max-time 45 -sS http://127.0.0.1:8080/v1/chat/completions -H 'Content-Type: application/json' -d '{"model":"codex","messages":[{"role":"user","content":"Say hello"}]}'
+curl --fail-with-body --max-time 45 -sS http://127.0.0.1:8789/v1/chat/completions -H 'Content-Type: application/json' -d '{"model":"codex","messages":[{"role":"user","content":"Say hello"}]}'
 
-curl --fail-with-body --max-time 45 -N http://127.0.0.1:8080/v1/chat/completions -H 'Content-Type: application/json' -d '{"model":"copilot","messages":[{"role":"user","content":"Say hello"}],"stream":true}'
+curl --fail-with-body --max-time 45 -N http://127.0.0.1:8789/v1/chat/completions -H 'Content-Type: application/json' -d '{"model":"copilot","messages":[{"role":"user","content":"Say hello"}],"stream":true}'
 ```
 
 Paste each curl command as one complete line. If Bash shows a `>` prompt, it is
@@ -210,7 +212,7 @@ service, because its temporary executable will disappear:
 
 ```bash
 GOBIN="$HOME/.local/bin" go install github.com/harness-gateway/harness-gateway/cmd/harness-gateway@v0.1.9
-"$HOME/.local/bin/harness-gateway" service install --listen 127.0.0.1:8080
+"$HOME/.local/bin/harness-gateway" service install --listen 127.0.0.1:8789
 "$HOME/.local/bin/harness-gateway" service enable --now
 ```
 
@@ -264,10 +266,11 @@ first signals the gateway so it can cancel requests and reap its CLI processes;
 systemd forcibly removes any remaining processes after the stop budget. An
 explicit stop does not trigger automatic restart. Re-run `service install` to
 update settings or executable locations, then explicitly restart the service.
-For example:
+Pass all desired gateway options when reinstalling. For example, move an
+existing service to port 8789 (also supported by v0.1.9):
 
 ```bash
-harness-gateway service install
+harness-gateway service install --listen 127.0.0.1:8789
 harness-gateway service restart
 ```
 
@@ -313,7 +316,7 @@ require separate manual acceptance; CI does not reboot its runner.
 
 ## Interactive API
 
-Open **<http://127.0.0.1:8080/docs>** to explore and test the API with the embedded
+Open **<http://127.0.0.1:8789/docs>** to explore and test the API with the embedded
 Scalar interface. Use the configured listener's port if you changed it. The
 startup log includes the documentation URL. The OpenAPI document is available
 at **`/openapi.json`**. Opening the gateway root (`/`) redirects to `/docs`.
@@ -340,7 +343,7 @@ the gateway's `/v1` base URL.
 For a Spring Boot application with `spring-ai-starter-model-openai`:
 
 ```properties
-spring.ai.openai.base-url=http://127.0.0.1:8080/v1
+spring.ai.openai.base-url=http://127.0.0.1:8789/v1
 spring.ai.openai.api-key=local-placeholder
 spring.ai.openai.chat.model=codex
 spring.ai.openai.timeout=180s
@@ -374,7 +377,7 @@ A standalone client can be constructed as follows:
 ```java
 var model = OpenAiChatModel.builder()
     .options(OpenAiChatOptions.builder()
-        .baseUrl("http://127.0.0.1:8080/v1")
+        .baseUrl("http://127.0.0.1:8789/v1")
         .apiKey("local-placeholder")
         .model("codex")
         .temperature(null)
@@ -445,7 +448,7 @@ mvn -f examples/spring-ai/pom.xml test
 
 # Override the URL or test only one enabled harness.
 mvn -f examples/spring-ai/pom.xml \
-  -Dgateway.url=http://127.0.0.1:8080/v1 -Dgateway.models=codex test
+  -Dgateway.url=http://127.0.0.1:8789/v1 -Dgateway.models=codex test
 
 # Exercise both aliases and explicit native model selection.
 mvn -f examples/spring-ai/pom.xml -Dgateway.models=codex,copilot,codex/gpt-6.1-sol,copilot/gpt-6.1-sol test

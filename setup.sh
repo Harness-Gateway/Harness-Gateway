@@ -63,5 +63,5 @@ else
   fi
   printf 'For this terminal, run:\n  %s\n' "$path_line"
 fi
-printf 'Run: harness-gateway (default: http://127.0.0.1:8080)\n'
+printf 'Run: harness-gateway\n'
 printf 'Custom port: harness-gateway --listen 127.0.0.1:8090\n'

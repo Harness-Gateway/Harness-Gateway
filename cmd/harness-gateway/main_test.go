@@ -18,7 +18,7 @@ func TestHelpDocumentsShortAndLongOptions(t *testing.T) {
 			if _, err := parseOptions([]string{argument}, &output); !errors.Is(err, pflag.ErrHelp) {
 				t.Fatalf("help returned %v", err)
 			}
-			for _, want := range []string{"Usage: harness-gateway [options]", "-h, --help", "-l, --listen string", `default "127.0.0.1:8080"`, "-t, --timeout duration", "default 3m0s", "-v, --version", "-H, --harnesses", "-d, --directory", "-c, --concurrency", "--codex-path", "--copilot-path", "--codex-model", "--copilot-model"} {
+			for _, want := range []string{"Usage: harness-gateway [options]", "-h, --help", "-l, --listen string", `default "127.0.0.1:8789"`, "-t, --timeout duration", "default 3m0s", "-v, --version", "-H, --harnesses", "-d, --directory", "-c, --concurrency", "--codex-path", "--copilot-path", "--codex-model", "--copilot-model"} {
 				if !strings.Contains(output.String(), want) {
 					t.Errorf("help missing %q:\n%s", want, &output)
 				}
@@ -57,7 +57,7 @@ func TestShortAndLongOptionsAreEquivalent(t *testing.T) {
 }
 
 func TestOptionDefaults(t *testing.T) {
-	want := options{address: "127.0.0.1:8080", harnesses: "codex,copilot", directory: ".",
+	want := options{address: "127.0.0.1:8789", harnesses: "codex,copilot", directory: ".",
 		logFormat: "text", timeout: 3 * time.Minute, concurrency: 2, codexPath: "codex", copilotPath: "copilot"}
 	got, err := parseOptions(nil, io.Discard)
 	if err != nil || got != want {

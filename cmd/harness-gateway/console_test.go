@@ -27,7 +27,7 @@ func TestStartupPanelShowsActualConfiguration(t *testing.T) {
 			t.Errorf("startup panel missing %q:\n%s", want, panel)
 		}
 	}
-	if strings.Contains(panel, "\x1b") || strings.Contains(panel, "8080") || strings.Contains(panel, "codex") {
+	if strings.Contains(panel, "\x1b") || strings.Contains(panel, "8789") || strings.Contains(panel, "codex") {
 		t.Fatalf("startup panel contains ANSI codes, a fixed port, or a disabled harness:\n%s", panel)
 	}
 	status.harnesses[0].model = ""

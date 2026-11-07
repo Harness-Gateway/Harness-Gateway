@@ -51,7 +51,7 @@ class GatewayTest {
     }
 
     static Stream<Arguments> nativeModels() throws Exception {
-        var url = System.getProperty("gateway.url", "http://127.0.0.1:8080/v1") + "/models";
+        var url = System.getProperty("gateway.url", "http://127.0.0.1:8789/v1") + "/models";
         try (var http = HttpClient.newHttpClient()) {
             var response = http.send(HttpRequest.newBuilder(URI.create(url)).timeout(Duration.ofSeconds(25)).build(),
                 HttpResponse.BodyHandlers.ofString());
@@ -107,7 +107,7 @@ class GatewayTest {
 
     @Test
     void modelCatalogWorksWithAuthenticatedHarnesses() throws Exception {
-        var url = System.getProperty("gateway.url", "http://127.0.0.1:8080/v1") + "/models";
+        var url = System.getProperty("gateway.url", "http://127.0.0.1:8789/v1") + "/models";
         try (var http = HttpClient.newHttpClient()) {
             var request = HttpRequest.newBuilder(URI.create(url)).timeout(Duration.ofSeconds(25)).build();
             var first = http.send(request, HttpResponse.BodyHandlers.ofString());

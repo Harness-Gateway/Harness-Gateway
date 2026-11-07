@@ -49,7 +49,7 @@ try {
   assert(log.includes('codex:0.0.0-fixture') && log.includes('copilot:0.0.0-fixture'), 'startup must identify both fixture CLI versions');
   assert(!log.includes('Harness CLI version unavailable'), 'fixture version discovery failed');
   report.base = base;
-  assert.notEqual(new URL(base).port, '8080');
+  assert.notEqual(new URL(base).port, '8789');
   browser = await chromium.launch({ executablePath: process.env.HARNESS_GATEWAY_BROWSER_EXECUTABLE || undefined, headless: true });
   report.browser = browser.version();
   const context = await browser.newContext({ viewport: { width: 1440, height: 1080 } });
