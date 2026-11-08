@@ -47,6 +47,17 @@ jobs:
           git diff --exit-code -- internal/adapters/inbound/openai/types.gen.go
       - run: go vet ./...
       - run: go test ./...
+      - name: Test privately installed Windows gateway
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $env:GOBIN = Join-Path $env:RUNNER_TEMP 'Gateway installed candidate'
+          go install ./cmd/harness-gateway
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $env:HARNESS_GATEWAY_TEST_INSTALLED_GATEWAY = '1'
+          $env:HARNESS_GATEWAY_INSTALLED_GATEWAY = Join-Path $env:GOBIN 'harness-gateway.exe'
+          $env:HARNESS_GATEWAY_EXPECT_REVISION = (git rev-parse HEAD).Trim()
+          go test -v -count=1 -timeout=3m -run '^TestInstalledGatewaySmoke$' ./tools/releaseverify
       - name: Fuzz Copilot framing and authentication
         if: runner.os == 'Linux'
         run: |

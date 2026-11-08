@@ -11,7 +11,45 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
+
+	"github.com/harness-gateway/harness-gateway/internal/buildinfo"
 )
+
+// CI installs the candidate into a private directory before enabling this
+// cross-platform check. It runs the same HTTP checks as public-tag verification.
+func TestInstalledGatewaySmoke(t *testing.T) {
+	if os.Getenv("HARNESS_GATEWAY_TEST_INSTALLED_GATEWAY") != "1" {
+		t.Skip("requires a private installed candidate")
+	}
+	binary := os.Getenv("HARNESS_GATEWAY_INSTALLED_GATEWAY")
+	if !filepath.IsAbs(binary) {
+		t.Fatal("provide an absolute installed gateway path")
+	}
+	ctx, cancel := context.WithTimeout(t.Context(), 2*time.Minute)
+	defer cancel()
+	repo, err := filepath.Abs("../..")
+	if err != nil {
+		t.Fatal(err)
+	}
+	root := t.TempDir()
+	output, err := runCommand(ctx, root, os.Environ(), binary, "--version")
+	if err != nil || !strings.HasPrefix(string(output), "Harness-Gateway v"+buildinfo.Version+" (") {
+		t.Fatalf("wrong installed candidate: %s %v", output, err)
+	}
+	if revision := os.Getenv("HARNESS_GATEWAY_EXPECT_REVISION"); revision != "" && (!strings.Contains(string(output), revision) || strings.Contains(string(output), "+dirty")) {
+		t.Fatalf("installed candidate does not match the clean commit: %s", output)
+	}
+	fixtures, err := buildFixtures(ctx, repo, root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	checks, err := smoke(ctx, root, binary, "v"+buildinfo.Version, fixtures)
+	if err != nil || checks != 24 {
+		t.Fatalf("installed gateway HTTP checks=%d: %v", checks, err)
+	}
+	t.Logf("installed gateway passed %d HTTP checks: %s", checks, strings.TrimSpace(string(output)))
+}
 
 const commandFixtureOutput = "{\"Error\":\"fixture module download failed\"}\nsecond line Ω\n"
 

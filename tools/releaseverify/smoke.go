@@ -11,6 +11,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"strings"
 	"time"
 
@@ -47,6 +48,19 @@ func smoke(ctx context.Context, root, binary, version string, fixtures map[strin
 			runErr = errors.Join(runErr, fmt.Errorf("smoke gateway exited before requested shutdown: %v", waitErr))
 			return
 		default:
+		}
+		if runtime.GOOS == "windows" {
+			// Windows has no os.Interrupt process signal. Retire the owned job
+			// explicitly, including CLI descendants, after HTTP verification.
+			stopErr := stop()
+			select {
+			case <-done:
+				runErr = errors.Join(runErr, stopErr)
+			case <-time.After(6 * time.Second):
+				_ = cmd.Process.Kill()
+				runErr = errors.Join(runErr, stopErr, errors.New("smoke gateway did not exit after job cleanup"))
+			}
+			return
 		}
 		_ = cmd.Process.Signal(os.Interrupt)
 		timer := time.NewTimer(6 * time.Second)

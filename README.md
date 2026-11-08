@@ -620,10 +620,11 @@ go run ./tools/releaseverify --version v0.1.11 --revision "$(git rev-parse 'v0.1
 
 It installs through the public Go proxy and checksum database with a private
 module cache, checks the expected tag commit, compares the tagged Bash script
-with the checksum-verified module, and exercises that script's default version.
-Go and Bash installations must have matching module/version identities and
-identical executable bytes. Both executables run HTTP smoke tests against Go CLI
-fixtures, including bundled docs, model discovery, origin protection, validation,
+with the checksum-verified module. On Linux/macOS it also exercises the script's
+default version. Go and Bash installations there must have matching module/version
+identities and identical executable bytes. Windows verifies the native Go-installed
+`.exe` without invoking Bash. Every installed executable runs 24 HTTP smoke tests
+against Go CLI fixtures, including bundled docs, model discovery, origin protection, validation,
 and blocking/streaming alias and native model requests. No CLI installation,
 authentication, provider key, or upstream inference is required.
 
@@ -631,11 +632,15 @@ Install commands run outside the checkout and leave the user's binaries and Bash
 configuration alone. The private download cache is cleaned on completion. Binaries,
 gateway logs and a `verification.json` receipt are retained in a unique directory
 printed on stderr; stdout contains the JSON receipt. Use `--output-dir` to choose
-its parent. Go 1.27.3+ and Bash are required; this verifier targets Linux/macOS.
+its parent. Go 1.27.3+ is required; Bash is also required on Linux/macOS.
 
-The **Verify public release** workflow runs this check on Linux and macOS after
-publication, then runs the Spring AI fixture suite against the public-installed
-binary. It can also be dispatched manually for an existing stable tag. Java 27
+The **Verify public release** workflow runs this check on Linux, macOS, and
+Windows after publication, then runs the Spring AI fixture suite against the
+public-installed binary on Linux/macOS. Windows Validate CI first runs the same
+24 HTTP checks against a privately installed candidate, including paths with spaces.
+These Windows checks use CLI fixtures; they do not establish authenticated Windows
+inference acceptance. The workflow can also be dispatched manually for an existing
+stable tag. Java 27
 and Maven are required for that Spring AI step. Reports and diagnostics are retained
 as workflow artifacts. Release titles use only the version tag, such as `v0.1.11`.
 This post-publication workflow supplements pre-release Validate CI; it cannot

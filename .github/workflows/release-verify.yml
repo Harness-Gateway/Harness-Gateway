@@ -23,7 +23,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 20
     env:
@@ -54,6 +54,7 @@ jobs:
           go-version: '1.27.x'
           check-latest: true
       - uses: actions/setup-java@v6.2.0
+        if: runner.os != 'Windows'
         with:
           distribution: temurin
           java-version: '27'
@@ -68,6 +69,7 @@ jobs:
             > "$RUNNER_TEMP/public-release.json" 2> "$RUNNER_TEMP/public-release.log"
           cat "$RUNNER_TEMP/public-release.json"
       - name: Run Spring AI fixtures against the public-installed executable
+        if: runner.os != 'Windows'
         shell: bash
         run: |
           binary=$(jq -er '.go_binary' "$RUNNER_TEMP/public-release.json")

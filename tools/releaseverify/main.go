@@ -36,7 +36,7 @@ type verification struct {
 	ModuleSum  string `json:"module_sum"`
 	SHA256     string `json:"sha256"`
 	GoBinary   string `json:"go_binary"`
-	BashBinary string `json:"bash_binary"`
+	BashBinary string `json:"bash_binary,omitempty"`
 	HTTPChecks int    `json:"http_checks"`
 }
 
@@ -72,9 +72,6 @@ func main() {
 func verify(ctx context.Context, version, revision, parent string) (result verification, runErr error) {
 	if !releaseVersion.MatchString(version) || !revisionPattern.MatchString(revision) {
 		return result, errors.New("provide a stable --version vMAJOR.MINOR.PATCH and its full lowercase --revision SHA")
-	}
-	if runtime.GOOS == "windows" {
-		return result, errors.New("Bash release verification requires Linux or macOS; native Windows installation is covered by Validate CI")
 	}
 	repo, err := filepath.Abs(".")
 	if err != nil {
@@ -153,16 +150,21 @@ func verify(ctx context.Context, version, revision, parent string) (result verif
 	if err := os.WriteFile(scriptPath, script, 0600); err != nil {
 		return result, err
 	}
-	// Exercise the tagged script's default version, including its --no-path path.
-	if _, err := runCommand(ctx, work, env, "bash", scriptPath, "--bin-dir", bashBin, "--no-path"); err != nil {
-		return result, err
+	result = verification{Version: version, Revision: revision, ModuleSum: module.Sum, GoBinary: filepath.Join(goBin, executableName("harness-gateway"))}
+	binaries := []string{result.GoBinary}
+	if runtime.GOOS != "windows" {
+		// Exercise the tagged Bash script's default version and --no-path.
+		if _, err := runCommand(ctx, work, env, "bash", scriptPath, "--bin-dir", bashBin, "--no-path"); err != nil {
+			return result, err
+		}
+		if _, err := os.Stat(filepath.Join(work, "home", ".bashrc")); !os.IsNotExist(err) {
+			return result, errors.New("--no-path changed Bash configuration")
+		}
+		result.BashBinary = filepath.Join(bashBin, "harness-gateway")
+		binaries = append(binaries, result.BashBinary)
 	}
-	if _, err := os.Stat(filepath.Join(work, "home", ".bashrc")); !os.IsNotExist(err) {
-		return result, errors.New("--no-path changed Bash configuration")
-	}
-	result = verification{Version: version, Revision: revision, ModuleSum: module.Sum, GoBinary: filepath.Join(goBin, "harness-gateway"), BashBinary: filepath.Join(bashBin, "harness-gateway")}
 	var digest [32]byte
-	for i, binary := range []string{result.GoBinary, result.BashBinary} {
+	for i, binary := range binaries {
 		info, err := buildinfo.ReadFile(binary)
 		if err != nil {
 			return result, err
@@ -189,14 +191,11 @@ func verify(ctx context.Context, version, revision, parent string) (result verif
 		}
 	}
 	result.SHA256 = fmt.Sprintf("%x", digest)
-	fixtures := make(map[string]string)
-	for _, harness := range []string{"codex", "copilot"} {
-		fixtures[harness] = filepath.Join(work, harness+"-fixture")
-		if _, err := runCommand(ctx, repo, os.Environ(), "go", "test", "-c", "-o", fixtures[harness], "./internal/adapters/outbound/"+harness); err != nil {
-			return result, err
-		}
+	fixtures, err := buildFixtures(ctx, repo, work)
+	if err != nil {
+		return result, err
 	}
-	for _, binary := range []string{result.GoBinary, result.BashBinary} {
+	for _, binary := range binaries {
 		checks, err := smoke(ctx, root, binary, version, fixtures)
 		if err != nil {
 			return result, err
@@ -211,6 +210,24 @@ func verify(ctx context.Context, version, revision, parent string) (result verif
 		return result, err
 	}
 	return result, nil
+}
+
+func executableName(name string) string {
+	if runtime.GOOS == "windows" {
+		return name + ".exe"
+	}
+	return name
+}
+
+func buildFixtures(ctx context.Context, repo, directory string) (map[string]string, error) {
+	fixtures := make(map[string]string)
+	for _, harness := range []string{"codex", "copilot"} {
+		fixtures[harness] = filepath.Join(directory, executableName(harness+"-fixture"))
+		if _, err := runCommand(ctx, repo, os.Environ(), "go", "test", "-c", "-o", fixtures[harness], "./internal/adapters/outbound/"+harness); err != nil {
+			return nil, err
+		}
+	}
+	return fixtures, nil
 }
 
 func validateModule(module moduleInfo, version, revision string) error {

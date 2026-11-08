@@ -2,6 +2,10 @@
 
 ## v0.1.11 - 2026-11-08
 
+- Verify privately installed Windows gateway executables through 24 HTTP fixture
+  checks before publication, and verify public tagged Go installs on Windows with
+  module/checksum provenance and the same HTTP checks. Keep Bash verification on
+  Linux/macOS and use owned Job Object cleanup for Windows smoke processes.
 - Bound Copilot's combined SDK/gateway event backlog to 128 MiB of serialized
   frame bytes per operation, reserving bytes before payload/SDK allocation and
   releasing them as events are consumed. Stop excessive backlogs explicitly,
