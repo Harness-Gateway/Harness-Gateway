@@ -1,0 +1,8 @@
+=== RUN   TestReviewEventsBeforeSendReply
+2026/11/08 21:31:57 Failed to close JSON-RPC writer: close tcp 127.0.0.1:47028->127.0.0.1:46745: use of closed network connection
+    egm_review_test.go:8: small answer: bytes=0 err=send copilot request: failed to send message: context deadline exceeded
+    egm_review_test.go:9: pre-reply events prevented protocol progress: bytes=0 err=send copilot request: failed to send message: context deadline exceeded
+--- FAIL: TestReviewEventsBeforeSendReply (1.00s)
+FAIL
+FAIL	github.com/harness-gateway/harness-gateway/internal/adapters/outbound/copilot	1.009s
+FAIL

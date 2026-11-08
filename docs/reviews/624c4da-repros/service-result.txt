@@ -1,0 +1,7 @@
+=== RUN   TestReviewServiceManagerIdentity
+    egm_review_test.go:7: commands="--user stop harness-gateway.service\n"; err=<nil>
+    egm_review_test.go:8: mutation dispatched without checking manager-loaded fragment identity
+--- FAIL: TestReviewServiceManagerIdentity (0.00s)
+FAIL
+FAIL	github.com/harness-gateway/harness-gateway/cmd/harness-gateway	0.006s
+FAIL

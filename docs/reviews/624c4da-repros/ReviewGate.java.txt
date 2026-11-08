@@ -1,0 +1,10 @@
+package io.harnessgateway;
+import java.net.URI;import java.net.http.*;import java.nio.file.*;
+public final class ReviewGate {
+ public static void main(String[] args)throws Exception{
+  try(var server=new FixtureGateway("codex","catalog-gate");var http=HttpClient.newHttpClient()){
+   http.sendAsync(HttpRequest.newBuilder(URI.create(server.url()+"/models")).build(),HttpResponse.BodyHandlers.ofString());
+   server.awaitModelDiscoveryStarted();Files.writeString(Path.of(args[0]),"ready");Thread.sleep(60000);
+  }
+ }
+}

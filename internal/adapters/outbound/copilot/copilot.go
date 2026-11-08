@@ -32,7 +32,7 @@ func (h *Harness) Complete(ctx context.Context, request domain.Request, emit fun
 			err = errors.Join(err, fmt.Errorf("remove copilot state directory: %w", cleanupErr))
 		}
 	}()
-	client, connection, stop, err := h.connect(ctx)
+	client, connection, closeTransport, stop, err := h.connect(ctx)
 	if err != nil {
 		return result, err
 	}
@@ -112,15 +112,43 @@ func (h *Harness) Complete(ctx context.Context, request domain.Request, emit fun
 		}
 	})
 	defer unsubscribe()
-	if _, err := session.Send(ctx, sdk.MessageOptions{Prompt: input}); err != nil {
-		return result, classifyRequestError(fmt.Errorf("send copilot request: %w", err))
-	}
+	// The protocol reader also delivers events. Drain them while Send waits for
+	// its reply, otherwise an early burst can fill the SDK's bounded event queue
+	// and prevent that same reader from reaching the reply.
+	sendCtx, cancelSend := context.WithCancel(ctx)
+	sendResult := make(chan error, 1)
+	sendDone := make(chan struct{})
+	go func() {
+		defer close(sendDone)
+		_, err := session.Send(sendCtx, sdk.MessageOptions{Prompt: input})
+		sendResult <- err
+	}()
+	defer func() {
+		stopEvents()
+		cancelSend()
+		if sendResult != nil {
+			// SDK socket writes do not observe context cancellation. Closing the
+			// owned transport unblocks a pending write before we join Send; the
+			// outer stop defer collects cleanup errors and retires the SDK.
+			_ = closeTransport()
+		}
+		<-sendDone
+	}()
 	monitorCtx, stopMonitor := context.WithCancel(ctx)
 	defer stopMonitor()
 	connectionErrors := monitorConnection(monitorCtx, connection)
 	deltaMessages := map[string]bool{}
+	idle := false
 	for {
 		select {
+		case err := <-sendResult:
+			sendResult = nil
+			if err != nil {
+				return result, classifyRequestError(fmt.Errorf("send copilot request: %w", err))
+			}
+			if idle {
+				return result, nil
+			}
 		case <-ctx.Done():
 			return result, ctx.Err()
 		case err := <-connectionErrors:
@@ -163,7 +191,10 @@ func (h *Harness) Complete(ctx context.Context, request domain.Request, emit fun
 				}
 				return result, err
 			case *sdk.SessionIdleData:
-				return result, nil
+				idle = true
+				if sendResult == nil {
+					return result, nil
+				}
 			}
 		}
 	}

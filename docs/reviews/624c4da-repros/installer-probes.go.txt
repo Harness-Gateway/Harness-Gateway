@@ -1,0 +1,15 @@
+package setup
+import("testing";"os";"path/filepath";"os/exec";"strings")
+func TestReviewCanonicalPathSeparator(t *testing.T){
+ f:=newSetupFixture(t)
+ physical:=filepath.Join(f.home,"physical:bin")
+ if err:=os.Mkdir(physical,0700);err!=nil{t.Fatal(err)}
+ alias:=filepath.Join(f.home,"safe-alias")
+ if err:=os.Symlink(physical,alias);err!=nil{t.Fatal(err)}
+ output,err:=f.run(t,"--bin-dir",alias)
+ if err!=nil {t.Logf("unsafe canonical path rejected: %v",err);return}
+ cmd:=exec.CommandContext(t.Context(),f.bash,"-c",`source "$1"; command -v harness-gateway`,"bash",filepath.Join(f.home,".bashrc"))
+ found,findErr:=cmd.CombinedOutput()
+ t.Logf("install output=%s; lookup=%q err=%v",output,found,findErr)
+ if findErr!=nil||strings.TrimSpace(string(found))!=filepath.Join(physical,"harness-gateway"){t.Fatalf("successful installation persisted an unusable PATH entry")}
+}

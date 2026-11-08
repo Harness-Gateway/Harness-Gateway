@@ -34,6 +34,28 @@ func localRequest(method, target string, body io.Reader) *http.Request {
 	return r
 }
 
+func TestObfuscationOptionsMatchPublishedContract(t *testing.T) {
+	for _, options := range []string{`{}`, `{"include_obfuscation":null}`, `{"include_obfuscation":false}`, `{"include_obfuscation":true}`} {
+		t.Run(options, func(t *testing.T) {
+			calls := 0
+			backend := harnessFunc(func(context.Context, domain.Request, func(string) error) (domain.Result, error) {
+				calls++
+				return domain.Result{}, nil
+			})
+			body := `{"model":"codex","messages":[{"role":"user","content":"hello"}],"stream":true,"stream_options":` + options + `}`
+			w := httptest.NewRecorder()
+			handler(backend, time.Second).ServeHTTP(w, localRequest("POST", "/v1/chat/completions", strings.NewReader(body)))
+			if options == `{"include_obfuscation":true}` {
+				if w.Code != http.StatusBadRequest || calls != 0 {
+					t.Fatalf("unsupported option reached backend: status=%d calls=%d", w.Code, calls)
+				}
+			} else if w.Code != http.StatusOK || calls != 1 {
+				t.Fatalf("supported option rejected: status=%d calls=%d body=%s", w.Code, calls, w.Body)
+			}
+		})
+	}
+}
+
 func TestCompletionAndStream(t *testing.T) {
 	for _, stream := range []bool{false, true} {
 		t.Run(fmtBool(stream), func(t *testing.T) {

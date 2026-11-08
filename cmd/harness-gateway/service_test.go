@@ -209,7 +209,7 @@ func serviceControllerFixture(t *testing.T) (string, string) {
 		t.Skip("systemd service installation targets Linux")
 	}
 	directory, log := t.TempDir(), filepath.Join(t.TempDir(), "systemctl.log")
-	script := "#!/bin/sh\nprintf '%s\\n' \"$*\" >> \"$SERVICE_TEST_LOG\"\nif [ \"${SERVICE_TEST_FAIL_RELOAD:-}\" = 1 ] && [ \"$2\" = daemon-reload ]; then echo 'fixture reload failure' >&2; exit 17; fi\nprintf '%s' \"$SERVICE_TEST_OUTPUT\"\nprintf '%s' \"$SERVICE_TEST_ERROR_OUTPUT\" >&2\nexit \"${SERVICE_TEST_EXIT_CODE:-0}\"\n"
+	script := "#!/bin/sh\nprintf '%s\\n' \"$*\" >> \"$SERVICE_TEST_LOG\"\nif [ \"${SERVICE_TEST_FAIL_RELOAD:-}\" = 1 ] && [ \"$2\" = daemon-reload ]; then echo 'fixture reload failure' >&2; exit 17; fi\nif [ \"$3\" = --property=LoadState,FragmentPath ] && [ \"${SERVICE_TEST_EXIT_CODE:-0}\" = 0 ]; then printf 'LoadState=%s\\nFragmentPath=%s\\n' \"$SERVICE_TEST_LOAD_STATE\" \"$SERVICE_TEST_FRAGMENT\"; exit 0; fi\nprintf '%s' \"$SERVICE_TEST_OUTPUT\"\nprintf '%s' \"$SERVICE_TEST_ERROR_OUTPUT\" >&2\nexit \"${SERVICE_TEST_EXIT_CODE:-0}\"\n"
 	if err := os.WriteFile(filepath.Join(directory, "systemctl"), []byte(script), 0700); err != nil {
 		t.Fatal(err)
 	}
@@ -221,6 +221,8 @@ func serviceControllerFixture(t *testing.T) (string, string) {
 	t.Setenv("SERVICE_TEST_EXIT_CODE", "0")
 	config := t.TempDir()
 	t.Setenv("XDG_CONFIG_HOME", config)
+	t.Setenv("SERVICE_TEST_FRAGMENT", filepath.Join(config, "systemd", "user", serviceName))
+	t.Setenv("SERVICE_TEST_LOAD_STATE", "loaded")
 	return filepath.Join(config, "systemd", "user", serviceName), log
 }
 
@@ -251,7 +253,11 @@ func TestServiceControlCommands(t *testing.T) {
 				t.Fatal(err)
 			}
 			calls, err := os.ReadFile(log)
-			if err != nil || string(calls) != "--user "+test.want+" "+serviceName+"\n" {
+			want := "--user " + test.want + " " + serviceName + "\n"
+			if test.args[0] != "status" {
+				want = "--user show --property=LoadState,FragmentPath " + serviceName + "\n" + want
+			}
+			if err != nil || string(calls) != want {
 				t.Fatalf("wrong controller invocation: %s %v", calls, err)
 			}
 			if !strings.Contains(output.String(), "controller output") {
@@ -326,7 +332,7 @@ func TestServiceControlPreservesFailureOutputAndCancellation(t *testing.T) {
 		}
 		err := serviceCommand(t.Context(), args, &output)
 		var exit *exec.ExitError
-		if !errors.As(err, &exit) || strconv.Itoa(exit.ExitCode()) != test.code || output.String() != test.message {
+		if !errors.As(err, &exit) || strconv.Itoa(exit.ExitCode()) != test.code || !strings.Contains(output.String()+err.Error(), test.message) {
 			t.Fatalf("lost failure details: %v %q", err, &output)
 		}
 	}

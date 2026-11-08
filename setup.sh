@@ -40,6 +40,7 @@ command -v go >/dev/null 2>&1 || fail 'Go is required; install Go 1.27.3+ from h
 [[ "$version" != *[[:space:]]* ]] || fail 'the version cannot contain whitespace'
 mkdir -p -- "$bin_dir"
 bin_dir=$(cd -- "$bin_dir" && pwd -P)
+[[ "$bin_dir" != *:* ]] || fail 'the resolved installation directory cannot contain a colon (PATH separator)'
 
 printf 'Installing harness-gateway@%s into %s\n' "$version" "$bin_dir"
 (

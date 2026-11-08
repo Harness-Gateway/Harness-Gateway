@@ -143,6 +143,13 @@ func fixture(mode string) error {
 				}
 			}
 		}
+		if mode == "send-write-hold" && length > 1024*1024 {
+			if err := event(&sdk.SessionErrorData{ErrorType: "fixture", Message: "send body not read"}, nil); err != nil {
+				return err
+			}
+			time.Sleep(30 * time.Second)
+			return nil
+		}
 		if length <= 0 || length > 1024*1024 {
 			return errors.New("invalid frame length")
 		}
@@ -307,6 +314,30 @@ func fixture(mode string) error {
 				return err
 			}
 		case "session.send":
+			if strings.HasPrefix(mode, "pre-reply-") {
+				for range 256 {
+					if err := event(&sdk.AssistantMessageDeltaData{MessageID: "burst", DeltaContent: "x"}, nil); err != nil {
+						return err
+					}
+				}
+				// Idle is also allowed to arrive before the RPC acknowledgement.
+				if err := event(&sdk.SessionIdleData{}, nil); err != nil {
+					return err
+				}
+				switch mode {
+				case "pre-reply-error":
+					if err := reject(); err != nil {
+						return err
+					}
+				case "pre-reply-hold":
+					// Leave Send pending until cancellation/consumer failure.
+				default:
+					if err := reply(map[string]string{"messageId": "fixture-user"}); err != nil {
+						return err
+					}
+				}
+				continue
+			}
 			if mode == "acceptance" {
 				if err := json.Unmarshal(request.Params["prompt"], &mode); err != nil {
 					return err

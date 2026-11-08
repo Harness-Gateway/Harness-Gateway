@@ -50,7 +50,7 @@ func TestInstalledCLIIsolatedSessionStorage(t *testing.T) {
 			ctx, cancel := context.WithTimeout(t.Context(), 30*time.Second)
 			defer cancel()
 			h := Harness{Path: path, Directory: t.TempDir()}
-			client, _, stop, err := h.connect(ctx)
+			client, _, _, stop, err := h.connect(ctx)
 			if err != nil {
 				t.Fatal(err)
 			}

@@ -22,7 +22,8 @@ func gatewayDocument(schemas node) node {
 	request["stream"].(node)["description"] = "When true, return incremental server-sent events instead of a buffered JSON response."
 	schemas["StreamOptions"].(node)["description"] = "Only valid with stream=true."
 	obfuscation := properties(schemas["StreamOptions"].(node))["include_obfuscation"].(node)
-	obfuscation["enum"], obfuscation["x-go-type"] = []any{false}, "bool"
+	obfuscation["nullable"] = true
+	obfuscation["enum"], obfuscation["x-go-type"] = []any{false, nil}, "bool"
 	message := properties(schemas["ChatMessage"].(node))
 	message["content"] = node{
 		"x-go-type": "json.RawMessage",

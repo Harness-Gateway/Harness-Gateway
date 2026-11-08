@@ -1,0 +1,6 @@
+=== RUN   TestReviewInterruptedFixtureOwnership
+    egm_review_test.go:20: gated CLI survived acceptance command cancellation: pid=3480810 pgid=3480810 executable=/tmp/harness-gateway-review-interrupt/codex-fixture
+--- FAIL: TestReviewInterruptedFixtureOwnership (1.13s)
+FAIL
+FAIL	github.com/harness-gateway/harness-gateway/tools/acceptance	1.134s
+FAIL

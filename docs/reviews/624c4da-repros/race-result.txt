@@ -1,0 +1,4 @@
+=== RUN   TestReviewCatalogCancellationRace
+--- PASS: TestReviewCatalogCancellationRace (1.72s)
+PASS
+ok  	github.com/harness-gateway/harness-gateway/internal/adapters/outbound/copilot	2.742s

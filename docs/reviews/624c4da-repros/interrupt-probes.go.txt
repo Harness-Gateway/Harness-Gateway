@@ -1,0 +1,22 @@
+package main
+import("context";"testing";"time";"os";"os/exec";"path/filepath";"strconv";"strings";"syscall")
+func TestReviewInterruptedFixtureOwnership(t *testing.T){
+ root:=os.Getenv("HG_REVIEW_INTERRUPT_ROOT");cp,err:=os.ReadFile(filepath.Join(root,"classpath"));if err!=nil{t.Fatal(err)}
+ work:=t.TempDir();pids:=filepath.Join(work,"pids");os.Mkdir(pids,0700);marker:=filepath.Join(work,"ready")
+ ctx,cancel:=context.WithTimeout(t.Context(),15*time.Second);defer cancel()
+ cmd:=exec.CommandContext(ctx,"java","-cp",root+":"+string(cp),"-Dgateway.failure.executable="+filepath.Join(root,"gateway"),"-Dgateway.failure.codex="+filepath.Join(root,"codex-fixture"),"-Dgateway.failure.directory="+work,"-Dgateway.failure.pids="+pids,"io.harnessgateway.ReviewGate",marker)
+ configureCommand(cmd)
+ if err:=cmd.Start();err!=nil{t.Fatal(err)}
+ defer func(){cancel();_=killCommand(cmd)}()
+ deadline:=time.Now().Add(10*time.Second)
+ for{if _,err:=os.Stat(marker);err==nil{break};if time.Now().After(deadline){t.Fatal("Java fixture did not reach catalog gate")};time.Sleep(time.Millisecond)}
+ entries,err:=os.ReadDir(pids);if err!=nil{t.Fatal(err)}
+ var owned []int
+ for _,entry:=range entries{pid,e:=strconv.Atoi(entry.Name());if e==nil{owned=append(owned,pid)}}
+ defer func(){for _,pid:=range owned{_=syscall.Kill(-pid,syscall.SIGKILL)}}()
+ cancel();_=cmd.Wait();time.Sleep(100*time.Millisecond)
+ for _,pid:=range owned{
+  exe,e:=os.Readlink("/proc/"+strconv.Itoa(pid)+"/exe")
+  if e==nil&&strings.Contains(exe,"codex-fixture"){t.Errorf("gated CLI survived acceptance command cancellation: pid=%d pgid=%d executable=%s",pid,pid,exe)}
+ }
+}

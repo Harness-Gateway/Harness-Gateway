@@ -379,8 +379,10 @@
         "properties": {
           "include_obfuscation": {
             "enum": [
-              false
+              false,
+              null
             ],
+            "nullable": true,
             "type": "boolean",
             "x-go-type": "bool"
           },

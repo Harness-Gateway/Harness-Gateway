@@ -1,0 +1,7 @@
+=== RUN   TestReviewNullObfuscationContract
+    egm_review_test.go:8: HTTP status=200; published schema=map[enum:[false] type:boolean x-go-type:bool]
+    egm_review_test.go:9: documented null is accepted by handler but excluded by published schema
+--- FAIL: TestReviewNullObfuscationContract (0.00s)
+FAIL
+FAIL	github.com/harness-gateway/harness-gateway/internal/adapters/inbound/openai	0.005s
+FAIL

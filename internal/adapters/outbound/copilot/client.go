@@ -13,18 +13,20 @@ import (
 )
 
 // Each operation owns its client/process. Authentication stays in the CLI.
-func (h *Harness) connect(ctx context.Context) (*sdk.Client, *rpc.ServerRPC, func() error, error) {
+// The callbacks close the transport to unblock pending writes, then retire the
+// SDK and collect cleanup errors after its operations have returned.
+func (h *Harness) connect(ctx context.Context) (*sdk.Client, *rpc.ServerRPC, func() error, func() error, error) {
 	path := h.Path
 	if path == "" {
 		path = "copilot"
 	}
 	resolved, err := exec.LookPath(path)
 	if err != nil {
-		return nil, nil, nil, fmt.Errorf("find copilot: %w", err)
+		return nil, nil, nil, nil, fmt.Errorf("find copilot: %w", err)
 	}
 	bridge, err := startBridge(ctx, resolved, h.Directory)
 	if err != nil {
-		return nil, nil, nil, fmt.Errorf("start copilot: %w", err)
+		return nil, nil, nil, nil, fmt.Errorf("start copilot: %w", err)
 	}
 	client := sdk.NewClient(&sdk.ClientOptions{
 		Connection: sdk.URIConnection{URL: bridge.listener.Addr().String(), ConnectionToken: bridge.token},
@@ -44,23 +46,23 @@ func (h *Harness) connect(ctx context.Context) (*sdk.Client, *rpc.ServerRPC, fun
 	stopOnCancel := context.AfterFunc(ctx, func() { _ = stopClient() })
 	stop := func() error { stopOnCancel(); return stopClient() }
 	if err := client.Start(ctx); err != nil {
-		return nil, nil, nil, fmt.Errorf("start copilot: %w", errors.Join(err, stop()))
+		return nil, nil, nil, nil, fmt.Errorf("start copilot: %w", errors.Join(err, stop()))
 	}
 	lifecycle.Lock()
 	connection := client.RPC
 	lifecycle.Unlock()
 	if err := ctx.Err(); err != nil {
 		_ = stop()
-		return nil, nil, nil, err
+		return nil, nil, nil, nil, err
 	}
 	if connection == nil {
-		return nil, nil, nil, errors.Join(fmt.Errorf("copilot connection closed during startup"), stop())
+		return nil, nil, nil, nil, errors.Join(fmt.Errorf("copilot connection closed during startup"), stop())
 	}
-	return client, connection, stop, nil
+	return client, connection, bridge.Close, stop, nil
 }
 
 func (h *Harness) Models(ctx context.Context) (ids []string, err error) {
-	client, _, stop, err := h.connect(ctx)
+	client, _, _, stop, err := h.connect(ctx)
 	if err != nil {
 		return nil, err
 	}

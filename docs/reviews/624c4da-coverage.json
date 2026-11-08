@@ -1,0 +1,197 @@
+{
+  "baseline": "624c4dafb7afd003a000ee886c3a2102744d1786",
+  "tracked_files": 128,
+  "areas": {
+    "http": {
+      "status": "completed",
+      "files": [
+        "api/LICENSE.openai",
+        "api/document.go",
+        "api/generate.go",
+        "api/oapi-codegen.yaml",
+        "api/openapi.json",
+        "internal/adapters/inbound/openai/docs.go",
+        "internal/adapters/inbound/openai/docs/assets/LICENSE.scalar",
+        "internal/adapters/inbound/openai/docs/assets/README.md",
+        "internal/adapters/inbound/openai/docs/assets/scalar-1.70.0.js",
+        "internal/adapters/inbound/openai/docs/index.html",
+        "internal/adapters/inbound/openai/docs/init.js",
+        "internal/adapters/inbound/openai/docs_test.go",
+        "internal/adapters/inbound/openai/error_classification_test.go",
+        "internal/adapters/inbound/openai/handler.go",
+        "internal/adapters/inbound/openai/handler_test.go",
+        "internal/adapters/inbound/openai/http_test.go",
+        "internal/adapters/inbound/openai/limits_test.go",
+        "internal/adapters/inbound/openai/models_lifecycle_test.go",
+        "internal/adapters/inbound/openai/models_test.go",
+        "internal/adapters/inbound/openai/observe.go",
+        "internal/adapters/inbound/openai/observe_test.go",
+        "internal/adapters/inbound/openai/security.go",
+        "internal/adapters/inbound/openai/security_test.go",
+        "internal/adapters/inbound/openai/types.gen.go",
+        "internal/application/gateway.go",
+        "internal/application/gateway_test.go",
+        "internal/application/models.go",
+        "internal/application/models_test.go",
+        "internal/domain/completion.go",
+        "internal/domain/errors.go"
+      ],
+      "reviewer": "full_http",
+      "coverage": "complete first-party source/config/tests; generated contracts inspected",
+      "partial_files": {
+        "internal/adapters/inbound/openai/docs/assets/scalar-1.70.0.js": "Vendored upstream internals not read byte-for-byte; SHA-256, embedding/CSP/license and browser checks inspected."
+      }
+    },
+    "codex": {
+      "status": "completed",
+      "files": [
+        "internal/adapters/outbound/codex/codex.go",
+        "internal/adapters/outbound/codex/codex_test.go",
+        "internal/adapters/outbound/codex/installed_test.go",
+        "internal/adapters/outbound/codex/regression_test.go",
+        "internal/adapters/outbound/codex/transport.go",
+        "internal/adapters/outbound/prompt/prompt.go",
+        "internal/adapters/outbound/prompt/prompt_test.go"
+      ],
+      "reviewer": "full_codex",
+      "coverage": "complete first-party source/config/tests; generated contracts inspected"
+    },
+    "copilot": {
+      "status": "completed",
+      "files": [
+        "internal/adapters/outbound/copilot/bridge.go",
+        "internal/adapters/outbound/copilot/bridge_linux_test.go",
+        "internal/adapters/outbound/copilot/bridge_test.go",
+        "internal/adapters/outbound/copilot/client.go",
+        "internal/adapters/outbound/copilot/copilot.go",
+        "internal/adapters/outbound/copilot/copilot_test.go",
+        "internal/adapters/outbound/copilot/errors_test.go",
+        "internal/adapters/outbound/copilot/frames.go",
+        "internal/adapters/outbound/copilot/frames_fuzz_test.go",
+        "internal/adapters/outbound/copilot/frames_test.go",
+        "internal/adapters/outbound/copilot/installed_storage_test.go",
+        "internal/adapters/outbound/copilot/installed_test.go",
+        "internal/adapters/outbound/copilot/lifecycle_test.go",
+        "internal/adapters/outbound/copilot/process_unix_test.go",
+        "internal/adapters/outbound/copilot/storage_test.go"
+      ],
+      "reviewer": "full_copilot",
+      "coverage": "complete first-party source/config/tests; generated contracts inspected"
+    },
+    "operations": {
+      "status": "completed",
+      "files": [
+        "cmd/harness-gateway/console.go",
+        "cmd/harness-gateway/console_test.go",
+        "cmd/harness-gateway/diagnostics.go",
+        "cmd/harness-gateway/diagnostics_test.go",
+        "cmd/harness-gateway/doctor.go",
+        "cmd/harness-gateway/doctor_test.go",
+        "cmd/harness-gateway/installed_test.go",
+        "cmd/harness-gateway/main.go",
+        "cmd/harness-gateway/main_test.go",
+        "cmd/harness-gateway/service.go",
+        "cmd/harness-gateway/service_logs.go",
+        "cmd/harness-gateway/service_observe_test.go",
+        "cmd/harness-gateway/service_status.go",
+        "cmd/harness-gateway/service_test.go",
+        "cmd/harness-gateway/soak_test.go",
+        "cmd/harness-gateway/versions.go",
+        "cmd/harness-gateway/versions_process_test.go",
+        "cmd/harness-gateway/versions_test.go",
+        "internal/buildinfo/info.go",
+        "internal/process/command_test.go",
+        "internal/process/command_windows_test.go",
+        "internal/process/process.go",
+        "internal/process/process_darwin_test.go",
+        "internal/process/process_other.go",
+        "internal/process/process_unix.go",
+        "internal/process/process_windows.go",
+        "internal/testutil/entrypoint.go",
+        "internal/testutil/process_other.go",
+        "internal/testutil/process_unix.go",
+        "internal/testutil/process_windows.go",
+        "tools/systemd/ci.sh",
+        "tools/systemd/lifecycle_test.go"
+      ],
+      "reviewer": "full_operations",
+      "coverage": "complete first-party source/config/tests; generated contracts inspected"
+    },
+    "distribution": {
+      "status": "completed",
+      "files": [
+        ".github/workflows/cli-canary.yml",
+        ".github/workflows/release-verify.yml",
+        ".github/workflows/validate.yml",
+        "go.mod",
+        "go.sum",
+        "setup.sh",
+        "tools/project-openapi/contract.go",
+        "tools/project-openapi/main.go",
+        "tools/project-openapi/main_test.go",
+        "tools/releaseverify/main.go",
+        "tools/releaseverify/main_test.go",
+        "tools/releaseverify/smoke.go",
+        "tools/setup/install_test.go",
+        "tools/setup/setup_test.go"
+      ],
+      "reviewer": "full_distribution",
+      "coverage": "complete first-party source/config/tests; generated contracts inspected"
+    },
+    "acceptance": {
+      "status": "completed",
+      "files": [
+        "examples/spring-ai/pom.xml",
+        "examples/spring-ai/src/main/java/io/harnessgateway/GatewayHttpConfiguration.java",
+        "examples/spring-ai/src/test/java/io/harnessgateway/FixtureGateway.java",
+        "examples/spring-ai/src/test/java/io/harnessgateway/GatewayContractTest.java",
+        "examples/spring-ai/src/test/java/io/harnessgateway/GatewayFailureTest.java",
+        "examples/spring-ai/src/test/java/io/harnessgateway/GatewaySoakTest.java",
+        "examples/spring-ai/src/test/java/io/harnessgateway/GatewayStressTest.java",
+        "examples/spring-ai/src/test/java/io/harnessgateway/GatewayTest.java",
+        "examples/spring-ai/src/test/java/io/harnessgateway/NativeModels.java",
+        "examples/spring-ai/src/test/java/io/harnessgateway/NativeModelsTest.java",
+        "examples/spring-ai/src/test/resources/application.properties",
+        "tools/acceptance/logs.go",
+        "tools/acceptance/logs_test.go",
+        "tools/acceptance/main.go",
+        "tools/acceptance/main_test.go",
+        "tools/acceptance/process_other.go",
+        "tools/acceptance/process_unix.go",
+        "tools/browser/acceptance.mjs",
+        "tools/browser/package-lock.json",
+        "tools/browser/package.json"
+      ],
+      "reviewer": "full_acceptance",
+      "coverage": "complete first-party source/config/tests; generated contracts inspected"
+    },
+    "root_docs": {
+      "status": "completed",
+      "files": [
+        ".gitattributes",
+        ".gitignore",
+        "AGENTS.md",
+        "CHANGELOG.md",
+        "LICENSE",
+        "README.md",
+        "docs/designs/diagnostics-observability.md",
+        "docs/reviews/6476397-egm-followup.md",
+        "docs/reviews/6476397-egm-review.md",
+        "docs/reviews/6476397-review-standard.md"
+      ],
+      "reviewer": "root + full_acceptance + full_distribution",
+      "coverage": "root context/document inspection; README and CHANGELOG also read by fresh reviewers"
+    }
+  },
+  "scope_limits": [
+    "No complete upstream dependency or vendored JavaScript source audit",
+    "Parent-turn isolation does not prove host instruction exclusion",
+    "No authenticated provider inference, host reboot, or current installed-service mutation",
+    "Platform execution evidence is baseline CI, not fresh cross-platform reproductions"
+  ],
+  "additional_reviewers": {
+    "full_architecture": "completed; independent source/architecture pass; no new prioritized finding",
+    "full_adjudication": "completed; independently sustained R1-R5 and evidence qualifications"
+  },
+  "production_changes": false
+}

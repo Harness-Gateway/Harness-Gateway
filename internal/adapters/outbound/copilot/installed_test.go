@@ -13,7 +13,7 @@ func TestInstalledCLIHandshake(t *testing.T) {
 	ctx, cancel := context.WithTimeout(t.Context(), 20*time.Second)
 	defer cancel()
 	h := Harness{Path: path, Directory: t.TempDir()}
-	_, connection, stop, err := h.connect(ctx)
+	_, connection, _, stop, err := h.connect(ctx)
 	if err != nil {
 		t.Fatal(err)
 	}

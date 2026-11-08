@@ -1,0 +1,10 @@
+package main
+import("testing";"os";"io";"strings")
+func TestReviewServiceManagerIdentity(t *testing.T){
+ path,log:=serviceControllerFixture(t);if err:=writeService(path,[]byte(serviceMarker));err!=nil{t.Fatal(err)}
+ t.Setenv("SERVICE_TEST_FRAGMENT","/foreign/harness-gateway.service")
+ t.Setenv("SERVICE_TEST_OUTPUT","ActiveState=active\nFragmentPath=/foreign/harness-gateway.service\n")
+ err:=serviceCommand(t.Context(),[]string{"stop"},io.Discard)
+ calls,_:=os.ReadFile(log);t.Logf("commands=%q; err=%v",calls,err)
+ if err==nil&&strings.Contains(string(calls),"--user stop harness-gateway.service"){t.Fatalf("mutation dispatched without checking manager-loaded fragment identity")}
+}

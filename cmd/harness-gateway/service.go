@@ -135,6 +135,15 @@ func controlService(ctx context.Context, args []string, output io.Writer) error 
 	if action == "status" && !raw {
 		return serviceStatus(ctx, output)
 	}
+	if action != "status" {
+		path, err := userServicePath()
+		if err != nil {
+			return err
+		}
+		if err := requireLoadedManagedService(ctx, path); err != nil {
+			return err
+		}
+	}
 	var err error
 	arguments := []string{action}
 	if now {
@@ -348,6 +357,9 @@ func uninstallService(ctx context.Context, path string, output io.Writer) error 
 	if !exists {
 		return errors.New("no managed user service is installed")
 	}
+	if err := requireLoadedManagedService(ctx, path); err != nil {
+		return err
+	}
 	if err := systemctl(ctx, "disable", "--now", serviceName); err != nil {
 		return err
 	}
@@ -359,4 +371,31 @@ func uninstallService(ctx context.Context, path string, output io.Writer) error 
 	}
 	_, err = fmt.Fprintln(output, "Removed user service:", path)
 	return err
+}
+
+// A local marker does not identify the unit selected by the user manager: its
+// configuration path can differ, and transient units can shadow disk files.
+func requireLoadedManagedService(ctx context.Context, path string) error {
+	var output bytes.Buffer
+	if err := runSystemctl(ctx, &output, "show", "--property=LoadState,FragmentPath", serviceName); err != nil {
+		return fmt.Errorf("%w\n%s", err, &output)
+	}
+	properties := make(map[string]string)
+	for line := range strings.SplitSeq(output.String(), "\n") {
+		if key, value, ok := strings.Cut(line, "="); ok {
+			properties[key] = value
+		}
+	}
+	if properties["LoadState"] != "loaded" || properties["FragmentPath"] == "" {
+		return errors.New("refusing to modify a service without a loaded managed unit")
+	}
+	managed, err := os.Stat(path)
+	if err != nil {
+		return err
+	}
+	loaded, err := os.Stat(properties["FragmentPath"])
+	if err != nil || !os.SameFile(managed, loaded) {
+		return fmt.Errorf("refusing to modify service loaded from %q instead of managed unit %q", properties["FragmentPath"], path)
+	}
+	return nil
 }

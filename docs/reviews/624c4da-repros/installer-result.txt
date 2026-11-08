@@ -1,0 +1,15 @@
+=== RUN   TestReviewCanonicalPathSeparator
+    egm_review_test.go:13: install output=Installing harness-gateway@v0.1.10 into /tmp/TestReviewCanonicalPathSeparator2712167133/001/physical:bin
+        Harness-Gateway fixture
+        Warning: harness-gateway resolves to /home/maurizio/go/bin/harness-gateway, which shadows this installation.
+        Added the command directory to /tmp/TestReviewCanonicalPathSeparator2712167133/001/.bashrc.
+        For this terminal, run:
+          export PATH=/tmp/TestReviewCanonicalPathSeparator2712167133/001/physical:bin:$PATH
+        Run: harness-gateway
+        Custom port: harness-gateway --listen 127.0.0.1:8090
+        ; lookup="/home/maurizio/go/bin/harness-gateway\n" err=<nil>
+    egm_review_test.go:14: successful installation persisted an unusable PATH entry
+--- FAIL: TestReviewCanonicalPathSeparator (0.03s)
+FAIL
+FAIL	github.com/harness-gateway/harness-gateway/tools/setup	0.037s
+FAIL

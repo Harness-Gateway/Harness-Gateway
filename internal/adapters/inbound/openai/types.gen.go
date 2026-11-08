@@ -114,7 +114,7 @@ type ResponseMessage struct {
 
 // StreamOptions Only valid with stream=true.
 type StreamOptions struct {
-	IncludeObfuscation *bool `json:"include_obfuscation,omitempty"`
+	IncludeObfuscation *bool `json:"include_obfuscation"`
 	IncludeUsage       *bool `json:"include_usage,omitempty"`
 }
 

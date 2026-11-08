@@ -1,0 +1,10 @@
+package openai
+import("context";"encoding/json";"net/http/httptest";"strings";"testing";"time";"github.com/harness-gateway/harness-gateway/api";"github.com/harness-gateway/harness-gateway/internal/domain")
+func TestReviewNullObfuscationContract(t *testing.T){
+ h:=handler(harnessFunc(func(_ context.Context,_ domain.Request,emit func(string)error)(domain.Result,error){return domain.Result{},emit("ok")}),time.Second)
+ w:=httptest.NewRecorder();h.ServeHTTP(w,localRequest("POST","/v1/chat/completions",strings.NewReader(`{"model":"codex","messages":[{"role":"user","content":"x"}],"stream":true,"stream_options":{"include_obfuscation":null}}`)))
+ var doc map[string]any;if err:=json.Unmarshal(api.OpenAPI,&doc);err!=nil{t.Fatal(err)}
+ field:=doc["components"].(map[string]any)["schemas"].(map[string]any)["StreamOptions"].(map[string]any)["properties"].(map[string]any)["include_obfuscation"].(map[string]any)
+ t.Logf("HTTP status=%d; published schema=%v",w.Code,field)
+ if w.Code==200&&field["type"]=="boolean"&&field["nullable"]!=true{t.Fatalf("documented null is accepted by handler but excluded by published schema")}
+}

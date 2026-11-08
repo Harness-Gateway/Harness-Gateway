@@ -31,6 +31,17 @@ func TestChecksumRequired(t *testing.T) {
 	}
 }
 
+func TestObfuscationSchemaAllowsOnlyFalseOrNull(t *testing.T) {
+	var document struct{ Components struct{ Schemas node } }
+	if err := json.Unmarshal(api.OpenAPI, &document); err != nil {
+		t.Fatal(err)
+	}
+	schema := properties(document.Components.Schemas["StreamOptions"].(node))["include_obfuscation"].(node)
+	if schema["type"] != "boolean" || schema["nullable"] != true || !reflect.DeepEqual(schema["enum"], []any{false, nil}) {
+		t.Fatalf("schema must admit false and null, and reject true: %#v", schema)
+	}
+}
+
 func TestNullableNormalization(t *testing.T) {
 	input := node{"anyOf": []any{node{"type": "string", "enum": []any{"stop", nil}}, node{"type": "null"}}, "description": "upstream", "examples": []any{"stop"}}
 	want := node{"type": "string", "enum": []any{"stop"}, "nullable": true, "x-go-type": "string"}
