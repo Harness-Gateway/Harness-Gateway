@@ -39,6 +39,8 @@ jobs:
           fi
       - name: Validate OpenAPI document and examples
         run: go run github.com/getkin/kin-openapi/cmd/validate@v0.133.0 -- api/openapi.json
+      - name: Check pinned upstream OpenAPI projection
+        run: go test -count=1 -run '^TestPinnedUpstreamProjection$' ./tools/project-openapi
       - name: Check generated API types
         run: |
           go generate ./api
@@ -48,7 +50,7 @@ jobs:
       - name: Fuzz Copilot framing and authentication
         if: runner.os == 'Linux'
         run: |
-          for target in FuzzFrameLength FuzzGuardedFrames FuzzBridgeAuthentication; do
+          for target in FuzzFrameLength FuzzGuardedFrames FuzzBridgeAuthentication FuzzBudgetedFrames; do
             go test -run='^$' -fuzz="^${target}$" -fuzztime=10s -parallel=2 ./internal/adapters/outbound/copilot
           done
       - name: Save discovered fuzz regressions

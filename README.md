@@ -393,7 +393,10 @@ Linux CI tests both default and explicit working directories using a disposable
 user and real systemd user manager with Go CLI
 fixtures to test install, start, status, enable/disable with and without `--now`,
 buffered/SSE requests, restart, crash recovery, stop, subprocess cleanup, and
-uninstall. It also checks the autostart target link, readable/raw dashboard and
+uninstall. Detached-helper regressions verify that new-session helpers remain
+in the service cgroup and exit after stop, restart, and main-process crash; the
+existing mixed kill policy allows graceful shutdown before forced cgroup cleanup.
+It also checks the autostart target link, readable/raw dashboard and
 journal output, current-invocation URLs after restart, and log-follower cleanup.
 Unit generation, special-character paths, ownership protection, and rollback have
 local regressions. An actual host reboot and pre-login credential availability
@@ -691,8 +694,17 @@ The application and domain packages do not import HTTP, provider SDKs, or proces
 protocols. Add a harness by implementing `domain.Harness` and registering its
 model alias in `cmd/harness-gateway`. CLI-specific conversation adaptation stays outbound.
 
-The gateway owns harness CLI and version-probe process trees through Unix process
-groups or Windows Job Objects in `internal/process`. Codex monitors parent exit
+The gateway starts each harness CLI and version probe in an owned Unix process
+group or Windows Job Object in `internal/process`. Foreground Unix cleanup kills
+that process group; descendants that create another process group (`setpgid`) or
+session (`setsid`) are outside this guarantee. Supported foreground harnesses
+must keep their helpers in the owned group. Use the Linux systemd service when
+ordinary detached helpers must also be retired: its cgroup cleanup covers those
+helpers on service stop, restart, and crash recovery. It does not add cgroup
+containment to individual requests while the service remains running. Windows
+cleanup covers descendants retained in the owned Job Object. These mechanisms
+are cleanup boundaries, not a sandbox against arbitrary same-user processes.
+Codex monitors parent exit
 while draining stdout so inherited child pipes cannot hide a crash. The Copilot
 SDK connects through a private, token-authenticated loopback bridge that checks
 protocol headers (8 KiB) and frame
@@ -702,7 +714,22 @@ does not change the gateway's public API or CLI-managed authentication. The brid
 consumes its transport token before forwarding the SDK handshake to the stdio CLI,
 including older installed versions without connection-token authentication.
 
+Copilot also has a **128 MiB per-operation backlog budget**, charged in serialized
+frame bytes before reading a payload or allowing SDK allocation. Session events,
+including ignored subagent events, remain charged while waiting in either the SDK
+or gateway queue. Taking an event for processing releases its charge, so this is
+not a cumulative limit on a long stream. One currently processed event can remain
+live in addition to the backlog; individual frames still have the 97 MiB bound.
+Exhausting the backlog budget stops that CLI operation and reports a backend
+failure (an SSE error without `[DONE]` if streaming already started). This limits
+queued wire bytes, not exact Go heap or process RSS: decoding, buffers, object
+overhead, other requests, and CLI processes also consume memory.
+
 ## Develop
+
+CI reproduces the complete gateway OpenAPI projection from a compressed,
+checksum-pinned official upstream input on all three OSes, then regenerates Go
+types and checks for drift. See [upstream input and reproduction instructions](tools/project-openapi/testdata/README.md).
 
 ```bash
 go fmt ./...

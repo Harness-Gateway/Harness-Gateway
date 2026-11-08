@@ -17,7 +17,7 @@ func TestGuardedFrames(t *testing.T) {
 		want        string
 	}{
 		{"valid", "Content-Length: 2\r\n\r\n{}", "Content-Length: 2\r\n\r\n{}"},
-		{"multiple", "Content-Length: 2\r\n\r\n{}Content-Length: 2\r\n\r\n[]", "Content-Length: 2\r\n\r\n{}Content-Length: 2\r\n\r\n[]"},
+		{"multiple", "Content-Length: 2\r\n\r\n{}Content-Length: 2\r\n\r\n{}", "Content-Length: 2\r\n\r\n{}Content-Length: 2\r\n\r\n{}"},
 		{"header normalization", "content-length: 2\nContent-Type: application/json\n\n{}", "Content-Length: 2\r\n\r\n{}"},
 		{"too large", fmt.Sprintf("Content-Length: %d\r\n\r\n", maxProtocolFrameBytes+1), ""},
 		{"overflow", "Content-Length: 9999999999999999999999\r\n\r\n", ""},
@@ -32,7 +32,7 @@ func TestGuardedFrames(t *testing.T) {
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			var output bytes.Buffer
-			err := copyFrames(&output, bufio.NewReaderSize(strings.NewReader(tc.frame), maxProtocolHeaderBytes))
+			err := copyFrames(&output, bufio.NewReaderSize(strings.NewReader(tc.frame), maxProtocolHeaderBytes), newEventBudget(maxQueuedEventBytes))
 			if output.String() != tc.want {
 				t.Fatalf("unexpected forwarded bytes: %d", output.Len())
 			}
@@ -58,7 +58,7 @@ func TestFrameBoundaryAndTruncatedBody(t *testing.T) {
 		}
 	}
 	var output bytes.Buffer
-	err := copyFrames(&output, bufio.NewReader(strings.NewReader("Content-Length: 5\r\n\r\n{}")))
+	err := copyFrames(&output, bufio.NewReader(strings.NewReader("Content-Length: 5\r\n\r\n{}")), newEventBudget(maxQueuedEventBytes))
 	if !errors.Is(err, io.ErrUnexpectedEOF) {
 		t.Fatalf("truncation not detected: %v", err)
 	}

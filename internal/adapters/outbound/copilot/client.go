@@ -13,9 +13,9 @@ import (
 )
 
 // Each operation owns its client/process. Authentication stays in the CLI.
-// The callbacks close the transport to unblock pending writes, then retire the
-// SDK and collect cleanup errors after its operations have returned.
-func (h *Harness) connect(ctx context.Context) (*sdk.Client, *rpc.ServerRPC, func() error, func() error, error) {
+// The bridge can close its transport to unblock pending writes. The stop
+// callback then retires the SDK and collects errors after operations return.
+func (h *Harness) connect(ctx context.Context) (*sdk.Client, *rpc.ServerRPC, *cliBridge, func() error, error) {
 	path := h.Path
 	if path == "" {
 		path = "copilot"
@@ -58,7 +58,7 @@ func (h *Harness) connect(ctx context.Context) (*sdk.Client, *rpc.ServerRPC, fun
 	if connection == nil {
 		return nil, nil, nil, nil, errors.Join(fmt.Errorf("copilot connection closed during startup"), stop())
 	}
-	return client, connection, bridge.Close, stop, nil
+	return client, connection, bridge, stop, nil
 }
 
 func (h *Harness) Models(ctx context.Context) (ids []string, err error) {

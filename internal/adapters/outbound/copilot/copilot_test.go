@@ -269,6 +269,28 @@ func fixture(mode string) error {
 			if string(request.Params["enableSessionStore"]) != "false" {
 				return errors.New("shared session store must be disabled")
 			}
+			if strings.HasPrefix(mode, "create-burst") {
+				for range 256 {
+					if err := event(&sdk.SessionStartData{}, nil); err != nil {
+						return err
+					}
+				}
+				if marker := os.Getenv("HARNESS_GATEWAY_COPILOT_CREATE_BURST"); marker != "" {
+					if err := os.WriteFile(marker, []byte("started"), 0600); err != nil {
+						return err
+					}
+				}
+				if mode == "create-burst-hold" {
+					continue
+				}
+				if mode == "create-burst-error" {
+					if err := reject(); err != nil {
+						return err
+					}
+					continue
+				}
+				mode = "normal"
+			}
 			if err := reply(map[string]any{"sessionId": sessionID, "workspacePath": nil}); err != nil {
 				return err
 			}
@@ -314,6 +336,17 @@ func fixture(mode string) error {
 				return err
 			}
 		case "session.send":
+			if mode == "budget-burst" {
+				if err := reply(map[string]string{"messageId": "fixture-user"}); err != nil {
+					return err
+				}
+				for range 64 {
+					if err := event(&sdk.AssistantMessageDeltaData{MessageID: "budget", DeltaContent: strings.Repeat("q", 8192)}, ptr("subagent")); err != nil {
+						return err
+					}
+				}
+				continue
+			}
 			if strings.HasPrefix(mode, "pre-reply-") {
 				for range 256 {
 					if err := event(&sdk.AssistantMessageDeltaData{MessageID: "burst", DeltaContent: "x"}, nil); err != nil {

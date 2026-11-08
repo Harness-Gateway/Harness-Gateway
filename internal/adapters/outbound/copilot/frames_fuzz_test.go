@@ -50,14 +50,24 @@ func FuzzGuardedFrames(f *testing.F) {
 		if len(payload) == 0 || len(payload) > maxConnectBytes {
 			return
 		}
-		// Include two frames to detect accidental body/header boundary changes.
-		wire := append([]byte(fmt.Sprintf("Content-Length: 2\r\n\r\n{}Content-Length: %d\r\n\r\n", len(payload))), payload...)
-		omitted := int(missing) % (len(payload) + 1)
+		// Use valid JSON-RPC objects; the guarded transport now also inspects
+		// notification metadata to reserve the event's bytes before forwarding.
+		body, err := json.Marshal(map[string]string{"result": string(payload)})
+		if err != nil {
+			t.Fatal(err)
+		}
+		first := "Content-Length: 2\r\n\r\n{}"
+		wire := append([]byte(first+fmt.Sprintf("Content-Length: %d\r\n\r\n", len(body))), body...)
+		omitted := int(missing) % (len(body) + 1)
 		wire = wire[:len(wire)-omitted]
 		var output bytes.Buffer
-		err := copyFrames(&output, bufio.NewReaderSize(bytes.NewReader(wire), maxProtocolHeaderBytes))
-		if !bytes.Equal(output.Bytes(), wire) {
-			t.Fatal("framing changed the forwarded body or frame boundaries")
+		err = copyFrames(&output, bufio.NewReaderSize(bytes.NewReader(wire), maxProtocolHeaderBytes), newEventBudget(maxQueuedEventBytes))
+		wantOutput := wire
+		if omitted != 0 {
+			wantOutput = []byte(first) // Partial payloads are never forwarded.
+		}
+		if !bytes.Equal(output.Bytes(), wantOutput) {
+			t.Fatal("framing changed a complete forwarded body or frame boundary")
 		}
 		want := io.EOF
 		if omitted != 0 {

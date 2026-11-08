@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
-	"io"
 	"strconv"
 	"strings"
 
@@ -56,24 +55,4 @@ func frameLength(reader *bufio.Reader, limit int) (int, error) {
 		return 0, errors.New("missing copilot Content-Length")
 	}
 	return length, nil
-}
-
-func copyFrames(dst io.Writer, src *bufio.Reader) error {
-	buffer := make([]byte, 32*1024)
-	for {
-		length, err := frameLength(src, maxProtocolFrameBytes)
-		if err != nil {
-			return err
-		}
-		if _, err := fmt.Fprintf(dst, "Content-Length: %d\r\n\r\n", length); err != nil {
-			return err
-		}
-		n, err := io.CopyBuffer(struct{ io.Writer }{dst}, io.LimitReader(struct{ io.Reader }{src}, int64(length)), buffer)
-		if err != nil {
-			return err
-		}
-		if n != int64(length) {
-			return io.ErrUnexpectedEOF
-		}
-	}
 }

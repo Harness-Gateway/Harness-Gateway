@@ -18,6 +18,8 @@ import (
 	"syscall"
 	"testing"
 	"time"
+
+	"golang.org/x/sys/unix"
 )
 
 // Run only in an isolated user account with a real systemd user manager.
@@ -71,7 +73,17 @@ func testSystemdUserService(t *testing.T, explicitDirectory bool) {
 	// Mimic npm launchers: their interpreter is found only through the PATH
 	// captured by installation, not the systemd manager's original environment.
 	runner := filepath.Join(directory, "harness-fixture-runner")
-	if err := os.WriteFile(runner, []byte("#!/bin/sh\ntarget=$1\nshift\nexec \"$target-real\" \"$@\"\n"), 0700); err != nil {
+	launcher := `#!/bin/sh
+target=$1
+shift
+if [ -f "${HG_DETACH_TRIGGER:-}" ]; then
+  setsid /bin/sleep 120 </dev/null >/dev/null 2>&1 &
+  detached=$!
+  printf '%s' "$detached" > "$HG_DETACHED_PIDS/$detached"
+fi
+exec "$target-real" "$@"
+`
+	if err := os.WriteFile(runner, []byte(launcher), 0700); err != nil {
 		t.Fatal(err)
 	}
 	for _, name := range []string{"codex", "copilot"} {
@@ -127,9 +139,13 @@ func testSystemdUserService(t *testing.T, explicitDirectory bool) {
 	if err := os.Mkdir(pids, 0700); err != nil {
 		t.Fatal(err)
 	}
+	detachedPids, detachTrigger := filepath.Join(directory, "detached-pids"), filepath.Join(directory, "detach-trigger")
+	if err := os.Mkdir(detachedPids, 0700); err != nil {
+		t.Fatal(err)
+	}
 	// These variables belong only to the test unit, never the generated user unit.
 	dropin := "[Service]\nEnvironment=HARNESS_GATEWAY_CODEX_TEST=acceptance\nEnvironment=HARNESS_GATEWAY_COPILOT_TEST=acceptance\n"
-	for key, value := range map[string]string{"HARNESS_GATEWAY_ACCEPTANCE_PIDS": pids, "HARNESS_GATEWAY_COPILOT_PID": filepath.Join(directory, "copilot-pid"), "HARNESS_GATEWAY_COPILOT_LOG": filepath.Join(directory, "copilot.log")} {
+	for key, value := range map[string]string{"HG_DETACH_TRIGGER": detachTrigger, "HG_DETACHED_PIDS": detachedPids, "HARNESS_GATEWAY_ACCEPTANCE_PIDS": pids, "HARNESS_GATEWAY_COPILOT_PID": filepath.Join(directory, "copilot-pid"), "HARNESS_GATEWAY_COPILOT_LOG": filepath.Join(directory, "copilot.log")} {
 		// Paths contain '$' and '%': Environment values expand specifiers only.
 		value = strings.NewReplacer(`\`, `\\`, `"`, `\"`, `%`, `%%`).Replace(key + "=" + value)
 		dropin += "Environment=\"" + value + "\"\n"
@@ -265,6 +281,9 @@ func testSystemdUserService(t *testing.T, explicitDirectory bool) {
 				body   io.ReadCloser
 				reader *bufio.Reader
 			}
+			if err := os.WriteFile(detachTrigger, []byte("detach"), 0600); err != nil {
+				t.Fatal(err)
+			}
 			var streams []held
 			for _, model := range []string{"codex", "copilot"} {
 				request, err := http.NewRequestWithContext(t.Context(), "POST", base+"/v1/chat/completions", strings.NewReader(chatBody(model, "hold", true)))
@@ -292,6 +311,34 @@ func testSystemdUserService(t *testing.T, explicitDirectory bool) {
 				}
 				streams = append(streams, held{response.Body, reader})
 			}
+			if err := os.Remove(detachTrigger); err != nil {
+				t.Fatal(err)
+			}
+			// The launcher starts a new session. It escapes the CLI process
+			// group but must remain in the service's cgroup for final cleanup.
+			entries, err := os.ReadDir(detachedPids)
+			if err != nil || len(entries) != 2 {
+				t.Fatalf("detached fixtures: entries=%v error=%v", entries, err)
+			}
+			serviceGroup, err := os.ReadFile("/proc/" + pid + "/cgroup")
+			if err != nil {
+				t.Fatal(err)
+			}
+			for _, entry := range entries {
+				detached, err := strconv.Atoi(entry.Name())
+				if err != nil {
+					t.Fatal(err)
+				}
+				poll(t, time.Second, func() bool {
+					group, groupErr := syscall.Getpgid(detached)
+					session, sessionErr := unix.Getsid(detached)
+					return groupErr == nil && sessionErr == nil && group == detached && session == detached
+				})
+				group, err := os.ReadFile("/proc/" + entry.Name() + "/cgroup")
+				if err != nil || string(group) != string(serviceGroup) {
+					t.Fatalf("detached PID %d left service cgroup: %s %v", detached, group, err)
+				}
+			}
 			if action == "crash" {
 				ctl("kill", "--signal=SIGKILL", "--kill-whom=main", "harness-gateway.service")
 			} else {
@@ -304,7 +351,12 @@ func testSystemdUserService(t *testing.T, explicitDirectory bool) {
 					t.Fatalf("graceful service stop lost interruption: %v %s", err, data)
 				}
 			}
-			poll(t, 20*time.Second, func() bool { return allExited(t, pids) })
+			poll(t, 20*time.Second, func() bool { return allExited(t, pids) && allExited(t, detachedPids) })
+			for _, entry := range entries {
+				if err := os.Remove(filepath.Join(detachedPids, entry.Name())); err != nil {
+					t.Fatal(err)
+				}
+			}
 			if action == "stop" {
 				time.Sleep(5500 * time.Millisecond)
 				if ctl("show", "--property=ActiveState", "--value", "harness-gateway.service") != "inactive" {
@@ -331,7 +383,7 @@ func testSystemdUserService(t *testing.T, explicitDirectory bool) {
 					t.Fatalf("previous invocation left temporary state: %v", entries)
 				}
 			}
-			_, err := os.Stat(marker)
+			_, err = os.Stat(marker)
 			if explicitDirectory && err != nil || !explicitDirectory && !os.IsNotExist(err) {
 				t.Fatalf("workspace persistence: explicit=%t, marker error=%v", explicitDirectory, err)
 			}

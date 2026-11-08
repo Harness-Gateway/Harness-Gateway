@@ -50,7 +50,7 @@ def run(case):
         env = os.environ.copy()
         env.setdefault("GOCACHE", "/tmp/harness-gateway-review-go-cache")
         replace = {str(ROOT / package / "egm_review_test.go"): str(HERE / (artifact + "-probes.go.txt"))}
-        if artifact == "copilot" and "func() error, func() error, error)" in (ROOT / package / "client.go").read_text():
+        if artifact == "copilot" and any(signature in (ROOT / package / "client.go").read_text() for signature in ("func() error, func() error, error)", "*cliBridge, func() error, error)")):
             # The remediation exposes transport close separately for pending writes.
             probe = work / "copilot-probes.go"
             probe.write_text((HERE / "copilot-probes.go.txt").read_text().replace("client,_,stop,err:=", "client,_,_,stop,err:="))

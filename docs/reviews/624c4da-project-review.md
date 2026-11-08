@@ -3,6 +3,7 @@
 Date: 2026-11-08, Europe/Rome.
 Baseline: `624c4dafb7afd003a000ee886c3a2102744d1786` (`dev`).
 Remediation: [fixes and validation](624c4da-fix-validation.md).
+V1-V3 follow-up: [backlog budget, Unix cleanup contract, and projection CI](b6179f2-gap-closure.md).
 Scope: all 128 tracked files, with the vendor/dependency limits below.
 Method: installed EGM 0.1.1 personas, fresh parent-turn contexts, independent
 domain reviews, an independent architecture pass, and parent-run fixture probes.

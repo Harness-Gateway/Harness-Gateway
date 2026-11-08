@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+- Bound Copilot's combined SDK/gateway event backlog to 128 MiB of serialized
+  frame bytes per operation, reserving bytes before payload/SDK allocation and
+  releasing them as events are consumed. Stop excessive backlogs explicitly,
+  including ignored subagent payloads, and cover blocked consumers and recycling.
+- Define and test foreground Unix cleanup as an owned process-group guarantee;
+  detached groups/sessions require external containment. Extend real systemd
+  lifecycle checks to cover detached helpers in the service cgroup on stop,
+  restart, and main-process crash.
+- Reproduce the full OpenAPI projection in Linux/macOS/Windows CI from a
+  compressed, checksum-pinned official upstream input before generating Go types.
+- Fix Copilot pre-acknowledgement event deadlocks and blocked-send cleanup,
+  installer symlink paths containing PATH separators, acceptance interruption
+  cleanup, manager-loaded service ownership checks, and nullable stream-option
+  schema agreement. Add regressions for all five EGM findings.
 - Add `doctor` for configuration, CLI version, health, and model-discovery
   diagnostics, with current-invocation service inspection and an explicit
   `--probe MODEL` inference option. Bound requests and version checks without

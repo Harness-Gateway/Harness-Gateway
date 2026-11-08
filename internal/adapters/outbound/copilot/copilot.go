@@ -32,7 +32,7 @@ func (h *Harness) Complete(ctx context.Context, request domain.Request, emit fun
 			err = errors.Join(err, fmt.Errorf("remove copilot state directory: %w", cleanupErr))
 		}
 	}()
-	client, connection, closeTransport, stop, err := h.connect(ctx)
+	client, connection, bridge, stop, err := h.connect(ctx)
 	if err != nil {
 		return result, err
 	}
@@ -58,6 +58,9 @@ func (h *Harness) Complete(ctx context.Context, request domain.Request, emit fun
 	if instructions != "" {
 		config.SystemMessage = &sdk.SystemMessageConfig{Mode: "append", Content: instructions}
 	}
+	events := make(chan sdk.SessionEvent, 64)
+	eventCtx, stopEvents := context.WithCancel(ctx)
+	defer stopEvents()
 	session, err := client.CreateSession(ctx, config)
 	if err != nil {
 		return result, classifyRequestError(fmt.Errorf("create copilot session: %w", err))
@@ -102,13 +105,14 @@ func (h *Harness) Complete(ctx context.Context, request domain.Request, emit fun
 		// CLI profile, not ConfigDirectory. The outer defers stop this process
 		// and then remove only the request-owned directory.
 	}()
-	events := make(chan sdk.SessionEvent, 64)
-	eventCtx, stopEvents := context.WithCancel(ctx)
-	defer stopEvents()
+	// Subscribe only after creation: a blocking callback during CreateSession
+	// could fill both event queues before the reader reaches its RPC reply.
+	// Unobserved startup notifications stay conservatively charged until stop.
 	unsubscribe := session.On(func(event sdk.SessionEvent) {
 		select {
 		case events <- event:
 		case <-eventCtx.Done():
+			bridge.events.consumed(event.ID)
 		}
 	})
 	defer unsubscribe()
@@ -130,7 +134,7 @@ func (h *Harness) Complete(ctx context.Context, request domain.Request, emit fun
 			// SDK socket writes do not observe context cancellation. Closing the
 			// owned transport unblocks a pending write before we join Send; the
 			// outer stop defer collects cleanup errors and retires the SDK.
-			_ = closeTransport()
+			_ = bridge.Close()
 		}
 		<-sendDone
 	}()
@@ -154,6 +158,7 @@ func (h *Harness) Complete(ctx context.Context, request domain.Request, emit fun
 		case err := <-connectionErrors:
 			return result, fmt.Errorf("copilot connection lost: %w", err)
 		case event := <-events:
+			bridge.events.consumed(event.ID)
 			if event.AgentID != nil && *event.AgentID != "" {
 				continue
 			}

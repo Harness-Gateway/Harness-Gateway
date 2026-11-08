@@ -2,12 +2,43 @@ package main
 
 import (
 	"bytes"
+	"compress/gzip"
 	"encoding/json"
+	"io"
+	"os"
 	"reflect"
 	"testing"
 
 	"github.com/harness-gateway/harness-gateway/api"
 )
+
+func TestPinnedUpstreamProjection(t *testing.T) {
+	file, err := os.Open("testdata/openai-85a23866.json.gz")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer file.Close()
+	reader, err := gzip.NewReader(file)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer reader.Close()
+	upstream, err := io.ReadAll(reader)
+	if err != nil {
+		t.Fatal(err)
+	}
+	projected, err := project(upstream) // Verifies the original upstream checksum.
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(projected, api.OpenAPI) {
+		t.Fatal("pinned upstream projection differs from api/openapi.json; reproduce it with tools/project-openapi, then go generate ./api")
+	}
+	upstream[len(upstream)/2] ^= 1
+	if _, err := project(upstream); err == nil {
+		t.Fatal("accepted a modified upstream fixture")
+	}
+}
 
 func TestPublishedGatewayContractIsCurrent(t *testing.T) {
 	var document struct {

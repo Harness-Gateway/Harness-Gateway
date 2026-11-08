@@ -37,6 +37,7 @@ type cliBridge struct {
 	closed      bool
 	failure     error
 	cleanupErr  error
+	events      *eventBudget
 }
 
 func startBridge(ctx context.Context, path, directory string) (*cliBridge, error) {
@@ -51,7 +52,7 @@ func startBridge(ctx context.Context, path, directory string) (*cliBridge, error
 	if err != nil {
 		return nil, err
 	}
-	b := &cliBridge{listener: listener, token: hex.EncodeToString(secret[:])}
+	b := &cliBridge{listener: listener, token: hex.EncodeToString(secret[:]), events: newEventBudget(maxQueuedEventBytes)}
 	cmd := exec.Command(path, "--headless", "--no-auto-update", "--log-level", "error", "--stdio")
 	cmd.Dir = directory
 	cmd.Env = os.Environ()
@@ -122,7 +123,7 @@ func (b *cliBridge) serve() {
 		b.workers.Add(1)
 		go func() {
 			defer b.workers.Done()
-			if err := copyFrames(conn, bufio.NewReaderSize(b.stdout, maxProtocolHeaderBytes)); err != nil {
+			if err := copyFrames(conn, bufio.NewReaderSize(b.stdout, maxProtocolHeaderBytes), b.events); err != nil {
 				b.fail(err)
 			}
 		}()
