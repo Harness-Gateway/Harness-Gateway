@@ -37,9 +37,30 @@ const startupJournalPattern = `"msg"\s*:\s*"Harness-Gateway listening"|msg="Harn
 func serviceStatus(ctx context.Context, output io.Writer) error {
 	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
+	inspection, err := inspectService(ctx)
+	if err != nil {
+		return err
+	}
+	color, width := terminalPresentation(output)
+	if _, err := io.WriteString(output, servicePanel(inspection.properties, inspection.snapshot, inspection.snapshotErr, color, width)); err != nil {
+		return err
+	}
+	if inspection.properties["ActiveState"] != "active" {
+		return fmt.Errorf("service is %s", inspection.properties["ActiveState"])
+	}
+	return nil
+}
+
+type serviceInspection struct {
+	properties  map[string]string
+	snapshot    startupSnapshot
+	snapshotErr error
+}
+
+func inspectService(ctx context.Context) (serviceInspection, error) {
 	var state bytes.Buffer
 	if err := runSystemctl(ctx, &state, "show", "--property=LoadState,ActiveState,SubState,UnitFileState,MainPID,InvocationID,ActiveEnterTimestamp,FragmentPath", serviceName); err != nil {
-		return fmt.Errorf("%w\n%s", err, &state)
+		return serviceInspection{}, fmt.Errorf("%w\n%s", err, &state)
 	}
 	properties := make(map[string]string)
 	for line := range strings.SplitSeq(state.String(), "\n") {
@@ -48,7 +69,7 @@ func serviceStatus(ctx context.Context, output io.Writer) error {
 		}
 	}
 	if properties["ActiveState"] == "" {
-		return errors.New("systemd did not report the service state")
+		return serviceInspection{}, errors.New("systemd did not report the service state")
 	}
 	var snapshot startupSnapshot
 	var snapshotErr error
@@ -74,16 +95,9 @@ func serviceStatus(ctx context.Context, output io.Writer) error {
 		snapshotErr = errors.New("no startup record for the current invocation yet")
 	}
 	if ctx.Err() != nil {
-		return ctx.Err()
+		return serviceInspection{}, ctx.Err()
 	}
-	color, width := terminalPresentation(output)
-	if _, err := io.WriteString(output, servicePanel(properties, snapshot, snapshotErr, color, width)); err != nil {
-		return err
-	}
-	if properties["ActiveState"] != "active" {
-		return fmt.Errorf("service is %s", properties["ActiveState"])
-	}
-	return nil
+	return serviceInspection{properties: properties, snapshot: snapshot, snapshotErr: snapshotErr}, nil
 }
 
 func decodeStartupSnapshot(line string) (startupSnapshot, error) {

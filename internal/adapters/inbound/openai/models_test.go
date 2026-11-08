@@ -69,7 +69,8 @@ func TestModelDiscoveryErrorClassification(t *testing.T) {
 			w := httptest.NewRecorder()
 			h.ServeHTTP(w, localRequest(http.MethodGet, "/v1/models", nil).WithContext(ctx))
 			if test.status == 0 {
-				if w.Body.Len() != 0 || logs.Len() != 0 {
+				records := readRequestLogs(t, &logs)
+				if w.Body.Len() != 0 || len(records) != 1 || records[0]["outcome"] != "canceled" {
 					t.Fatalf("client cancellation wrote a response or logged a failure: body=%s logs=%s", w.Body.String(), logs.String())
 				}
 				return
@@ -81,12 +82,18 @@ func TestModelDiscoveryErrorClassification(t *testing.T) {
 			if strings.Contains(w.Body.String(), "private CLI detail") {
 				t.Fatal("discovery exposed private CLI diagnostics to the client")
 			}
+			records := readRequestLogs(t, &logs)
+			last := records[len(records)-1]
+			if last["request_id"] != w.Header().Get("X-Request-ID") || last["code"] != test.code || last["http_status"] != float64(test.status) {
+				t.Fatalf("discovery summary lost correlation or status: %s", &logs)
+			}
 			var record struct {
 				Level string `json:"level"`
 				Msg   string `json:"msg"`
 				Code  string `json:"code"`
 			}
-			if err := json.Unmarshal(logs.Bytes(), &record); err != nil || record.Level != test.level || record.Msg != test.event || record.Code != test.code {
+			first, _, _ := bytes.Cut(logs.Bytes(), []byte("\n"))
+			if err := json.Unmarshal(first, &record); err != nil || record.Level != test.level || record.Msg != test.event || record.Code != test.code {
 				t.Fatalf("wrong discovery log classification: %v %s", err, logs.String())
 			}
 		})

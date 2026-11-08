@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+- Add `doctor` for configuration, CLI version, health, and model-discovery
+  diagnostics, with current-invocation service inspection and an explicit
+  `--probe MODEL` inference option. Bound requests and version checks without
+  changing service settings.
+- Correlate completion and model-discovery requests before validation and origin
+  checks. Log final outcomes, actual HTTP status, total duration, and time to
+  first nonempty backend text, including cancellation and streaming failures.
+
 ## v0.1.10 - 2026-11-07
 
 - Bypass the module proxy for Bash `--version dev` installs and document direct

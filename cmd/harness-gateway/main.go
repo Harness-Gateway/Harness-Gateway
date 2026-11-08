@@ -26,6 +26,15 @@ import (
 )
 
 func main() {
+	if len(os.Args) > 1 && os.Args[1] == "doctor" {
+		ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+		defer cancel()
+		if err := doctorCommand(ctx, os.Args[2:], os.Stdout); err != nil && !errors.Is(err, pflag.ErrHelp) {
+			fmt.Fprintln(os.Stderr, "doctor:", err)
+			os.Exit(1)
+		}
+		return
+	}
 	if len(os.Args) > 1 && (os.Args[1] == "service" || os.Args[1] == "status" || os.Args[1] == "logs") {
 		args := os.Args[1:]
 		if args[0] == "service" {
@@ -84,6 +93,7 @@ func gatewayFlags(options *options, output io.Writer, command, defaultLogFormat 
 		if command == "harness-gateway" {
 			fmt.Fprintln(output, "       harness-gateway service <command> [options]")
 			fmt.Fprintln(output, "       harness-gateway <status|logs> [options]")
+			fmt.Fprintln(output, "       harness-gateway doctor [options]")
 		}
 		fmt.Fprintln(output, "\nOptions:")
 		flags.PrintDefaults()

@@ -48,7 +48,7 @@ func New(gateway *application.Gateway, timeout time.Duration, logger *slog.Logge
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusNotFound, "Unknown endpoint", "invalid_request_error", "not_found", nil)
 	})
-	return protectLocalRequests(mux)
+	return observeRequests(logger, protectLocalRequests(mux))
 }
 
 func registerAPI(mux *http.ServeMux, method, path string, handler http.HandlerFunc) {
@@ -64,6 +64,8 @@ func registerAPI(mux *http.ServeMux, method, path string, handler http.HandlerFu
 }
 
 func (h *Handler) models(w http.ResponseWriter, r *http.Request) {
+	observed := w.(*observedResponse)
+	logger := h.logger.With("request_id", observed.id)
 	ctx, cancel := context.WithTimeout(r.Context(), min(h.timeout, application.ModelDiscoveryTimeout))
 	defer cancel()
 	models, err := h.gateway.Models(ctx)
@@ -73,6 +75,7 @@ func (h *Handler) models(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		shuttingDown := errors.Is(context.Cause(ctx), ErrShuttingDown)
 		if errors.Is(err, context.Canceled) && !shuttingDown {
+			observed.outcome = "canceled"
 			return
 		}
 		status, code, message := http.StatusBadGateway, "model_discovery_failed", "Local model discovery failed; check the gateway log"
@@ -87,7 +90,7 @@ func (h *Handler) models(w http.ResponseWriter, r *http.Request) {
 		case errors.Is(err, context.DeadlineExceeded):
 			status = http.StatusGatewayTimeout
 		}
-		h.logger.Log(ctx, level, event, "code", code, "error", err)
+		logger.Log(ctx, level, event, "code", code, "error", err)
 		writeError(w, status, message, "server_error", code, nil)
 		return
 	}
@@ -100,6 +103,7 @@ func (h *Handler) models(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) complete(w http.ResponseWriter, r *http.Request) {
+	observed := w.(*observedResponse)
 	if contentType := r.Header.Get("Content-Type"); contentType != "" {
 		mediaType, _, err := mime.ParseMediaType(contentType)
 		if err != nil || mediaType != "application/json" {
@@ -140,13 +144,11 @@ func (h *Handler) complete(w http.ResponseWriter, r *http.Request) {
 	}
 	ctx, cancel := context.WithTimeout(r.Context(), h.timeout)
 	defer cancel()
-	id := newID()
-	w.Header().Set("X-Request-ID", id)
+	id := observed.id
 	created := time.Now().Unix()
 	stream := request.Stream != nil && *request.Stream
-	startedAt := time.Now()
+	observed.model, observed.stream = request.Model, stream
 	h.logger.Info("completion started", "request_id", id, "model", request.Model, "stream", stream)
-	defer func() { h.logger.Info("completion finished", "request_id", id, "duration", time.Since(startedAt)) }()
 	started := false
 	wroteText := false
 	var responseErr error
@@ -175,6 +177,9 @@ func (h *Handler) complete(w http.ResponseWriter, r *http.Request) {
 		}
 		if delta == "" {
 			return nil
+		}
+		if observed.firstText == 0 {
+			observed.firstText = time.Since(observed.started)
 		}
 		size += len(delta)
 		if size > maxResponseBytes {
@@ -212,6 +217,7 @@ func (h *Handler) complete(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		shuttingDown := errors.Is(context.Cause(ctx), ErrShuttingDown)
 		if errors.Is(err, context.Canceled) && !shuttingDown {
+			observed.outcome = "canceled"
 			return
 		}
 		status, code, message := http.StatusBadGateway, "harness_error", "Local harness failed; check the gateway log and CLI login"
@@ -233,6 +239,7 @@ func (h *Handler) complete(w http.ResponseWriter, r *http.Request) {
 		default:
 			h.logger.Error("completion failed", "request_id", id, "model", request.Model, "error", err)
 		}
+		observeFailure(w, status, code)
 		if started {
 			// Never send a successful finish chunk or [DONE] after an error.
 			_ = writeSSE(w, ErrorResponse{Error: APIError{Message: message, Type: errorType, Code: &code}})
@@ -367,6 +374,7 @@ func writeJSON(w http.ResponseWriter, status int, value any) {
 }
 
 func writeError(w http.ResponseWriter, status int, message, kind, code string, param *string) {
+	observeFailure(w, status, code)
 	writeJSON(w, status, ErrorResponse{Error: APIError{Message: message, Type: kind, Code: &code, Param: param}})
 }
 
@@ -394,6 +402,9 @@ func setWriteDeadline(w http.ResponseWriter) error {
 	err := http.NewResponseController(w).SetWriteDeadline(time.Now().Add(responseWriteTimeout))
 	if errors.Is(err, http.ErrNotSupported) {
 		return nil
+	}
+	if observed, ok := w.(*observedResponse); ok {
+		observed.recordWriteError(err)
 	}
 	return err
 }

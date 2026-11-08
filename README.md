@@ -208,6 +208,53 @@ harness-gateway --log-format json
 Logs go to stderr, including request IDs, durations, failures, and shutdown
 events. `harness-gateway --version` prints its build identity to stdout.
 
+Model-discovery and completion requests receive a generated `X-Request-ID` before
+origin checks, method checks, or body validation. Client-supplied IDs are not
+trusted. Each request has a final `model discovery finished` or `completion
+finished` log record with `request_id`, `method`, `path`, `http_status`, `outcome`,
+and total `duration`; failures also include a `code` when available. Outcomes are
+`success`, `rejected`, `timeout`, `canceled`, `backend_error`, `shutdown`, or
+`write_error`. `http_status` is the status actually started (zero if no response
+started); an SSE request can have status 200 and a failure outcome.
+Completions that receive nonempty backend text also record `time_to_first_text`,
+measured from request arrival. The initial role-only SSE chunk does not count.
+These timings include backend startup and are durations (nanoseconds in JSON
+logs). The summary records contain no prompt or response content.
+
+## Diagnostics
+
+Use the diagnostic command against a running gateway:
+
+```bash
+harness-gateway doctor
+harness-gateway doctor --listen 127.0.0.1:8090 --harnesses codex
+harness-gateway doctor --service
+```
+
+The foreground mode checks the inspecting executable's build identity, local
+configuration and CLI versions, then the selected listener's `/health` and
+`/v1/models`. Supply the same harnesses, executable paths and directory as the
+foreground gateway when they differ from defaults. On Linux, `--service` reads
+the managed service's current invocation, compares release versions, and checks
+its recorded CLI paths and working directory. It reports shell PATH differences
+as informational. Build identities are shown separately; matching release
+versions do not establish identical binary bytes. Missing current startup data
+or an inactive service fails diagnostics without probing a historical listener.
+
+Model discovery can start CLI processes and contact their normal services. It
+does not prove authentication or entitlement for inference. Only an explicit
+probe performs one completion and uses account allowance:
+
+```bash
+harness-gateway doctor --service --probe codex
+harness-gateway doctor --probe copilot/NATIVE_MODEL_ID --timeout 2m
+```
+
+Checks share a 30-second deadline by default; each CLI version query has at most
+20 seconds. Diagnostics return a nonzero exit status for failed checks, preserve
+the loopback restriction, bypass HTTP proxy settings, reject redirects, and cap
+each JSON response at 1 MiB. They do not change service settings or restart it.
+
 ## Linux user service
 
 Systemd user-service support is opt-in and available from v0.1.8.
