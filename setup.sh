@@ -6,7 +6,7 @@ usage() {
 Usage: bash setup.sh [--version REF] [--bin-dir DIRECTORY] [--no-path]
 
 Install harness-gateway with Go (Go 1.27.3+ required).
-  --version REF        Go module version or revision (default: v0.1.10)
+  --version REF        Go module version or revision (default: v0.1.11)
   --bin-dir DIRECTORY  Installation directory (default: GOBIN or ~/.local/bin)
   --no-path            Leave ~/.bashrc unchanged
   -h, --help           Show this help
@@ -17,7 +17,7 @@ USAGE
 
 fail() { printf 'setup: %s\n' "$*" >&2; exit 1; }
 
-version=v0.1.10
+version=v0.1.11
 bin_dir=${GOBIN:-"$HOME/.local/bin"}
 update_path=true
 while (($#)); do

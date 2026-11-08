@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.1.11 - 2026-11-08
 
 - Bound Copilot's combined SDK/gateway event backlog to 128 MiB of serialized
   frame bytes per operation, reserving bytes before payload/SDK allocation and
@@ -28,6 +28,10 @@
 - Run diagnostic CLI version checks in the selected working directory, require
   assistant text for inference probes, and continue independent HTTP diagnostics
   after an unsuccessful health check when the shared deadline permits.
+
+Qualification limit: Windows has automated launcher, protocol, storage, and
+gateway regression coverage. Authenticated Windows inference remains unverified
+for this release; publication accepts that documented acceptance limit.
 
 ## v0.1.10 - 2026-11-07
 
