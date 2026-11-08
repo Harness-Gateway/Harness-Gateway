@@ -46,7 +46,7 @@ type moduleInfo struct {
 }
 
 func main() {
-	version := flag.String("version", "", "published stable version, e.g. v0.1.11 (required)")
+	version := flag.String("version", "", "published stable version, e.g. v0.1.12 (required)")
 	revision := flag.String("revision", "", "expected full tag commit SHA (required)")
 	output := flag.String("output-dir", "", "parent for retained binaries, logs and verification.json (default: system temp)")
 	flag.Parse()

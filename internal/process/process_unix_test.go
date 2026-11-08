@@ -3,6 +3,7 @@
 package process
 
 import (
+	"errors"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -66,7 +67,7 @@ func TestUnixCleanupContainmentBoundary(t *testing.T) {
 			// test owns their identities and explicitly retires them afterward.
 			t.Cleanup(func() {
 				if running, _ := testutil.ProcessRunning(child); running {
-					if err := syscall.Kill(child, syscall.SIGKILL); err != nil {
+					if err := stopUnixFixture(child); err != nil {
 						t.Errorf("retire detached fixture: %v", err)
 					}
 				}
@@ -96,6 +97,24 @@ func TestUnixCleanupContainmentBoundary(t *testing.T) {
 				t.Fatalf("repeated cleanup changed its result: %v", err)
 			}
 		})
+	}
+}
+
+func stopUnixFixture(pid int) error {
+	err := syscall.Kill(pid, syscall.SIGKILL)
+	if errors.Is(err, syscall.ESRCH) {
+		return nil // The child can exit after the liveness check.
+	}
+	return err
+}
+
+func TestUnixFixtureCleanupAllowsAlreadyExitedChild(t *testing.T) {
+	cmd := exec.Command("/bin/sh", "-c", "exit 0")
+	if err := cmd.Run(); err != nil {
+		t.Fatal(err)
+	}
+	if err := stopUnixFixture(cmd.Process.Pid); err != nil {
+		t.Fatalf("already reaped fixture was reported as cleanup failure: %v", err)
 	}
 }
 

@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.1.12 - 2026-11-08
+
+- Fix a Unix regression-fixture cleanup race: accept an already exited child
+  when termination races its exit, matching production process-group cleanup.
+  Add an already-reaped-child regression and stress the containment scenarios.
+- Include the diagnostics, observability, backlog-budget, ownership, schema,
+  and Windows public-install verification changes described under v0.1.11.
+  The v0.1.11 tag remains unchanged; its GitHub release was withheld after this
+  test-cleanup failure during final main-branch qualification.
+
+Authenticated Windows inference remains an explicitly accepted qualification
+limit; Windows native installs and HTTP/protocol fixtures are verified in CI.
+
 ## v0.1.11 - 2026-11-08
 
 - Verify privately installed Windows gateway executables through 24 HTTP fixture
