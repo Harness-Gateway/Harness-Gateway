@@ -45,6 +45,10 @@ func probeHarnessVersion(parent context.Context, name, executable string) (strin
 // Startup retains its two-second budget; explicit diagnostics can allow more
 // time for cold runtime initialization without changing gateway startup latency.
 func queryHarnessVersion(ctx context.Context, name, executable string) (string, error) {
+	return queryHarnessVersionInDirectory(ctx, name, executable, "")
+}
+
+func queryHarnessVersionInDirectory(ctx context.Context, name, executable, directory string) (string, error) {
 	if err := ctx.Err(); err != nil {
 		return "", err
 	}
@@ -55,6 +59,7 @@ func queryHarnessVersion(ctx context.Context, name, executable string) (string, 
 		args = []string{"--no-auto-update", "--version"}
 	}
 	command := exec.Command(executable, args...)
+	command.Dir = directory
 	command.WaitDelay = 200 * time.Millisecond
 	var output versionOutput
 	command.Stdout, command.Stderr = &output, io.Discard

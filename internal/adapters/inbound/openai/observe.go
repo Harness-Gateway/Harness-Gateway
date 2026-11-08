@@ -28,12 +28,18 @@ func observeRequests(logger *slog.Logger, next http.Handler) http.Handler {
 		defer func() {
 			if !returned {
 				observed.outcome, observed.code = "backend_error", "handler_panic"
-			} else if errors.Is(context.Cause(r.Context()), ErrShuttingDown) {
-				observed.outcome, observed.code = "shutdown", "gateway_shutting_down"
-			} else if errors.Is(r.Context().Err(), context.DeadlineExceeded) {
-				observed.outcome = "timeout"
-			} else if r.Context().Err() != nil {
-				observed.outcome = "canceled"
+			} else if observed.outcome == "success" {
+				// Context is a fallback for operations without a recorded failure.
+				// A later disconnect/shutdown must not replace a timeout, rejection,
+				// backend failure, or response-write error already observed.
+				switch {
+				case errors.Is(context.Cause(r.Context()), ErrShuttingDown):
+					observed.outcome, observed.code = "shutdown", "gateway_shutting_down"
+				case errors.Is(r.Context().Err(), context.DeadlineExceeded):
+					observed.outcome = "timeout"
+				case r.Context().Err() != nil:
+					observed.outcome = "canceled"
+				}
 			}
 			args := []any{"request_id", observed.id, "method", r.Method, "path", r.URL.Path,
 				"http_status", observed.status, "outcome", observed.outcome, "duration", time.Since(observed.started)}
@@ -43,8 +49,8 @@ func observeRequests(logger *slog.Logger, next http.Handler) http.Handler {
 			if observed.model != "" {
 				args = append(args, "model", observed.model, "stream", observed.stream)
 			}
-			if observed.firstText > 0 {
-				args = append(args, "time_to_first_text", observed.firstText)
+			if observed.firstText != nil {
+				args = append(args, "time_to_first_text", *observed.firstText)
 			}
 			logger.InfoContext(r.Context(), event, args...)
 		}()
@@ -59,7 +65,7 @@ type observedResponse struct {
 	stream                   bool
 	status                   int
 	started                  time.Time
-	firstText                time.Duration
+	firstText                *time.Duration
 }
 
 // Unwrap preserves ResponseController's socket write deadlines. FlushError

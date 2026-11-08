@@ -15,6 +15,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/harness-gateway/harness-gateway/internal/adapters/inbound/openai"
 	"github.com/harness-gateway/harness-gateway/internal/buildinfo"
 	"github.com/spf13/pflag"
 )
@@ -71,6 +72,7 @@ func doctorCommand(parent context.Context, args []string, output io.Writer) erro
 	executable, executableErr := os.Executable()
 	checks := []doctorCheck{{name: "installed gateway", detail: buildinfo.String() + "; " + executable, err: executableErr}}
 	baseURL := "http://" + options.address
+	var directory string
 	var harnesses []harnessStatus
 	if service {
 		serviceChecks, snapshot, err := doctorService(ctx)
@@ -79,17 +81,19 @@ func doctorCommand(parent context.Context, args []string, output io.Writer) erro
 			return printDoctorChecks(output, checks)
 		}
 		baseURL = snapshot.URL
+		directory = snapshot.Directory
 		for _, harness := range snapshot.HarnessDetails {
 			harnesses = append(harnesses, harnessStatus{name: harness.Name, executable: harness.Executable, model: harness.Model})
 		}
 	} else {
-		directory, _, configured, err := prepareGateway(options)
+		resolved, _, configured, err := prepareGateway(options)
+		directory = resolved
 		checks = append(checks, doctorCheck{name: "configuration", detail: directory, err: err})
 		harnesses = configured
 	}
 	for _, harness := range harnesses {
 		probeCtx, stop := context.WithTimeout(ctx, 20*time.Second)
-		version, err := queryHarnessVersion(probeCtx, harness.name, harness.executable)
+		version, err := queryHarnessVersionInDirectory(probeCtx, harness.name, harness.executable, directory)
 		stop()
 		checks = append(checks, doctorCheck{name: harness.name + " CLI", detail: version + "; " + harness.executable, err: err})
 		if service {
@@ -172,26 +176,23 @@ func doctorHTTPChecks(ctx context.Context, baseURL, probe string) []doctorCheck 
 	transport := &http.Transport{Proxy: nil, DisableKeepAlives: true}
 	defer transport.CloseIdleConnections()
 	client := &http.Client{Transport: transport, CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}
-	var health struct{ Status string }
+	var health openai.Health
 	err = doctorRequest(ctx, client, http.MethodGet, baseURL+"/health", nil, &health)
 	if err == nil && health.Status != "ok" {
 		err = errors.New("health response did not report ok")
 	}
 	checks := []doctorCheck{{name: "gateway health", detail: baseURL + "/health (liveness only)", err: err}}
-	if err != nil {
+	if err != nil && ctx.Err() != nil {
 		return checks
 	}
-	var models struct {
-		Object string
-		Data   []struct{ ID string }
-	}
+	var models openai.ModelList
 	err = doctorRequest(ctx, client, http.MethodGet, baseURL+"/v1/models", nil, &models)
 	if err == nil && (models.Object != "list" || len(models.Data) == 0) {
 		err = errors.New("model discovery returned no usable catalog")
 	}
 	if err == nil {
 		for _, model := range models.Data {
-			if strings.TrimSpace(model.ID) == "" {
+			if strings.TrimSpace(model.Id) == "" {
 				err = errors.New("model discovery returned an empty model ID")
 				break
 			}
@@ -200,14 +201,11 @@ func doctorHTTPChecks(ctx context.Context, baseURL, probe string) []doctorCheck 
 	checks = append(checks, doctorCheck{name: "model discovery", detail: fmt.Sprintf("%d models/aliases; discovery does not prove inference access", len(models.Data)), err: err})
 	if probe != "" {
 		body, err := json.Marshal(map[string]any{"model": probe, "messages": []map[string]string{{"role": "user", "content": "Reply with OK."}}})
-		var completion struct {
-			Object  string
-			Choices []struct{ Message struct{ Content *string } }
-		}
+		var completion openai.Completion
 		if err == nil {
 			err = doctorRequest(ctx, client, http.MethodPost, baseURL+"/v1/chat/completions", body, &completion)
 		}
-		if err == nil && (completion.Object != "chat.completion" || len(completion.Choices) == 0 || completion.Choices[0].Message.Content == nil || *completion.Choices[0].Message.Content == "") {
+		if err == nil && (completion.Object != "chat.completion" || len(completion.Choices) == 0 || completion.Choices[0].Message.Role != "assistant" || completion.Choices[0].Message.Content == nil || *completion.Choices[0].Message.Content == "") {
 			err = errors.New("inference returned no assistant text")
 		}
 		checks = append(checks, doctorCheck{name: "inference probe", detail: probe, err: err})

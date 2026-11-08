@@ -9,6 +9,11 @@
 - Correlate completion and model-discovery requests before validation and origin
   checks. Log final outcomes, actual HTTP status, total duration, and time to
   first nonempty backend text, including cancellation and streaming failures.
+- Preserve zero-duration text timings on coarse clocks and retain recorded
+  failures during later request cancellation. Cover terminal SSE write failures.
+- Run diagnostic CLI version checks in the selected working directory, require
+  assistant text for inference probes, and continue independent HTTP diagnostics
+  after an unsuccessful health check when the shared deadline permits.
 
 ## v0.1.10 - 2026-11-07
 

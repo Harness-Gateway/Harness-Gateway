@@ -178,8 +178,9 @@ func (h *Handler) complete(w http.ResponseWriter, r *http.Request) {
 		if delta == "" {
 			return nil
 		}
-		if observed.firstText == 0 {
-			observed.firstText = time.Since(observed.started)
+		if observed.firstText == nil {
+			latency := time.Since(observed.started)
+			observed.firstText = &latency
 		}
 		size += len(delta)
 		if size > maxResponseBytes {

@@ -5,8 +5,10 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"log/slog"
+	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
@@ -125,7 +127,7 @@ func TestCompletionOutcomesAndFirstText(t *testing.T) {
 				t.Fatalf("missing error code: %v", last)
 			}
 			latency, hasText := last["time_to_first_text"].(float64)
-			if hasText != test.emit || (hasText && (latency <= 0 || latency > last["duration"].(float64))) {
+			if hasText != test.emit || (hasText && (latency < 0 || latency > last["duration"].(float64))) {
 				t.Fatalf("incorrect text latency: %v", last)
 			}
 			if strings.Contains(logs.String(), "private prompt") {
@@ -171,5 +173,99 @@ func TestObservedResponseWriteFailures(t *testing.T) {
 				t.Fatalf("write/flush failure lost: %s", &logs)
 			}
 		}
+	}
+}
+
+type cancelOnResponse struct {
+	http.ResponseWriter
+	cancel func()
+	mode   string
+}
+
+func (w cancelOnResponse) Write(data []byte) (int, error) {
+	if w.mode != "flush" {
+		w.cancel()
+	}
+	if w.mode == "write" {
+		return 0, errors.New("write failed")
+	}
+	return w.ResponseWriter.Write(data)
+}
+
+func (w cancelOnResponse) FlushError() error {
+	w.cancel()
+	return errors.New("flush failed")
+}
+
+func TestRecordedOutcomeSurvivesContextCancellation(t *testing.T) {
+	for _, mode := range []string{"write", "flush", "timeout-response"} {
+		for _, cause := range []error{context.Canceled, ErrShuttingDown} {
+			t.Run(mode+"/"+cause.Error(), func(t *testing.T) {
+				ctx, cancel := context.WithCancelCause(t.Context())
+				defer cancel(nil)
+				backend := harnessFunc(func(ctx context.Context, _ domain.Request, emit func(string) error) (domain.Result, error) {
+					if mode == "timeout-response" {
+						<-ctx.Done()
+						return domain.Result{}, ctx.Err()
+					}
+					return domain.Result{}, emit("text")
+				})
+				var logs bytes.Buffer
+				h := New(application.New([]application.Backend{{Model: application.Model{ID: "codex"}, Harness: backend}}, 1), 10*time.Millisecond, slog.New(slog.NewJSONHandler(&logs, nil)))
+				w := cancelOnResponse{ResponseWriter: httptest.NewRecorder(), cancel: func() { cancel(cause) }, mode: mode}
+				body := `{"model":"codex","messages":[{"role":"user","content":"x"}],"stream":` + fmtBool(mode != "timeout-response") + `}`
+				h.ServeHTTP(w, localRequest("POST", "/v1/chat/completions", strings.NewReader(body)).WithContext(ctx))
+				records := readRequestLogs(t, &logs)
+				last := records[len(records)-1]
+				outcome, code := "write_error", "response_write_failed"
+				if mode == "timeout-response" {
+					outcome, code = "timeout", "harness_timeout"
+				}
+				if last["outcome"] != outcome || last["code"] != code {
+					t.Fatalf("recorded failure was overwritten: %s", &logs)
+				}
+			})
+		}
+	}
+}
+
+func TestTerminalFrameFailuresAreObserved(t *testing.T) {
+	for _, mode := range []string{"deadline", "write", "flush"} {
+		for _, frame := range []int{3, 4, 5} { // finish, usage, [DONE]
+			t.Run(fmt.Sprintf("%s/frame=%d", mode, frame), func(t *testing.T) {
+				var logs bytes.Buffer
+				backend := harnessFunc(func(_ context.Context, request domain.Request, emit func(string) error) (domain.Result, error) {
+					if request.Messages[0].Text == "recover" {
+						return domain.Result{}, emit("recovered")
+					}
+					return domain.Result{}, emit("text")
+				})
+				h := New(application.New([]application.Backend{{Model: application.Model{ID: "codex"}, Harness: backend}}, 1), time.Second, slog.New(slog.NewJSONHandler(&logs, nil)))
+				w := &failingStreamWriter{ResponseRecorder: httptest.NewRecorder(), mode: mode, failAt: frame}
+				h.ServeHTTP(w, localRequest("POST", "/v1/chat/completions", strings.NewReader(`{"model":"codex","messages":[{"role":"user","content":"x"}],"stream":true,"stream_options":{"include_usage":true}}`)))
+				records := readRequestLogs(t, &logs)
+				last := records[len(records)-1]
+				if last["outcome"] != "write_error" || last["code"] != "response_write_failed" || last["http_status"] != float64(200) || w.deadlines != frame {
+					t.Fatalf("terminal failure lost or retried: deadlines=%d logs=%s", w.deadlines, &logs)
+				}
+				assertRecovery(t, h)
+			})
+		}
+	}
+}
+
+func TestZeroFirstTextLatencyIsStillPresent(t *testing.T) {
+	var logs bytes.Buffer
+	h := observeRequests(slog.New(slog.NewJSONHandler(&logs, nil)), http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Coarse platform clocks can report exactly zero for a fast emission.
+		// Presence must not depend on the numeric latency value.
+		w.(*observedResponse).firstText = ptr(time.Duration(0))
+		w.WriteHeader(http.StatusOK)
+	}))
+	h.ServeHTTP(httptest.NewRecorder(), localRequest("POST", "/v1/chat/completions", nil))
+	records := readRequestLogs(t, &logs)
+	latency, present := records[0]["time_to_first_text"].(float64)
+	if !present || latency != 0 {
+		t.Fatalf("zero-duration emission was omitted: %s", &logs)
 	}
 }

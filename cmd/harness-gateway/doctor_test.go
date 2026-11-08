@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/harness-gateway/harness-gateway/internal/buildinfo"
+	"github.com/harness-gateway/harness-gateway/internal/testutil"
 	"github.com/spf13/pflag"
 )
 
@@ -37,7 +38,7 @@ func TestDoctorChecksAndExplicitInference(t *testing.T) {
 					if r.Method != "POST" || json.NewDecoder(r.Body).Decode(&request) != nil || request.Model != "codex/native" {
 						t.Error("probe did not use the explicitly requested model")
 					}
-					io.WriteString(w, `{"object":"chat.completion","choices":[{"message":{"content":"OK"}}]}`)
+					io.WriteString(w, `{"object":"chat.completion","choices":[{"message":{"role":"assistant","content":"OK"}}]}`)
 				default:
 					t.Errorf("unexpected diagnostic request: %s", r.URL.Path)
 				}
@@ -157,7 +158,7 @@ func TestDoctorServiceUsesCurrentInvocation(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			t.Setenv("HARNESS_GATEWAY_VERSION_TEST", "ok")
+			t.Setenv("HARNESS_GATEWAY_VERSION_TEST", "directory")
 			var httpCalls atomic.Int32
 			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				httpCalls.Add(1)
@@ -173,6 +174,7 @@ func TestDoctorServiceUsesCurrentInvocation(t *testing.T) {
 				t.Fatal(err)
 			}
 			snapshot.Version, snapshot.URL, snapshot.Directory = test.version, server.URL, t.TempDir()
+			t.Setenv("HARNESS_GATEWAY_VERSION_DIRECTORY", snapshot.Directory)
 			snapshot.HarnessDetails = []harnessSnapshot{{Name: "codex", Executable: executable}}
 			data, err := json.Marshal(snapshot)
 			if err != nil {
@@ -207,5 +209,73 @@ func TestDoctorReportsMissingConfiguration(t *testing.T) {
 	err := doctorCommand(t.Context(), []string{"--harnesses=codex", "--codex-path=" + t.TempDir() + "/missing", "--listen=127.0.0.1:0"}, &output)
 	if err == nil || !strings.Contains(output.String(), "FAIL  configuration") || !strings.Contains(output.String(), "FAIL  gateway health") {
 		t.Fatalf("independent failures were not reported: %v %s", err, &output)
+	}
+}
+
+func TestDoctorProbeRequiresAssistantMessage(t *testing.T) {
+	for _, role := range []string{"", "user", "assistant"} {
+		t.Run("role="+role, func(t *testing.T) {
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				switch r.URL.Path {
+				case "/health":
+					io.WriteString(w, `{"status":"ok"}`)
+				case "/v1/models":
+					io.WriteString(w, `{"object":"list","data":[{"id":"codex"}]}`)
+				default:
+					json.NewEncoder(w).Encode(map[string]any{"object": "chat.completion", "choices": []any{map[string]any{"message": map[string]string{"role": role, "content": "text"}}}})
+				}
+			}))
+			defer server.Close()
+			checks := doctorHTTPChecks(t.Context(), server.URL, "codex")
+			probe := checks[len(checks)-1]
+			if probe.name != "inference probe" || (probe.err == nil) != (role == "assistant") {
+				t.Fatalf("incorrect probe validation for role %q: %+v", role, probe)
+			}
+		})
+	}
+}
+
+func TestDoctorHealthFailureDoesNotSuppressOtherChecks(t *testing.T) {
+	var discovery, probes atomic.Int32
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/health":
+			w.WriteHeader(http.StatusServiceUnavailable)
+		case "/v1/models":
+			discovery.Add(1)
+			io.WriteString(w, `{"object":"list","data":[{"id":"codex"}]}`)
+		case "/v1/chat/completions":
+			probes.Add(1)
+			io.WriteString(w, `{"object":"chat.completion","choices":[{"message":{"role":"assistant","content":"OK"}}]}`)
+		}
+	}))
+	defer server.Close()
+	checks := doctorHTTPChecks(t.Context(), server.URL, "codex")
+	var output bytes.Buffer
+	if len(checks) != 3 || discovery.Load() != 1 || probes.Load() != 1 || printDoctorChecks(&output, checks) == nil || checks[1].err != nil || checks[2].err != nil {
+		t.Fatalf("independent checks were suppressed: checks=%+v discovery=%d probes=%d", checks, discovery.Load(), probes.Load())
+	}
+}
+
+func TestDoctorVersionUsesSelectedDirectory(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/health" {
+			io.WriteString(w, `{"status":"ok"}`)
+		} else {
+			io.WriteString(w, `{"object":"list","data":[{"id":"codex"}]}`)
+		}
+	}))
+	defer server.Close()
+	executable, err := os.Executable()
+	if err != nil {
+		t.Fatal(err)
+	}
+	directory := t.TempDir()
+	t.Setenv("HARNESS_GATEWAY_VERSION_TEST", "directory")
+	t.Setenv("HARNESS_GATEWAY_VERSION_DIRECTORY", directory)
+	var output bytes.Buffer
+	err = doctorCommand(t.Context(), []string{"--harnesses=codex", "--codex-path", testutil.CLIEntryPoint(t, executable), "--listen", server.Listener.Addr().String(), "--directory", directory}, &output)
+	if err != nil || !strings.Contains(output.String(), "PASS  codex CLI: 1.2.3") {
+		t.Fatalf("diagnostic did not use the selected working directory: %v\n%s", err, &output)
 	}
 }

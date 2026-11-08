@@ -48,6 +48,13 @@ func TestMain(tests *testing.M) {
 			}
 		case "ok":
 			fmt.Println("codex-cli 1.2.3")
+		case "directory":
+			current, err := os.Stat(".")
+			expected, expectedErr := os.Stat(os.Getenv("HARNESS_GATEWAY_VERSION_DIRECTORY"))
+			if err != nil || expectedErr != nil || !os.SameFile(current, expected) {
+				os.Exit(14)
+			}
+			fmt.Println("codex-cli 1.2.3")
 		case "bare":
 			fmt.Println("v4.5.6")
 		case "failure":

@@ -220,6 +220,9 @@ Completions that receive nonempty backend text also record `time_to_first_text`,
 measured from request arrival. The initial role-only SSE chunk does not count.
 These timings include backend startup and are durations (nanoseconds in JSON
 logs). The summary records contain no prompt or response content.
+Zero elapsed time is a valid timing value on coarse platform clocks. Recorded
+failures retain their classification if the request context is canceled later;
+a response-write failure takes precedence if sending an error response fails.
 
 ## Diagnostics
 
@@ -232,9 +235,10 @@ harness-gateway doctor --service
 ```
 
 The foreground mode checks the inspecting executable's build identity, local
-configuration and CLI versions, then the selected listener's `/health` and
-`/v1/models`. Supply the same harnesses, executable paths and directory as the
-foreground gateway when they differ from defaults. On Linux, `--service` reads
+configuration and CLI versions in the selected working directory, then the
+selected listener's `/health` and `/v1/models`. Supply the same harnesses,
+executable paths and directory as the foreground gateway when they differ from
+defaults. On Linux, `--service` reads
 the managed service's current invocation, compares release versions, and checks
 its recorded CLI paths and working directory. It reports shell PATH differences
 as informational. Build identities are shown separately; matching release
@@ -249,6 +253,11 @@ probe performs one completion and uses account allowance:
 harness-gateway doctor --service --probe codex
 harness-gateway doctor --probe copilot/NATIVE_MODEL_ID --timeout 2m
 ```
+
+A failed health check does not suppress discovery or an explicit probe while
+their shared deadline permits. Probe success requires a `chat.completion`
+response whose first choice contains an assistant message with nonempty text;
+it does not perform full response-schema validation.
 
 Checks share a 30-second deadline by default; each CLI version query has at most
 20 seconds. Diagnostics return a nonzero exit status for failed checks, preserve
