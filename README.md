@@ -13,7 +13,7 @@ session. No provider API key or gateway authentication is needed.
 Use Go 1.27.3+ and the module package path, without `https://`:
 
 ```bash
-go install github.com/harness-gateway/harness-gateway/cmd/harness-gateway@v0.1.12
+go install github.com/harness-gateway/harness-gateway/cmd/harness-gateway@v0.1.13
 ```
 
 This installs the command **`harness-gateway`** into `GOBIN`, or into
@@ -43,10 +43,10 @@ bash setup.sh
 bash setup.sh --version dev
 
 # Select another module version or destination; avoid editing ~/.bashrc.
-bash setup.sh --version v0.1.12 --bin-dir "$HOME/.local/bin" --no-path
+bash setup.sh --version v0.1.13 --bin-dir "$HOME/.local/bin" --no-path
 ```
 
-Without `--version`, the script selects `v0.1.12`. It requires Go to be installed.
+Without `--version`, the script selects `v0.1.13`. It requires Go to be installed.
 With `--version dev`, it also requires Git and bypasses the module proxy for that
 installation so the branch resolves freshly. Tagged installs keep your configured
 proxy settings.
@@ -60,13 +60,13 @@ binary, setup prints its location and the export command to select this installa
 Install the release without cloning the repository:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Harness-Gateway/harness-gateway/v0.1.12/setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Harness-Gateway/harness-gateway/v0.1.13/setup.sh | bash
 ```
 
 To download and inspect the script before running it:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Harness-Gateway/harness-gateway/v0.1.12/setup.sh -o /tmp/harness-gateway-setup.sh
+curl -fsSL https://raw.githubusercontent.com/Harness-Gateway/harness-gateway/v0.1.13/setup.sh -o /tmp/harness-gateway-setup.sh
 bash /tmp/harness-gateway-setup.sh
 ```
 
@@ -80,7 +80,7 @@ The integration has been exercised with Codex CLI 0.167.0 and Copilot CLI 1.0.10
 harness-gateway
 ```
 
-The release version is **v0.1.12**. See [release notes](CHANGELOG.md). To build a
+The release version is **v0.1.13**. See [release notes](CHANGELOG.md). To build a
 local executable and inspect its version, source revision, and platform:
 
 ```bash
@@ -275,7 +275,7 @@ Install a persistent executable first; do not use `go run` to install a
 service, because its temporary executable will disappear:
 
 ```bash
-GOBIN="$HOME/.local/bin" go install github.com/harness-gateway/harness-gateway/cmd/harness-gateway@v0.1.12
+GOBIN="$HOME/.local/bin" go install github.com/harness-gateway/harness-gateway/cmd/harness-gateway@v0.1.13
 "$HOME/.local/bin/harness-gateway" service install --listen 127.0.0.1:8789
 "$HOME/.local/bin/harness-gateway" service enable --now
 ```
@@ -617,7 +617,7 @@ artifacts and when `--output-dir` is supplied locally.
 After publishing a stable tag, run the repository-owned verifier from the root:
 
 ```bash
-go run ./tools/releaseverify --version v0.1.12 --revision "$(git rev-parse 'v0.1.12^{commit}')"
+go run ./tools/releaseverify --version v0.1.13 --revision "$(git rev-parse 'v0.1.13^{commit}')"
 ```
 
 It installs through the public Go proxy and checksum database with a private
@@ -644,7 +644,7 @@ These Windows checks use CLI fixtures; they do not establish authenticated Windo
 inference acceptance. The workflow can also be dispatched manually for an existing
 stable tag. Java 27
 and Maven are required for that Spring AI step. Reports and diagnostics are retained
-as workflow artifacts. Release titles use only the version tag, such as `v0.1.12`.
+as workflow artifacts. Release titles use only the version tag, such as `v0.1.13`.
 This post-publication workflow supplements pre-release Validate CI; it cannot
 prevent publication of a bad tag and never moves or rewrites a tag.
 

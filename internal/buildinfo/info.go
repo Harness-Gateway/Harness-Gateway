@@ -7,7 +7,7 @@ import (
 	"runtime/debug"
 )
 
-const Version = "0.1.12"
+const Version = "0.1.13"
 
 const RepositoryURL = "https://github.com/Harness-Gateway/Harness-Gateway"
 

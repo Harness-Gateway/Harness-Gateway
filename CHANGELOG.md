@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.1.13 - 2026-11-09
 
 - Confirm macOS zombie-only groups across their bounded exit transition before
   classifying cleanup EPERM, preserving real permission errors and owned identity.
