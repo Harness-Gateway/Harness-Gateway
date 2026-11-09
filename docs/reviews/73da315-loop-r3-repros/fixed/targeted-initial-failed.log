@@ -1,0 +1,7 @@
+--- FAIL: TestWaitPreservesKernelIdentityUntilGroupTermination (5.01s)
+    wait_linux_test.go:35: exit did not reach group termination
+FAIL
+FAIL	github.com/harness-gateway/harness-gateway/internal/process	5.443s
+ok  	github.com/harness-gateway/harness-gateway/tools/acceptance	66.624s
+ok  	github.com/harness-gateway/harness-gateway/cmd/harness-gateway	4.452s
+FAIL

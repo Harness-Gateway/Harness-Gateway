@@ -1,0 +1,2154 @@
+{
+  "round": 3,
+  "baseline_commit": "73da315fc9d384595c2bf229a37abf3963fcfb82",
+  "source_state": "uncommitted working tree",
+  "snapshot_sha256": "be5f7f63d85065876f8691c6c261e7bd06513f64d3fc99cf9ea5829c6c7a2ceb",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "reviewer": "delivery",
+      "bytes": 178,
+      "sha256": "39beb16e40874bc9bd42b7ab3eca44585a0b0329e9c4c5919cc5c4c349472cb6",
+      "format": "text",
+      "lines": 4,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": ".github/workflows/cli-canary.yml",
+      "reviewer": "delivery",
+      "bytes": 2397,
+      "sha256": "4f43e7f9144c47ed2d9aa8eb5259de3c83f53829a5e8af7e0b64fab1a833d943",
+      "format": "text",
+      "lines": 67,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": ".github/workflows/release-verify.yml",
+      "reviewer": "delivery",
+      "bytes": 3354,
+      "sha256": "c42fc95234ba3570ebc0b1a48051149a7799c2af00627b35651b510e6e941be4",
+      "format": "text",
+      "lines": 91,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": ".github/workflows/validate.yml",
+      "reviewer": "delivery",
+      "bytes": 8906,
+      "sha256": "d8d6d4aed96782bc7bb0b02f4abf4d57400d62b2d8f20617e29621ee76e27817",
+      "format": "text",
+      "lines": 240,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": ".gitignore",
+      "reviewer": "delivery",
+      "bytes": 109,
+      "sha256": "5483d5ce2828efdd33d74a703f39a0b26bf4a53e3da2dade7c04581a93456340",
+      "format": "text",
+      "lines": 5,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "AGENTS.md",
+      "reviewer": "docs-examples",
+      "bytes": 1893,
+      "sha256": "00ab542f0ab49bb6c6c5c8aaaf2c8d6c945cd817eb153399f83c5e4318a63a76",
+      "format": "text",
+      "lines": 51,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "reviewer": "docs-examples",
+      "bytes": 15318,
+      "sha256": "27c317f5028c4cbcdaa42a0d163a546c9a112016518d48750dedcc2e90c3299e",
+      "format": "text",
+      "lines": 240,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "LICENSE",
+      "reviewer": "docs-examples",
+      "bytes": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "format": "text",
+      "lines": 202,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "README.md",
+      "reviewer": "docs-examples",
+      "bytes": 49996,
+      "sha256": "db5038b9d1a80f6bd05125cdb3fe65106a602934872c69d4c4bbb0c6dcba6d57",
+      "format": "text",
+      "lines": 901,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "api/LICENSE.openai",
+      "reviewer": "api-http",
+      "bytes": 1083,
+      "sha256": "bcba3de214851cce46ed5af42d6698044616eeace887c3231bc7a20474ab639e",
+      "format": "text",
+      "lines": 21,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "api/document.go",
+      "reviewer": "api-http",
+      "bytes": 153,
+      "sha256": "4f66dba0dfd34cc15cc58ec1f55e106e331c1bf9853e3f236d2db6223e93cabb",
+      "format": "text",
+      "lines": 8,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "api/generate.go",
+      "reviewer": "api-http",
+      "bytes": 201,
+      "sha256": "edbaa066f5540623a4e52dac5cafb24a66ffa8f9c1db344fa2ab93356887f7ad",
+      "format": "text",
+      "lines": 4,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "api/oapi-codegen.yaml",
+      "reviewer": "api-http",
+      "bytes": 133,
+      "sha256": "688701652fd4f48b29323173357af91ae93ecbb5c7cb3dcf793914540da9f430",
+      "format": "text",
+      "lines": 6,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "api/openapi.json",
+      "reviewer": "api-http",
+      "bytes": 24918,
+      "sha256": "af9196353489dcf173668939d2a0d120f03d8c8fd2a640fa7b7583258af4c331",
+      "format": "text",
+      "lines": 880,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "cmd/harness-gateway/console.go",
+      "reviewer": "cli-service",
+      "bytes": 6327,
+      "sha256": "6af6f9b2ea27a3b2e9f8f5d6e6f024449fd1744d6d920d23285b4189e8687f6a",
+      "format": "text",
+      "lines": 202,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "cmd/harness-gateway/console_test.go",
+      "reviewer": "cli-service",
+      "bytes": 4160,
+      "sha256": "418833df2cdbbc11d54274e2461e01a6a5e353a4700ad05c15bbda5a03a3ce60",
+      "format": "text",
+      "lines": 102,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "cmd/harness-gateway/diagnostics.go",
+      "reviewer": "cli-service",
+      "bytes": 1110,
+      "sha256": "ca1b0ac2b99fdb4689cb131a716bcadf52cc7ee60a64bafb2093f619f3b1d648",
+      "format": "text",
+      "lines": 30,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "cmd/harness-gateway/diagnostics_test.go",
+      "reviewer": "cli-service",
+      "bytes": 1842,
+      "sha256": "58ff69656868939e0e891d33d459c3ab7762b485810286e5a748d9341c5835cf",
+      "format": "text",
+      "lines": 59,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "cmd/harness-gateway/doctor.go",
+      "reviewer": "cli-service",
+      "bytes": 11264,
+      "sha256": "7b70925ea6ae4f245685e847c84c143f1c4a08b41a0ddc77be55e3a772b816f5",
+      "format": "text",
+      "lines": 269,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "cmd/harness-gateway/doctor_identity_test.go",
+      "reviewer": "cli-service",
+      "bytes": 2500,
+      "sha256": "4627bbf0167288327845815cee0694af60cc474749fc8d2c71cc2f558c5fede6",
+      "format": "text",
+      "lines": 70,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "cmd/harness-gateway/doctor_test.go",
+      "reviewer": "cli-service",
+      "bytes": 11036,
+      "sha256": "12922f6f1e6f889654a2d010185c67b2e27f600e7dfa37fbf0591f7794e550c5",
+      "format": "text",
+      "lines": 285,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "cmd/harness-gateway/installed_test.go",
+      "reviewer": "cli-service",
+      "bytes": 1570,
+      "sha256": "5f9ae2c81888430d6b76d2ce34d93b0e71a2d389f9a0e8d2841937e51079244c",
+      "format": "text",
+      "lines": 44,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "cmd/harness-gateway/loopback_test.go",
+      "reviewer": "cli-service",
+      "bytes": 1827,
+      "sha256": "ab623d7032aa4f8c3a27342339968b85a731965cae67af19faf30ed27fdf3b1d",
+      "format": "text",
+      "lines": 57,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "cmd/harness-gateway/main.go",
+      "reviewer": "cli-service",
+      "bytes": 10310,
+      "sha256": "e26e7208911aae556c6d760da3653cf65b8b2ec79809d257fc74b1f4be07842c",
+      "format": "text",
+      "lines": 288,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "cmd/harness-gateway/main_test.go",
+      "reviewer": "cli-service",
+      "bytes": 4068,
+      "sha256": "759137041e327b59ac8344733f71e540bc8c99f492243da3b11395f990ca17b9",
+      "format": "text",
+      "lines": 101,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "cmd/harness-gateway/service.go",
+      "reviewer": "cli-service",
+      "bytes": 13649,
+      "sha256": "4100968b9065c45c5cb36b634803f477e6daa1a117b0f35e2711ee5892abc188",
+      "format": "text",
+      "lines": 409,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "cmd/harness-gateway/service_identity_test.go",
+      "reviewer": "cli-service",
+      "bytes": 1527,
+      "sha256": "377d32b4027a8d544e4a138c2f1d6f5b5093c4362c03e77730bf069d8e3e8ad9",
+      "format": "text",
+      "lines": 46,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "cmd/harness-gateway/service_log_latency_test.go",
+      "reviewer": "cli-service",
+      "bytes": 865,
+      "sha256": "b263840e7794229b938e430cebff59e06b2e9844288eba34c2a3ca164dc2f676",
+      "format": "text",
+      "lines": 22,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "cmd/harness-gateway/service_logs.go",
+      "reviewer": "cli-service",
+      "bytes": 7554,
+      "sha256": "31740a35b99f1246f0f71fef18783f05411beeddd88b6bfadb9e089f176b9ac5",
+      "format": "text",
+      "lines": 273,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "cmd/harness-gateway/service_observe_test.go",
+      "reviewer": "cli-service",
+      "bytes": 17137,
+      "sha256": "fff6134c3b78d8eebc51f66925e8675deb0bdbb574ab131d72306f7919e5b0fb",
+      "format": "text",
+      "lines": 371,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "cmd/harness-gateway/service_status.go",
+      "reviewer": "cli-service",
+      "bytes": 7961,
+      "sha256": "5cf341a3b3953040763cce120b1dd8d3169a5a0428b3fdacedc26e1268f2083f",
+      "format": "text",
+      "lines": 201,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "cmd/harness-gateway/service_test.go",
+      "reviewer": "cli-service",
+      "bytes": 17054,
+      "sha256": "516e878e0425af0ee8bc8715121efb9c2e1e932daff91df5f250214bad9115bd",
+      "format": "text",
+      "lines": 453,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "cmd/harness-gateway/soak_test.go",
+      "reviewer": "cli-service",
+      "bytes": 2728,
+      "sha256": "3f3dd64ee44bf9de9dcdcb91736da669c5659e088b273d77508c9148ebcceecc",
+      "format": "text",
+      "lines": 99,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "cmd/harness-gateway/versions.go",
+      "reviewer": "cli-service",
+      "bytes": 3856,
+      "sha256": "f17cb6563acdbb9e3f5802116bd595a3d626abf07312ff5806bc5e5cc812f669",
+      "format": "text",
+      "lines": 120,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "cmd/harness-gateway/versions_process_test.go",
+      "reviewer": "cli-service",
+      "bytes": 1370,
+      "sha256": "f7b27a4d7dfaa41cf7875114baed4544c4a89ce35f0bd48fc92102c8394acfa1",
+      "format": "text",
+      "lines": 51,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "cmd/harness-gateway/versions_test.go",
+      "reviewer": "cli-service",
+      "bytes": 6099,
+      "sha256": "544583ead53cbd9e0a439f11caba1490899f85aa4796c6f3b195b77d8816bafc",
+      "format": "text",
+      "lines": 179,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/designs/diagnostics-observability.md",
+      "reviewer": "docs-examples",
+      "bytes": 8919,
+      "sha256": "315d5b6ac60946efab998de73fe22cd9de9cb6b3c68a13758443b6ad96cd6470",
+      "format": "text",
+      "lines": 150,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/624c4da-adjudication.md",
+      "reviewer": "docs-examples",
+      "bytes": 3813,
+      "sha256": "12756ce335b3289d095422ab0075b275a74e05ba630a23cba29fb0226445d81a",
+      "format": "text",
+      "lines": 54,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/624c4da-coverage.json",
+      "reviewer": "docs-examples",
+      "bytes": 8863,
+      "sha256": "340f9e6a5324163b3f3496021df74700d6e38256119301aafe82638821cecc27",
+      "format": "text",
+      "lines": 197,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/624c4da-fix-validation.md",
+      "reviewer": "docs-examples",
+      "bytes": 4369,
+      "sha256": "400ec155d88fd08208c11094907f077470c4cfb27f02e54e82f26d01b0904de3",
+      "format": "text",
+      "lines": 55,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/624c4da-project-baseline.md",
+      "reviewer": "docs-examples",
+      "bytes": 5518,
+      "sha256": "b8293eddb9735181f00b59ebf456c6f3f843f60af8e9c8ce2b484e9636e9bacc",
+      "format": "text",
+      "lines": 84,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/624c4da-project-review.md",
+      "reviewer": "docs-examples",
+      "bytes": 15882,
+      "sha256": "b9efc3e12076d22f6baaa3b32ca3db6ff86c35ff023244164748f95ec0a9b5ba",
+      "format": "text",
+      "lines": 254,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/624c4da-repros/README.md",
+      "reviewer": "docs-examples",
+      "bytes": 1835,
+      "sha256": "2c8971579f989be597a6d9f3ebf4f6c7b7493357a6db65bb1f6bd02c6bdf494f",
+      "format": "text",
+      "lines": 36,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/624c4da-repros/ReviewGate.java.txt",
+      "reviewer": "docs-examples",
+      "bytes": 518,
+      "sha256": "ecaeb22c0a9350fe02a641b06ddaa15d52f644ace87d61cdd419f37fbb36fa43",
+      "format": "text",
+      "lines": 10,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/624c4da-repros/burst-result.txt",
+      "reviewer": "docs-examples",
+      "bytes": 602,
+      "sha256": "11753518bebb0a082c0684e8084f6cb599d4142823dcafa062a3a9e6fa79e697",
+      "format": "text",
+      "lines": 8,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/624c4da-repros/cleanup-receipt.json",
+      "reviewer": "docs-examples",
+      "bytes": 582,
+      "sha256": "24ea343f5b3d65616f1afd662620960e3365be75a5ea34403b963430af6fa6c3",
+      "format": "text",
+      "lines": 18,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/624c4da-repros/copilot-probes.go.txt",
+      "reviewer": "docs-examples",
+      "bytes": 853,
+      "sha256": "63e5833f3120c2e1323872b72441bef157ead644c836fcba2f59eb2d98e9cf23",
+      "format": "text",
+      "lines": 24,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/624c4da-repros/http-probes.go.txt",
+      "reviewer": "docs-examples",
+      "bytes": 1124,
+      "sha256": "615231aeac6e40becbe168c5f22aba2cddc13b1beae865b5c43850b6bc611a65",
+      "format": "text",
+      "lines": 10,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/624c4da-repros/installer-probes.go.txt",
+      "reviewer": "docs-examples",
+      "bytes": 869,
+      "sha256": "f38ec3a8af19250902be2c79701a1c2c0b923a734627df9d79fced34f7224d82",
+      "format": "text",
+      "lines": 15,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/624c4da-repros/installer-result.txt",
+      "reviewer": "docs-examples",
+      "bytes": 935,
+      "sha256": "66b38d9582cc7c73a680744180b72ee1d6ebea7d067de16585bb96618181178e",
+      "format": "text",
+      "lines": 15,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/624c4da-repros/interrupt-probes.go.txt",
+      "reviewer": "docs-examples",
+      "bytes": 1631,
+      "sha256": "7bbad607dee9fe61ed3a57d4ab9b32fb2eff723686d303bb32b59382bf0f2194",
+      "format": "text",
+      "lines": 22,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/624c4da-repros/interrupt-result.txt",
+      "reviewer": "docs-examples",
+      "bytes": 353,
+      "sha256": "18898b2652ae24b749b51e73c31b44dcd5ef9fc16ed10e1b7b7c69d7661fbc2a",
+      "format": "text",
+      "lines": 6,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/624c4da-repros/race-result.txt",
+      "reviewer": "docs-examples",
+      "bytes": 191,
+      "sha256": "ad5933974eeec977c2bdcedf68798fa2f26fd45f92057bacfb7a8ce5f7217e57",
+      "format": "text",
+      "lines": 4,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/624c4da-repros/run.py",
+      "reviewer": "docs-examples",
+      "bytes": 4668,
+      "sha256": "48838b13d526a4765727ffaa01191b7a58facd68e5cf2f63827219e37ea842c9",
+      "format": "text",
+      "lines": 92,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/624c4da-repros/schema-result.txt",
+      "reviewer": "docs-examples",
+      "bytes": 398,
+      "sha256": "f7602be9ac3fa130ffd697a273b887eb82e98a80bacd09c3f05de4b2cd3da4a7",
+      "format": "text",
+      "lines": 7,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/624c4da-repros/service-probes.go.txt",
+      "reviewer": "docs-examples",
+      "bytes": 686,
+      "sha256": "a789ecbce1f46af93795225e5a51441d240e759f0b3ba37da55de61721c29552",
+      "format": "text",
+      "lines": 10,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/624c4da-repros/service-result.txt",
+      "reviewer": "docs-examples",
+      "bytes": 361,
+      "sha256": "fb690b09200b98c093148a8c035b147f0fbebe64562dedcccf376bb174b36ed4",
+      "format": "text",
+      "lines": 7,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/624c4da-review-standard.md",
+      "reviewer": "docs-examples",
+      "bytes": 3032,
+      "sha256": "4ff16de4bce51ce69841e2876683b566faa36fd431b8bb5545e36de8d77a4647",
+      "format": "text",
+      "lines": 56,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/6476397-egm-followup.md",
+      "reviewer": "docs-examples",
+      "bytes": 3369,
+      "sha256": "0035c546293eb05a6b5690a67c202c2bdbbaab3efb521e069ce2d1d529cb7932",
+      "format": "text",
+      "lines": 59,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/6476397-egm-review.md",
+      "reviewer": "docs-examples",
+      "bytes": 11223,
+      "sha256": "3afcd53b6995e5cebb791688b52391ccf61e8a84a87ad0d03fe1d8f15aef9950",
+      "format": "text",
+      "lines": 209,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/6476397-review-standard.md",
+      "reviewer": "docs-examples",
+      "bytes": 3027,
+      "sha256": "94fac94c064c71e540ba119a92dec20b606f409f97307448ad41d3af20366622",
+      "format": "text",
+      "lines": 57,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-baseline.md",
+      "reviewer": "docs-examples",
+      "bytes": 1450,
+      "sha256": "fbe480732b0bc73cf3815ec44ad8db96f373bdbe755fd3634a05ff6e6cfb52cb",
+      "format": "text",
+      "lines": 25,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-coverage.json",
+      "reviewer": "docs-examples",
+      "bytes": 46878,
+      "sha256": "4230664e9029270327928df96f665558d72849da182f28afb653677863e544b4",
+      "format": "text",
+      "lines": 1471,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-r1-report.md",
+      "reviewer": "docs-examples",
+      "bytes": 17703,
+      "sha256": "80cb80141985eb20ae45e3d0fe3cad6b706477d3b0defb8c122e63ee60d15cdd",
+      "format": "text",
+      "lines": 111,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-r2-baseline.md",
+      "reviewer": "docs-examples",
+      "bytes": 1245,
+      "sha256": "367ee500b90e51b9725143b06c3345d8b82a595f779bc0995533006d587b6029",
+      "format": "text",
+      "lines": 21,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-r2-coverage.json",
+      "reviewer": "docs-examples",
+      "bytes": 61135,
+      "sha256": "b92cf88702928b064e4b5aa9a8ca3741c876e702f57d21eeaeec943f399badc3",
+      "format": "text",
+      "lines": 1910,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-r2-report.md",
+      "reviewer": "docs-examples",
+      "bytes": 13925,
+      "sha256": "5f9cbb66450e1240a8f9651c8da8bda77c69d7345090c85380a7217b3b7187ff",
+      "format": "text",
+      "lines": 86,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-r2-repros/README.md",
+      "reviewer": "docs-examples",
+      "bytes": 3398,
+      "sha256": "9199b12c2c22d2daa22971c0a9e385741e9e359a7ff3cc65037839ef817f5a30",
+      "format": "text",
+      "lines": 25,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-r2-repros/aborted-fixture.patch",
+      "reviewer": "docs-examples",
+      "bytes": 1045,
+      "sha256": "691552bb26c726773a3d1141822e4b1e42b1e7139d8c779086c8d000a8af9068",
+      "format": "text",
+      "lines": 29,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-r2-repros/aborted-idle.log",
+      "reviewer": "docs-examples",
+      "bytes": 3511,
+      "sha256": "a820f2fe4e5d7b7063157fbff3856c2e733b2d9b4883e7965db76f880c0dfa66",
+      "format": "text",
+      "lines": 34,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-r2-repros/aborted_probe_test.go.txt",
+      "reviewer": "docs-examples",
+      "bytes": 1412,
+      "sha256": "333f2b91f3a7f0e87e3e261ee41098cd805306f6e46d40f6fbc9bf51f01df773",
+      "format": "text",
+      "lines": 28,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-r2-repros/acceptance-ownership.log",
+      "reviewer": "docs-examples",
+      "bytes": 292,
+      "sha256": "438a8b839a83cc4339bbdd37fec5797d9a6105a3a66a3bbec1ea968039fc1380",
+      "format": "text",
+      "lines": 5,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-r2-repros/acceptance-signal-hook.patch",
+      "reviewer": "docs-examples",
+      "bytes": 1053,
+      "sha256": "d5f20cf2d625223776e6604012d5c22f991eb33800bbdde5854387f7d2c6d94b",
+      "format": "text",
+      "lines": 33,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-r2-repros/acceptance_ownership_test.go.txt",
+      "reviewer": "docs-examples",
+      "bytes": 1592,
+      "sha256": "fd225f421fc7f8ce69871aa3e2ff569be26b4847e7213a76f1cf72b96c17ce3f",
+      "format": "text",
+      "lines": 42,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-r2-repros/case-variant.log",
+      "reviewer": "docs-examples",
+      "bytes": 291,
+      "sha256": "11c5475e5963fde4e6e603951fb9490c98447695af64f9fdbb571fdf10ec7432",
+      "format": "text",
+      "lines": 5,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-r2-repros/case_test.go.txt",
+      "reviewer": "docs-examples",
+      "bytes": 1333,
+      "sha256": "4669e82bc248509edb0a540695f221242d0433021cf3a6adb0537fb0c4d07968",
+      "format": "text",
+      "lines": 28,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-r2-repros/fixed/acceptance.log",
+      "reviewer": "docs-examples",
+      "bytes": 17388,
+      "sha256": "245879e71113d4da81278409590094078003e5492791088010197472c7f2fbbb",
+      "format": "text",
+      "lines": 113,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-r2-repros/fixed/build.log",
+      "reviewer": "docs-examples",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "format": "text",
+      "lines": 0,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-r2-repros/fixed/darwin.log",
+      "reviewer": "docs-examples",
+      "bytes": 313,
+      "sha256": "7546221b3f11c7d6f06cfc22c500d5a0b5b18cf65a8ce1a96aaf5d35112e3c7c",
+      "format": "text",
+      "lines": 4,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-r2-repros/fixed/fmt.log",
+      "reviewer": "docs-examples",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "format": "text",
+      "lines": 0,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-r2-repros/fixed/implementation-snapshot.json",
+      "reviewer": "docs-examples",
+      "bytes": 8178,
+      "sha256": "e8310212f90db1f22ea56783c0f6a4c31e5993cfe9863bb1f7a6e741c0ff847e",
+      "format": "text",
+      "lines": 246,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-r2-repros/fixed/race.log",
+      "reviewer": "docs-examples",
+      "bytes": 1264,
+      "sha256": "edc7ac151143e769940cf308359539d25150f3160860539636eaf01dfd845d10",
+      "format": "text",
+      "lines": 16,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-r2-repros/fixed/targeted.log",
+      "reviewer": "docs-examples",
+      "bytes": 311,
+      "sha256": "4c63f086573cb5c756437f8c2a8a38a2dc67a7b5949190ce81253a39afa79736",
+      "format": "text",
+      "lines": 4,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-r2-repros/fixed/tests-final.log",
+      "reviewer": "docs-examples",
+      "bytes": 1264,
+      "sha256": "653342aa02c7047eafff1b39e98a8950408879cd7bd76ca6d1a9a49fbc70d40b",
+      "format": "text",
+      "lines": 16,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-r2-repros/fixed/validation.json",
+      "reviewer": "docs-examples",
+      "bytes": 558,
+      "sha256": "58078a94e37ac1445be612f008d836df0d8e205f9e5d82f2cf85f4064d675d5d",
+      "format": "text",
+      "lines": 21,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-r2-repros/fixed/vet-final.log",
+      "reviewer": "docs-examples",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "format": "text",
+      "lines": 0,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-r2-repros/fixed/windows.log",
+      "reviewer": "docs-examples",
+      "bytes": 313,
+      "sha256": "7546221b3f11c7d6f06cfc22c500d5a0b5b18cf65a8ce1a96aaf5d35112e3c7c",
+      "format": "text",
+      "lines": 4,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-r2-repros/latency_log_test.go.txt",
+      "reviewer": "docs-examples",
+      "bytes": 452,
+      "sha256": "8970755318f36cbc2a69c91fa0f6d70c21643016a3c62acd1b726f58364180f4",
+      "format": "text",
+      "lines": 10,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-r2-repros/log-latency.log",
+      "reviewer": "docs-examples",
+      "bytes": 363,
+      "sha256": "49ebe488d2c6b09bf0a27777ba20a0284457859a47b5842c1025446f091fcb17",
+      "format": "text",
+      "lines": 6,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-r2-resolution.md",
+      "reviewer": "docs-examples",
+      "bytes": 6277,
+      "sha256": "0947753c00ec7404537d6f5a666bc83fc02b00d0e95c0991a1259132ed18ca37",
+      "format": "text",
+      "lines": 38,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-r2-standard.md",
+      "reviewer": "docs-examples",
+      "bytes": 5734,
+      "sha256": "ea4531aa2b6df2871ea07f3b4b973df52cfbbf09834884696b921f63af807fb3",
+      "format": "text",
+      "lines": 34,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-repros/README.md",
+      "reviewer": "docs-examples",
+      "bytes": 3840,
+      "sha256": "8516b9a8139a9f16561a96833726d5c9ef20384d7c4a8e2dcb83b8191ff1fd24",
+      "format": "text",
+      "lines": 28,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-repros/baseline-build.log",
+      "reviewer": "docs-examples",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "format": "text",
+      "lines": 0,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-repros/baseline-tests.log",
+      "reviewer": "docs-examples",
+      "bytes": 1266,
+      "sha256": "f970b11796a713a30bf99d41d28f95ccb8f7d0c829ddda3964d2a861e8937b62",
+      "format": "text",
+      "lines": 16,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-repros/baseline-vet.log",
+      "reviewer": "docs-examples",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "format": "text",
+      "lines": 0,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-repros/cancellation-race.log",
+      "reviewer": "docs-examples",
+      "bytes": 3516,
+      "sha256": "a94a79662ce2bd477dad689990007ca0087ace250a034e2f3f9ae6e13bc02548",
+      "format": "text",
+      "lines": 52,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-repros/doctor-fixture.patch",
+      "reviewer": "docs-examples",
+      "bytes": 1049,
+      "sha256": "ab9850b41163123be0c4b9f10779f6a22b70e4e4caedb286d7a7057702412885",
+      "format": "text",
+      "lines": 23,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-repros/doctor-foreign-fragment.log",
+      "reviewer": "docs-examples",
+      "bytes": 2834,
+      "sha256": "0f1eb151055cb02805150b30d5110e8d4476088af82c4110a296122418bfdf3e",
+      "format": "text",
+      "lines": 34,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-repros/fixed/acceptance.log",
+      "reviewer": "docs-examples",
+      "bytes": 17362,
+      "sha256": "4fdd46420948cef5101a249aabe4678eb5c8a4f53394b71cfa1982f65b81e155",
+      "format": "text",
+      "lines": 113,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-repros/fixed/browser-acceptance.json",
+      "reviewer": "docs-examples",
+      "bytes": 3074,
+      "sha256": "27673ea18efd6395e9de05e50ed868ec4f92973c514f72499b2a1aa98f814795",
+      "format": "text",
+      "lines": 111,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-repros/fixed/browser.log",
+      "reviewer": "docs-examples",
+      "bytes": 996,
+      "sha256": "bec6f24cd169e52fe4eaaad2a174a46325f45b69d928eec2c8930fe1059c33cb",
+      "format": "text",
+      "lines": 21,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-repros/fixed/build.log",
+      "reviewer": "docs-examples",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "format": "text",
+      "lines": 0,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-repros/fixed/darwin-final.log",
+      "reviewer": "docs-examples",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "format": "text",
+      "lines": 0,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-repros/fixed/darwin-refinement.log",
+      "reviewer": "docs-examples",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "format": "text",
+      "lines": 0,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-repros/fixed/darwin.log",
+      "reviewer": "docs-examples",
+      "bytes": 313,
+      "sha256": "7546221b3f11c7d6f06cfc22c500d5a0b5b18cf65a8ce1a96aaf5d35112e3c7c",
+      "format": "text",
+      "lines": 4,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-repros/fixed/final-targeted.log",
+      "reviewer": "docs-examples",
+      "bytes": 162,
+      "sha256": "b2d07b1a9f64ecbe3a6146f76b427e4c8acb49bc4c365996378687854f145822",
+      "format": "text",
+      "lines": 2,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-repros/fixed/generation.json",
+      "reviewer": "docs-examples",
+      "bytes": 279,
+      "sha256": "1a7e42725447b168bfbff747994440201c04e87fd86de67ff3401b4a524b26d8",
+      "format": "text",
+      "lines": 7,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-repros/fixed/go-tests.log",
+      "reviewer": "docs-examples",
+      "bytes": 1266,
+      "sha256": "f2834b7b09be238ff7ff16a8f0ef21c66f83e2b6453c3793472defdd38da2dee",
+      "format": "text",
+      "lines": 16,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-repros/fixed/implementation-snapshot.json",
+      "reviewer": "docs-examples",
+      "bytes": 6277,
+      "sha256": "aa85197e3f867620994b291bc9f2fe5091baaeee1e9696c38424029baae0d996",
+      "format": "text",
+      "lines": 191,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-repros/fixed/localhost-fixed.json",
+      "reviewer": "docs-examples",
+      "bytes": 220,
+      "sha256": "322bded9c2d45e82d5a4cd7bc937d2bc8858579e0d658e67148b3d58bf3438c2",
+      "format": "text",
+      "lines": 5,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-repros/fixed/localhost-fixed.log",
+      "reviewer": "docs-examples",
+      "bytes": 1103,
+      "sha256": "971a69fd2e36f1e5dfec852b15179057d810812f0ca8e5793852c7df7bd6a4cd",
+      "format": "text",
+      "lines": 4,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-repros/fixed/race.log",
+      "reviewer": "docs-examples",
+      "bytes": 1265,
+      "sha256": "5ac03338291a672f62bd9cd90c21a51be4a0d340b8893e933fcebbeb2388dc86",
+      "format": "text",
+      "lines": 16,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-repros/fixed/sdk-scheduling-test.go.txt",
+      "reviewer": "docs-examples",
+      "bytes": 1042,
+      "sha256": "9d19e0e1cf7565d35ee162bebc502e8384b3763f359cb97cf9b611886b0eb0f2",
+      "format": "text",
+      "lines": 25,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-repros/fixed/sdk-scheduling.log",
+      "reviewer": "docs-examples",
+      "bytes": 440,
+      "sha256": "c7cb3f3d7d1b69e6d64586b1e14ef0c00656791b766c83a2ce6a7a5cb8beee98",
+      "format": "text",
+      "lines": 6,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-repros/fixed/vet.log",
+      "reviewer": "docs-examples",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "format": "text",
+      "lines": 0,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-repros/fixed/windows-refinement.log",
+      "reviewer": "docs-examples",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "format": "text",
+      "lines": 0,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-repros/fixed/windows.log",
+      "reviewer": "docs-examples",
+      "bytes": 313,
+      "sha256": "7546221b3f11c7d6f06cfc22c500d5a0b5b18cf65a8ce1a96aaf5d35112e3c7c",
+      "format": "text",
+      "lines": 4,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-repros/installer-cdpath.json",
+      "reviewer": "docs-examples",
+      "bytes": 976,
+      "sha256": "9e8dd28a7677a62144c30465b0bc818c12086b03c1a57824a6d501bae6ec3ab1",
+      "format": "text",
+      "lines": 14,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-repros/localhost-resolution.json",
+      "reviewer": "docs-examples",
+      "bytes": 657,
+      "sha256": "2fcfade7aa43b54063e27d950261518549dbaac9033a80cccf9454a2531ccd82",
+      "format": "text",
+      "lines": 6,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-repros/localhost-resolver.c",
+      "reviewer": "docs-examples",
+      "bytes": 478,
+      "sha256": "29352c0be85575799702ab93152c843d138db7c9cabf7ac51ac3b3ed6482ecc7",
+      "format": "text",
+      "lines": 11,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-repros/race_probe_test.go.txt",
+      "reviewer": "docs-examples",
+      "bytes": 1014,
+      "sha256": "0987046c89f7e8e0e2107b3527bed41a603ed00b94b070c9802e4d6418ab773a",
+      "format": "text",
+      "lines": 25,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-repros/schema-null-enum.json",
+      "reviewer": "docs-examples",
+      "bytes": 733,
+      "sha256": "ee14c86e2a9dd5da0d1ee5a580d753cdc8719e0dd0b711fad11ef4f1eec8b31b",
+      "format": "text",
+      "lines": 32,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-repros/sdk-rendezvous.patch",
+      "reviewer": "docs-examples",
+      "bytes": 611,
+      "sha256": "cbae3424d55f7a1ad22a117971e51e6315c0a22f812d56240e7985d5800bcf65",
+      "format": "text",
+      "lines": 26,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-resolution.md",
+      "reviewer": "docs-examples",
+      "bytes": 8033,
+      "sha256": "dc4b2ca9703c92b2f0657dd8065afce9cc87174dad442aaffb8313a8b6995f7f",
+      "format": "text",
+      "lines": 49,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/73da315-loop-standard.md",
+      "reviewer": "docs-examples",
+      "bytes": 4819,
+      "sha256": "05677cb0a0a99aae6bfef587df458b02c0e4a5f306e4c29da91f846505c91d33",
+      "format": "text",
+      "lines": 30,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/b6179f2-gap-closure.md",
+      "reviewer": "docs-examples",
+      "bytes": 5906,
+      "sha256": "608875baa91a1abb8996c0b67e858e0d849218a5ea31b9e95f06158eb57b3b95",
+      "format": "text",
+      "lines": 95,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "docs/reviews/goldfish_review_report.md",
+      "reviewer": "docs-examples",
+      "bytes": 13925,
+      "sha256": "5f9cbb66450e1240a8f9651c8da8bda77c69d7345090c85380a7217b3b7187ff",
+      "format": "text",
+      "lines": 86,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "examples/spring-ai/pom.xml",
+      "reviewer": "docs-examples",
+      "bytes": 2532,
+      "sha256": "e4a3e7e7379c3095eff29f9df52d542169cb8b88cff2b2cb252a1d40fec44f8d",
+      "format": "text",
+      "lines": 72,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "examples/spring-ai/src/main/java/io/harnessgateway/GatewayHttpConfiguration.java",
+      "reviewer": "docs-examples",
+      "bytes": 1974,
+      "sha256": "035c8e79fdd6d8233d2b0f9213d9b637ddb06c4eddc3516fe4a4a6596f82e18e",
+      "format": "text",
+      "lines": 51,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "examples/spring-ai/src/test/java/io/harnessgateway/FixtureGateway.java",
+      "reviewer": "docs-examples",
+      "bytes": 7777,
+      "sha256": "c490e930e82f62023769bcdf8921352b7a84755fe07bf03748a5ad66fea47269",
+      "format": "text",
+      "lines": 183,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "examples/spring-ai/src/test/java/io/harnessgateway/GatewayContractTest.java",
+      "reviewer": "docs-examples",
+      "bytes": 25093,
+      "sha256": "e403bfccc066ae1f68567e44943f16243bc0893c174278a5276ca3f1f9557429",
+      "format": "text",
+      "lines": 389,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "examples/spring-ai/src/test/java/io/harnessgateway/GatewayFailureTest.java",
+      "reviewer": "docs-examples",
+      "bytes": 23287,
+      "sha256": "d2f487f79b1bfe5cf8c029dab6c28744a91fd768e85d2401e0f06f3dfc214b71",
+      "format": "text",
+      "lines": 467,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "examples/spring-ai/src/test/java/io/harnessgateway/GatewaySoakTest.java",
+      "reviewer": "docs-examples",
+      "bytes": 11391,
+      "sha256": "f6b7ae8d9e4f2e320b0c51e9d6fe1bb8a0d68e100d6d2ac96440a0194e69a55b",
+      "format": "text",
+      "lines": 195,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "examples/spring-ai/src/test/java/io/harnessgateway/GatewayStressTest.java",
+      "reviewer": "docs-examples",
+      "bytes": 8405,
+      "sha256": "fe20a01b81db4a7898f02732d1d5a5a19251811e3cca640b9f60b8e39930f501",
+      "format": "text",
+      "lines": 173,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "examples/spring-ai/src/test/java/io/harnessgateway/GatewayTest.java",
+      "reviewer": "docs-examples",
+      "bytes": 12343,
+      "sha256": "4ac424d28c1ec4c7152ed5ef9b1ade9ef30628f0be34d31c7768da4aef6b9ce6",
+      "format": "text",
+      "lines": 239,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "examples/spring-ai/src/test/java/io/harnessgateway/NativeModels.java",
+      "reviewer": "docs-examples",
+      "bytes": 2135,
+      "sha256": "4ecc761c86b6ff4f1672ab3af97ed908e0f50c47fdcb50e2ff026f21ac1206b9",
+      "format": "text",
+      "lines": 41,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "examples/spring-ai/src/test/java/io/harnessgateway/NativeModelsTest.java",
+      "reviewer": "docs-examples",
+      "bytes": 2206,
+      "sha256": "4a9f6222a3edbdeef276f7a4953bd0ad780a44703807767e1435564c87e37e1b",
+      "format": "text",
+      "lines": 42,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "examples/spring-ai/src/test/resources/application.properties",
+      "reviewer": "docs-examples",
+      "bytes": 488,
+      "sha256": "e33920d1559d02fa010328f9e11fcecc2473addd347aafa6d912214ab55e9f7d",
+      "format": "text",
+      "lines": 13,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "go.mod",
+      "reviewer": "delivery",
+      "bytes": 682,
+      "sha256": "823870fb98175d4b03949a57f5f68c0673ca948ffd391b3af9ed70b9615d09c8",
+      "format": "text",
+      "lines": 23,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "go.sum",
+      "reviewer": "delivery",
+      "bytes": 3315,
+      "sha256": "989238514c14fd2ab367b50d549a064f9147df80dda7cb0c1e732527ab1ed872",
+      "format": "text",
+      "lines": 39,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/contract_test.go",
+      "reviewer": "api-http",
+      "bytes": 6570,
+      "sha256": "f7551211169b49a7d37fdbae297e72e8db4987a93034dad056d2ea45019eb247",
+      "format": "text",
+      "lines": 183,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/docs.go",
+      "reviewer": "api-http",
+      "bytes": 2228,
+      "sha256": "7c25e09513f68e6307e1bde13c7b1d255ff91fd4e9d036a5f53bd419d2921bfc",
+      "format": "text",
+      "lines": 64,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/docs/assets/LICENSE.scalar",
+      "reviewer": "api-http",
+      "bytes": 1071,
+      "sha256": "380cd0a6ad700e1f821f2a509f0dd9ff835041cee2d43daf5dedc1adb2bcc620",
+      "format": "text",
+      "lines": 21,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/docs/assets/README.md",
+      "reviewer": "api-http",
+      "bytes": 1631,
+      "sha256": "3a998a1a8716d25faa653f7bcb990a8347a4ce7968fb781b46968ad352fb78b9",
+      "format": "text",
+      "lines": 25,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/docs/assets/scalar-1.70.0.js",
+      "reviewer": "api-http",
+      "bytes": 3798913,
+      "sha256": "ab654f973a5e5aa5ba0cb0f53635db8c9b2a0f3b454a613238c4fa223b2046e2",
+      "format": "text",
+      "lines": 2471,
+      "review_status": "pending at inventory freeze",
+      "coverage_exception": "Third-party minified JS: integration and provenance only"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/docs/index.html",
+      "reviewer": "api-http",
+      "bytes": 638,
+      "sha256": "b1a680c045fa7f78fdb7ddf365e2df8ebaa879c5f3b7d7cedf0f2c573c367849",
+      "format": "text",
+      "lines": 16,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/docs/init.js",
+      "reviewer": "api-http",
+      "bytes": 349,
+      "sha256": "d33ceba9ae36ebd2c04050fb22a15b7fe64ac1cfe2537f1116a3fd45fac84ebb",
+      "format": "text",
+      "lines": 12,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/docs_test.go",
+      "reviewer": "api-http",
+      "bytes": 7096,
+      "sha256": "8948173861dc004a09b58227697469ae7ff9d23bac52be07aa5ecfff2d313fb5",
+      "format": "text",
+      "lines": 190,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/error_classification_test.go",
+      "reviewer": "api-http",
+      "bytes": 3350,
+      "sha256": "c6708376a191f7bf42df4a4ad2f071a92a7b8d60c7bed9443e77f9c90fbbe7da",
+      "format": "text",
+      "lines": 78,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/handler.go",
+      "reviewer": "api-http",
+      "bytes": 14930,
+      "sha256": "777180ccb66161d28c0381a71719ce7433cc6342f22501e0f91df01792273810",
+      "format": "text",
+      "lines": 411,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/handler_test.go",
+      "reviewer": "api-http",
+      "bytes": 17216,
+      "sha256": "b08efdb4a5425cb3f3307aec7bdc309c947ec2a396cf34d924376125fc8ee1df",
+      "format": "text",
+      "lines": 425,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/http_test.go",
+      "reviewer": "api-http",
+      "bytes": 3865,
+      "sha256": "2eaa071517d1719f4ebf75878c713701430e5b2b08d628b08047a95e0efb0c6c",
+      "format": "text",
+      "lines": 99,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/limits_test.go",
+      "reviewer": "api-http",
+      "bytes": 10478,
+      "sha256": "1df1ed58aed2a7d877e3dff88168f6b6aa9bb677552fed377acaf633400ac911",
+      "format": "text",
+      "lines": 301,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/models_lifecycle_test.go",
+      "reviewer": "api-http",
+      "bytes": 6433,
+      "sha256": "ee5e9818232b3e8aa481efe2334144fb1b6a0e5fa4adc5811b75ad98fc10cf0e",
+      "format": "text",
+      "lines": 210,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/models_test.go",
+      "reviewer": "api-http",
+      "bytes": 4346,
+      "sha256": "4d21a760c685054e3cfa0255e94f2cf7fafc73b6828e11afa5542a034d141bc9",
+      "format": "text",
+      "lines": 101,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/observe.go",
+      "reviewer": "api-http",
+      "bytes": 3658,
+      "sha256": "8e22f8b738a084129f1f5fc9622a092e1241e133a6fcefcefbfd2a4f696381fe",
+      "format": "text",
+      "lines": 123,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/observe_test.go",
+      "reviewer": "api-http",
+      "bytes": 11050,
+      "sha256": "125610456a76d0f94ae7697dd35ab86b2c1bf8dc111da3e4adfc59c900e80024",
+      "format": "text",
+      "lines": 271,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/security.go",
+      "reviewer": "api-http",
+      "bytes": 1757,
+      "sha256": "bf60581a44dbb95150fd80d210660367cc7b2c1721e6d870f01833fb033538fd",
+      "format": "text",
+      "lines": 54,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/security_test.go",
+      "reviewer": "api-http",
+      "bytes": 6030,
+      "sha256": "71a909315a2b6adee02a69f2c604fd4356f4e8f53f9a1ea5d7f9162afb1d42a1",
+      "format": "text",
+      "lines": 166,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/types.gen.go",
+      "reviewer": "api-http",
+      "bytes": 4040,
+      "sha256": "a4e722ad7646d988943df8135ab5ce8e2baf8f0d53dd327b99ecfbc54e8a59e8",
+      "format": "text",
+      "lines": 135,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/outbound/codex/codex.go",
+      "reviewer": "providers",
+      "bytes": 6776,
+      "sha256": "da3a8aff3207ec5b32b3f3cbe7ce3d4a7b9f6fc889b8b1b2362ebbaf152b2d3d",
+      "format": "text",
+      "lines": 244,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/outbound/codex/codex_test.go",
+      "reviewer": "providers",
+      "bytes": 15654,
+      "sha256": "261c57fa7bc0fcdc9f8d581b551c1a07efb320a2233b6dd23784c30309cfcb41",
+      "format": "text",
+      "lines": 469,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/outbound/codex/installed_test.go",
+      "reviewer": "providers",
+      "bytes": 646,
+      "sha256": "3590f55646f8f9631e614451ede043ca6535258297afe0f455b2d05c923d4d2e",
+      "format": "text",
+      "lines": 26,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/outbound/codex/regression_test.go",
+      "reviewer": "providers",
+      "bytes": 6407,
+      "sha256": "a2545de0092e9dc3e006fbbf9bcccf2fd507aeff2936de7e44e4d0c3df7851a4",
+      "format": "text",
+      "lines": 172,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/outbound/codex/transport.go",
+      "reviewer": "providers",
+      "bytes": 4995,
+      "sha256": "4dd8d8f95fe49d19c0164433d00556e89b99443593e1c218512ab30c9136ae4c",
+      "format": "text",
+      "lines": 171,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/aborted_test.go",
+      "reviewer": "providers",
+      "bytes": 3654,
+      "sha256": "0816698b2bb451fa600844d04cb270d8fb4dc070c468f6aafce3c4613f181ed8",
+      "format": "text",
+      "lines": 91,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/bridge.go",
+      "reviewer": "providers",
+      "bytes": 5818,
+      "sha256": "a62744d24a892f9fe1126d3cd3c93915d87b2a95ed81cd0c3cf0b7dd102bae9f",
+      "format": "text",
+      "lines": 228,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/bridge_linux_test.go",
+      "reviewer": "providers",
+      "bytes": 1493,
+      "sha256": "712b738f7fbeefbadaa6fd28a767539711324582836c6027a05cdb46649b3fb8",
+      "format": "text",
+      "lines": 61,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/bridge_test.go",
+      "reviewer": "providers",
+      "bytes": 6772,
+      "sha256": "f371a35f33a6b5a0183fe477f7279c5f2af4d0c9916056e6e035723d2f65facb",
+      "format": "text",
+      "lines": 206,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/client.go",
+      "reviewer": "providers",
+      "bytes": 2540,
+      "sha256": "dfefe955de547e31249d9fce941636758bd2608b302b01347edc96deb40c022e",
+      "format": "text",
+      "lines": 78,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/client_lifecycle_test.go",
+      "reviewer": "providers",
+      "bytes": 1567,
+      "sha256": "a9ff322722f35d522ea38e53a60933cbecef17137af82a3ad9cfd897f0f10af9",
+      "format": "text",
+      "lines": 66,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/copilot.go",
+      "reviewer": "providers",
+      "bytes": 8123,
+      "sha256": "e996f02a603c9900655d210340ba9534dc6b415661d8c73752a5b5feaed8eeb4",
+      "format": "text",
+      "lines": 243,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/copilot_test.go",
+      "reviewer": "providers",
+      "bytes": 25852,
+      "sha256": "edc68563209c0efaff85310706de7813fd0d3b57f45536f7c68be22cdadb1ada",
+      "format": "text",
+      "lines": 797,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/errors_test.go",
+      "reviewer": "providers",
+      "bytes": 1035,
+      "sha256": "e6b0c49e6dd3eaefc278e06f1ac2ddaf1ebb3472e66c6e4b14cdee4ee20f311b",
+      "format": "text",
+      "lines": 33,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/event_budget.go",
+      "reviewer": "providers",
+      "bytes": 3060,
+      "sha256": "71e59f063efb2497e64dab6ff288e5aa2721e45339b4f5b15b0dd505b51bf485",
+      "format": "text",
+      "lines": 122,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/event_budget_test.go",
+      "reviewer": "providers",
+      "bytes": 6798,
+      "sha256": "2a8cfb4e7d8c155a1ee36637b55152b219a3fd27be0e5775b43b3ad68050abc6",
+      "format": "text",
+      "lines": 196,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/frames.go",
+      "reviewer": "providers",
+      "bytes": 1707,
+      "sha256": "f0f25b2ea2f92b79f651fb08c1042cf7a51afe5f353308f07ab451274f6fd7db",
+      "format": "text",
+      "lines": 58,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/frames_fuzz_test.go",
+      "reviewer": "providers",
+      "bytes": 4266,
+      "sha256": "2211ba2612a5e9fb2309dbb3307b8ad4b468914d58474a05b3c87ac870ea39c0",
+      "format": "text",
+      "lines": 126,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/frames_test.go",
+      "reviewer": "providers",
+      "bytes": 3771,
+      "sha256": "e75f7598ad0491f31d4c43855176fd5d297b4e80282518df1750512e9ffee479",
+      "format": "text",
+      "lines": 95,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/installed_storage_test.go",
+      "reviewer": "providers",
+      "bytes": 5003,
+      "sha256": "97d2ab87a9d6c85853cad8ebcbf35e5ebf728c3aaa01467ad62a4ee97e33b4f4",
+      "format": "text",
+      "lines": 129,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/installed_test.go",
+      "reviewer": "providers",
+      "bytes": 725,
+      "sha256": "032f076e209c5cdff312d434e75098a8fd94f9b79f471acad6de4d070f412bae",
+      "format": "text",
+      "lines": 30,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/lifecycle_test.go",
+      "reviewer": "providers",
+      "bytes": 2534,
+      "sha256": "5308702c4bc991ad7cbae716a87cb286b78f4a75b11a184409efd6d519d3ba16",
+      "format": "text",
+      "lines": 83,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/process_unix_test.go",
+      "reviewer": "providers",
+      "bytes": 955,
+      "sha256": "c191a952313ecc7193a2797ab1ac586f0723b97d3f538016f3af045d5ea6fedd",
+      "format": "text",
+      "lines": 46,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/send_test.go",
+      "reviewer": "providers",
+      "bytes": 3855,
+      "sha256": "83f32fe70d7168ed85ad503a9ca3f94682e0870c9ecd57f342e4049f9b5aa37a",
+      "format": "text",
+      "lines": 117,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/storage_test.go",
+      "reviewer": "providers",
+      "bytes": 5215,
+      "sha256": "6476a9ce00947ee4270ddb9d2d4aa24fe7920c090d66b601fd6dd6dbd498ef25",
+      "format": "text",
+      "lines": 152,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/outbound/prompt/prompt.go",
+      "reviewer": "providers",
+      "bytes": 1128,
+      "sha256": "88855656684d7bdb6b04e2d39875462f9646a804ebf836a4d08c946caa825ff2",
+      "format": "text",
+      "lines": 33,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/adapters/outbound/prompt/prompt_test.go",
+      "reviewer": "providers",
+      "bytes": 770,
+      "sha256": "600c93786383b867176e246a2d9a7945c49c68e801b8fa6a9e75669c1381a565",
+      "format": "text",
+      "lines": 19,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/application/gateway.go",
+      "reviewer": "api-http",
+      "bytes": 2040,
+      "sha256": "9e76fd7a3dc2bba62f88f2770c0ae55b81f4d554b32556de09901b56dfd1f7e0",
+      "format": "text",
+      "lines": 81,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/application/gateway_test.go",
+      "reviewer": "api-http",
+      "bytes": 6890,
+      "sha256": "dcb8e87a98afc432bc0008affb9ef18bdbe65ac253131ce24279f43518267ff0",
+      "format": "text",
+      "lines": 221,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/application/models.go",
+      "reviewer": "api-http",
+      "bytes": 4514,
+      "sha256": "ca62cc4ac41f69f8cd2c4dcca011d6b3cfe77e711b696995d674f8b662ba6cca",
+      "format": "text",
+      "lines": 168,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/application/models_test.go",
+      "reviewer": "api-http",
+      "bytes": 13518,
+      "sha256": "f92821cb0602b396db35ca3af8aa24f9e56f502be546e5d662e024406c55e233",
+      "format": "text",
+      "lines": 435,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/buildinfo/info.go",
+      "reviewer": "cli-service",
+      "bytes": 1011,
+      "sha256": "933fe8b14e166c98ee2b007444aa8aef35b7f261921ee13c92e1cbd95cf981d3",
+      "format": "text",
+      "lines": 40,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/domain/completion.go",
+      "reviewer": "api-http",
+      "bytes": 1300,
+      "sha256": "68b5b361829e1b4f3ef71d7b61ab5c21c81c05af98576500b973434b7c1c6273",
+      "format": "text",
+      "lines": 45,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/domain/errors.go",
+      "reviewer": "api-http",
+      "bytes": 415,
+      "sha256": "6cf7b4561d4f2db33150daed68b4dcf363ae0d709df4175600577c094cecd380",
+      "format": "text",
+      "lines": 9,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/process/command_test.go",
+      "reviewer": "process-lifecycle",
+      "bytes": 4592,
+      "sha256": "d81367f915900d70f4b6468dd224813b69eed130f0a0615b44b098c7626fcc1b",
+      "format": "text",
+      "lines": 136,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/process/command_windows_test.go",
+      "reviewer": "process-lifecycle",
+      "bytes": 2129,
+      "sha256": "673a58a19a808ea82eddbf00c25a957adc7c736e2960c51f97f2a85f26c860bf",
+      "format": "text",
+      "lines": 67,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/process/grace_linux_test.go",
+      "reviewer": "process-lifecycle",
+      "bytes": 3369,
+      "sha256": "cba4530839dbee13e09bfc6c0daf6855b5c8e0d2b41284470ef25ed9c723d47b",
+      "format": "text",
+      "lines": 109,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/process/process.go",
+      "reviewer": "process-lifecycle",
+      "bytes": 4386,
+      "sha256": "44b8b07a8c2d8f127e0cf08c87f826022adaf8c171659129bb9b974e5bfcaf4a",
+      "format": "text",
+      "lines": 136,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/process/process_darwin_test.go",
+      "reviewer": "process-lifecycle",
+      "bytes": 1456,
+      "sha256": "4645ad981dac123a016bb5bb8d0be8a5e1051ed134f01a072372c33e7422d290",
+      "format": "text",
+      "lines": 60,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/process/process_other.go",
+      "reviewer": "process-lifecycle",
+      "bytes": 464,
+      "sha256": "9f350507acd27a5d64bc546a9487896f447af47d960dbae3212e1677235c6748",
+      "format": "text",
+      "lines": 19,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/process/process_unix.go",
+      "reviewer": "process-lifecycle",
+      "bytes": 1403,
+      "sha256": "bfec23d1e19415203421d535128458d3a3581718caee5fb8d67ac49b525f1704",
+      "format": "text",
+      "lines": 56,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/process/process_unix_test.go",
+      "reviewer": "process-lifecycle",
+      "bytes": 3982,
+      "sha256": "529ee0f93784bccce3bde1d3d3d8c993a421f9f92e304b61709e96cf7bac8a12",
+      "format": "text",
+      "lines": 131,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/process/process_windows.go",
+      "reviewer": "process-lifecycle",
+      "bytes": 5040,
+      "sha256": "78ca0e24d01acce18dcaf5bee3572b82cec6ee8506ea1e7bfb0246f222a422ba",
+      "format": "text",
+      "lines": 149,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/process/wait_darwin.go",
+      "reviewer": "process-lifecycle",
+      "bytes": 2401,
+      "sha256": "fdf1e4d7f1d4f3da9b7a28330a054e4c4dfa9f15b71e916b9d42a4a54e03aa16",
+      "format": "text",
+      "lines": 93,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/process/wait_linux.go",
+      "reviewer": "process-lifecycle",
+      "bytes": 313,
+      "sha256": "393f3fb098e656698b78bd572c8fe9f7c4f22e1bb140bb3ead85c09f7e69f30e",
+      "format": "text",
+      "lines": 19,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/process/wait_linux_test.go",
+      "reviewer": "process-lifecycle",
+      "bytes": 2331,
+      "sha256": "cbe60bfcbf13d1205b2a35c04e7310867e1897a4c610b2b0b182e0cb74df8ba9",
+      "format": "text",
+      "lines": 83,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/testutil/entrypoint.go",
+      "reviewer": "process-lifecycle",
+      "bytes": 1986,
+      "sha256": "5ebcabd754164b45cdf6aa71153a86bd269853e319ca5ce8bc8e934e09703e28",
+      "format": "text",
+      "lines": 56,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/testutil/process_other.go",
+      "reviewer": "process-lifecycle",
+      "bytes": 184,
+      "sha256": "2f60055c0399edb6f212791115359fccb04e641bae7ac4c60470dd0174dc6993",
+      "format": "text",
+      "lines": 9,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/testutil/process_unix.go",
+      "reviewer": "process-lifecycle",
+      "bytes": 570,
+      "sha256": "b933477458e6a8670e50013605819b726346e879867c2b124e1f2c97e97cb389",
+      "format": "text",
+      "lines": 27,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "internal/testutil/process_windows.go",
+      "reviewer": "process-lifecycle",
+      "bytes": 450,
+      "sha256": "62c3653ae2946e695fba5c042da33d14bd87a5770b2bd1b20fab31899c67d662",
+      "format": "text",
+      "lines": 20,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "setup.sh",
+      "reviewer": "delivery",
+      "bytes": 2854,
+      "sha256": "af155f24691b389054b2cd3b2d127e4034a01cac3c5c459baedf588cb1552b96",
+      "format": "text",
+      "lines": 75,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "tools/acceptance/command_test.go",
+      "reviewer": "delivery",
+      "bytes": 1338,
+      "sha256": "c48d9f1ff5c0e5f05cffcaa4016c25e76f96bf68adf21029ca684dae5163f1ea",
+      "format": "text",
+      "lines": 48,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "tools/acceptance/logs.go",
+      "reviewer": "delivery",
+      "bytes": 745,
+      "sha256": "927901c89ace29de1e0e5d527f52dcafe6846f786732c2c3a0c16f7368b23a62",
+      "format": "text",
+      "lines": 31,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "tools/acceptance/logs_test.go",
+      "reviewer": "delivery",
+      "bytes": 2035,
+      "sha256": "c65675facae20895b743a86056a681f008e00be31b2b44c15f30acccc4aa8eaf",
+      "format": "text",
+      "lines": 72,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "tools/acceptance/main.go",
+      "reviewer": "delivery",
+      "bytes": 9755,
+      "sha256": "de26a6efec0527c28bbade9df5aeda7c6bba2e9154df2aadc9b735adf641453d",
+      "format": "text",
+      "lines": 283,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "tools/acceptance/main_test.go",
+      "reviewer": "delivery",
+      "bytes": 3083,
+      "sha256": "35e9111c66cdb9c51812152b3f04e9f1f8fd42f3ab7242ca22226433d5125528",
+      "format": "text",
+      "lines": 93,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "tools/acceptance/ownership_linux_test.go",
+      "reviewer": "delivery",
+      "bytes": 1700,
+      "sha256": "a66bac406876a76fdfc12b18233ef41bfa28b172709a262117f04aed3f968e29",
+      "format": "text",
+      "lines": 61,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "tools/acceptance/process_other.go",
+      "reviewer": "delivery",
+      "bytes": 250,
+      "sha256": "dca39480555fde5f877254124b58aeba4b423cd25409ecf93a424c409ca2092a",
+      "format": "text",
+      "lines": 8,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "tools/acceptance/process_unix.go",
+      "reviewer": "delivery",
+      "bytes": 487,
+      "sha256": "d210d078ee4d4b15cac3e8d4e0ce480180503c60e20ab07c470cbcabda84f879",
+      "format": "text",
+      "lines": 19,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "tools/acceptance/process_unix_test.go",
+      "reviewer": "delivery",
+      "bytes": 5795,
+      "sha256": "507af4b9678efa437913006cf013104e0b8f26c7c827d19a328d3d7caf5358a3",
+      "format": "text",
+      "lines": 185,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "tools/browser/acceptance.mjs",
+      "reviewer": "delivery",
+      "bytes": 13932,
+      "sha256": "28611f681abc0a4d842bb5beb452e533e3169906520fdf3d2b4c03d5b44dc4d6",
+      "format": "text",
+      "lines": 258,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "tools/browser/package-lock.json",
+      "reviewer": "delivery",
+      "bytes": 1185,
+      "sha256": "442cd3082f3c43913dbe70be0d294451fe5f94d86ba5d9c610cfd1e6ee18554e",
+      "format": "text",
+      "lines": 42,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "tools/browser/package.json",
+      "reviewer": "delivery",
+      "bytes": 199,
+      "sha256": "6be33381c49c84a3acadcf771af91264bd198e87d20bc1e9fc1cdf0ec7b6ba3d",
+      "format": "text",
+      "lines": 11,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "tools/project-openapi/contract.go",
+      "reviewer": "delivery",
+      "bytes": 8196,
+      "sha256": "7f35cb02cc889a6d06dfb0c9b6dc39c6864a72d5b746dbe752279ad37027dd5c",
+      "format": "text",
+      "lines": 119,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "tools/project-openapi/main.go",
+      "reviewer": "delivery",
+      "bytes": 8233,
+      "sha256": "17c7abc1f1741e8c6cb50d4228209e0934bbfe65a74a5075ed2a224f45b8cbd9",
+      "format": "text",
+      "lines": 246,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "tools/project-openapi/main_test.go",
+      "reviewer": "delivery",
+      "bytes": 4042,
+      "sha256": "63c3ddb02b57dbe7718172446a4efc59211fcbb2612c59e6283af7ac6d63c012",
+      "format": "text",
+      "lines": 117,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "tools/project-openapi/testdata/README.md",
+      "reviewer": "delivery",
+      "bytes": 1387,
+      "sha256": "44f3f25c17f23045bf40039aa67b00fc77a1f284d92ec9915155cca05aeccb50",
+      "format": "text",
+      "lines": 29,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "tools/project-openapi/testdata/openai-85a23866.json.gz",
+      "reviewer": "delivery",
+      "bytes": 512176,
+      "sha256": "1a5eb1b9b94d5e5acc45c8783f63ed23f34d96dd33cde5e5066f10873facc000",
+      "format": "gzip",
+      "lines": 4074,
+      "review_status": "pending at inventory freeze",
+      "decompressed_lines": 136346,
+      "decompressed_sha256": "0e4dc3d7f52cc7d7c41940587b5ae23c0e3173bd4b4384f9d673ee90185ebafb",
+      "coverage_exception": "Upstream OpenAPI: provenance, checksum, projection-relevant schemas and ancestors only"
+    },
+    {
+      "path": "tools/releaseverify/main.go",
+      "reviewer": "delivery",
+      "bytes": 10517,
+      "sha256": "d875634679e9a1123b243513052bb536fc7e9cc77251a053864a6355fbeb920e",
+      "format": "text",
+      "lines": 308,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "tools/releaseverify/main_test.go",
+      "reviewer": "delivery",
+      "bytes": 7290,
+      "sha256": "ba4ad207266ad9960c74e09839d6b2a8fd61b8ceb5c7720bc985b269255b063c",
+      "format": "text",
+      "lines": 189,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "tools/releaseverify/smoke.go",
+      "reviewer": "delivery",
+      "bytes": 9796,
+      "sha256": "a52da5194ee14035928c598d38ba5eb38de609588450e2e4edd49781aa9a1d88",
+      "format": "text",
+      "lines": 307,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "tools/setup/canonical_test.go",
+      "reviewer": "delivery",
+      "bytes": 2039,
+      "sha256": "96c11921a11e8880f8b317dcfdd40fa7fe9537c75c7d25ac28c64e167a1885ab",
+      "format": "text",
+      "lines": 65,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "tools/setup/install_test.go",
+      "reviewer": "delivery",
+      "bytes": 6092,
+      "sha256": "edfbf46b9126895b86e5982a2434981affc959ff3578037000470b9afa303b0b",
+      "format": "text",
+      "lines": 189,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "tools/setup/setup_test.go",
+      "reviewer": "delivery",
+      "bytes": 10786,
+      "sha256": "cece5259171b831626b953c3cb2c7fa569f6311d684acce029c8c8e23910f6e3",
+      "format": "text",
+      "lines": 298,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "tools/systemd/ci.sh",
+      "reviewer": "delivery",
+      "bytes": 2344,
+      "sha256": "af54a106f46171c923323ae916f08a7e97fa388108e22159824b7d95f016dea7",
+      "format": "text",
+      "lines": 46,
+      "review_status": "pending at inventory freeze"
+    },
+    {
+      "path": "tools/systemd/lifecycle_test.go",
+      "reviewer": "delivery",
+      "bytes": 18311,
+      "sha256": "4c32d58bdb088487556d114a514e04784491718952f659a8dfa3276b346dd8ca",
+      "format": "text",
+      "lines": 494,
+      "review_status": "pending at inventory freeze"
+    }
+  ],
+  "reviewer_status": {
+    "api-http": "pending at inventory freeze",
+    "cli-service": "pending at inventory freeze",
+    "delivery": "pending at inventory freeze",
+    "docs-examples": "pending at inventory freeze",
+    "process-lifecycle": "pending at inventory freeze",
+    "providers": "pending at inventory freeze"
+  },
+  "settled_findings": [
+    {
+      "id": "api-r2-1",
+      "issue": "Known-field JSON case aliases and later scalar matching-member override",
+      "disposition": "accepted compatibility limit",
+      "authority": "Explicit user acceptance; documented in current README and regression tested"
+    }
+  ],
+  "consecutive_clean_rounds": 0,
+  "converged": false
+}

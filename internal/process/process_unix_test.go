@@ -50,12 +50,13 @@ func TestUnixCleanupContainmentBoundary(t *testing.T) {
 			cmd := exec.Command(os.Args[0], "-test.run=^TestUnixContainmentFixture$")
 			cmd.Env = append(os.Environ(), "HARNESS_GATEWAY_UNIX_TREE_FIXTURE="+mode,
 				"HARNESS_GATEWAY_UNIX_TREE_PID="+marker, "GORACE=atexit_sleep_ms=0")
-			stop, err := Start(cmd)
+			owned, err := Start(cmd)
 			if err != nil {
 				t.Fatal(err)
 			}
+			stop := owned.Stop
 			done := make(chan struct{})
-			go func() { _ = cmd.Wait(); close(done) }()
+			go func() { _ = owned.Wait(); close(done) }()
 			t.Cleanup(func() { _ = stop(); <-done })
 			var child int
 			waitUnixProcess(t, func() bool {

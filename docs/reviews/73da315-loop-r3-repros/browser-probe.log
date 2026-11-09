@@ -1,0 +1,3 @@
+(node:2864650) ExperimentalWarning: `--experimental-loader` may be removed in the future; instead use `register()`:
+--import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("/mnt/DATA/workspace/AI/Harness-Gateway/.egm-r3-probes/loader.mjs", pathToFileURL("./"));'
+(Use `node --trace-warnings ...` to show where the warning was created)

@@ -386,8 +386,16 @@ func requireLoadedManagedService(ctx context.Context, path string) error {
 			properties[key] = value
 		}
 	}
+	if err := validateLoadedManagedService(path, properties); err != nil {
+		return fmt.Errorf("refusing to modify service: %w", err)
+	}
+	return nil
+}
+
+// Validate the properties from the same inspection that supplies diagnostics.
+func validateLoadedManagedService(path string, properties map[string]string) error {
 	if properties["LoadState"] != "loaded" || properties["FragmentPath"] == "" {
-		return errors.New("refusing to modify a service without a loaded managed unit")
+		return errors.New("service does not have a loaded managed unit")
 	}
 	managed, err := os.Stat(path)
 	if err != nil {
@@ -395,7 +403,7 @@ func requireLoadedManagedService(ctx context.Context, path string) error {
 	}
 	loaded, err := os.Stat(properties["FragmentPath"])
 	if err != nil || !os.SameFile(managed, loaded) {
-		return fmt.Errorf("refusing to modify service loaded from %q instead of managed unit %q", properties["FragmentPath"], path)
+		return fmt.Errorf("service loaded from %q instead of managed unit %q", properties["FragmentPath"], path)
 	}
 	return nil
 }

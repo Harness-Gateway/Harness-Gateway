@@ -1,15 +1,26 @@
-//go:build unix
+//go:build linux || darwin
 
 package process
 
 import (
 	"errors"
 	"fmt"
+	"os"
 	"os/exec"
-	"runtime"
 	"syscall"
-	"time"
 )
+
+func signal(cmd *exec.Cmd, sig os.Signal) error {
+	value, ok := sig.(syscall.Signal)
+	if !ok {
+		return fmt.Errorf("unsupported process-group signal %T", sig)
+	}
+	err := syscall.Kill(-cmd.Process.Pid, value)
+	if errors.Is(err, syscall.ESRCH) || errors.Is(err, syscall.EPERM) && zombieOnlyGroup(cmd.Process.Pid) {
+		return os.ErrProcessDone
+	}
+	return err
+}
 
 func start(cmd *exec.Cmd) (func() error, error) {
 	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
@@ -22,25 +33,24 @@ func start(cmd *exec.Cmd) (func() error, error) {
 		if errors.Is(err, syscall.ESRCH) {
 			return nil
 		}
-		if runtime.GOOS == "darwin" && errors.Is(err, syscall.EPERM) {
-			// Darwin's killpg skips zombies and can report EPERM while an
-			// exited group leader is being reaped. Confirm disappearance rather
-			// than suppressing a genuine permission failure on a live group.
-			deadline := time.Now().Add(250 * time.Millisecond)
-			for time.Now().Before(deadline) {
-				probe := syscall.Kill(-pid, 0)
-				if errors.Is(probe, syscall.ESRCH) {
-					return nil
-				}
-				if !errors.Is(probe, syscall.EPERM) {
-					break
-				}
-				time.Sleep(time.Millisecond)
-			}
+		if errors.Is(err, syscall.EPERM) && zombieOnlyGroup(pid) {
+			return nil
 		}
 		if err != nil {
 			return fmt.Errorf("terminate CLI process group %d: %w", pid, err)
 		}
 		return nil
 	}, nil
+}
+
+func wait(cmd *exec.Cmd, child *Child, cleanup func() error) error {
+	// Observe exit without reaping: the leader's PID still reserves the group
+	// identity when Stop signals it, even when no live members remain.
+	exitErr := waitForExit(cmd.Process.Pid)
+	if errors.Is(exitErr, syscall.ECHILD) {
+		child.lost.Store(true)
+		return errors.Join(errOwnershipLost, exitErr, cmd.Wait())
+	}
+	stopErr := cleanup()
+	return errors.Join(exitErr, stopErr, cmd.Wait())
 }

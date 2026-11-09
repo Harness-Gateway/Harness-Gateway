@@ -1,0 +1,21 @@
+
+> test
+> node acceptance.mjs
+
+PASS browser acceptance (16 cases)
+  gateway root redirects to interactive documentation on the configured port
+  UI renders with bundled assets, no cloud assistant, and off-origin requests blocked
+  cross-origin no-CORS Blob POST is denied before CLI startup
+  cross-origin model GET/HEAD denied with cold gateway cache
+  cross-origin model GET/HEAD denied with warm gateway cache
+  health request through Scalar
+  discovered aliases and native IDs through Scalar
+  default documented Codex example works without editing
+  codex: buffered completion
+  codex: successful SSE visible, including [DONE] and usage
+  codex: text arrives before stream completion; Cancel reaps PID 905895 and capacity recovers
+  copilot: buffered completion
+  copilot: successful SSE visible, including [DONE] and usage
+  copilot: text arrives before stream completion; Cancel reaps PID 906237 and capacity recovers
+  unsupported request returns a visible HTTP 400 error
+  mobile render

@@ -1,0 +1,7 @@
+{
+  "result": "passed",
+  "generator": "oapi-codegen v2.5.1",
+  "generated_sha256": "a4e722ad7646d988943df8135ab5ce8e2baf8f0d53dd327b99ecfbc54e8a59e8",
+  "check": "Pinned go generate ./api reproduced byte-identical output",
+  "openapi_validator": "kin-openapi v0.133.0 passed"
+}

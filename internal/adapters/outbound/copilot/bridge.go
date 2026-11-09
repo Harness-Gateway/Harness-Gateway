@@ -75,20 +75,20 @@ func startBridge(ctx context.Context, path, directory string) (*cliBridge, error
 	cmd.Stdin, cmd.Stdout = stdin, stdout
 	defer stdin.Close()
 	defer stdout.Close()
-	b.kill, err = process.Start(cmd)
+	child, err := process.Start(cmd)
 	if err != nil {
 		_ = b.stdin.Close()
 		_ = b.stdout.Close()
 		_ = listener.Close()
 		return nil, err
 	}
+	b.kill = child.Stop
 	done := make(chan struct{})
 	b.processDone = done
 	go func() {
-		_ = cmd.Wait()
-		// Also clean up children if the direct CLI exits first. Their inherited
-		// pipe handles must not keep an otherwise dead connection open.
-		_ = b.kill()
+		// Retire descendants before reaping the direct CLI, including those
+		// keeping inherited pipe handles open after its exit.
+		_ = child.Wait()
 		close(done)
 	}()
 	b.workers.Add(1)

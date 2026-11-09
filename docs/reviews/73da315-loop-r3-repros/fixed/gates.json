@@ -1,0 +1,67 @@
+[
+  {
+    "gate": "fmt",
+    "command": [
+      "go",
+      "fmt",
+      "./..."
+    ],
+    "exit_code": 0,
+    "seconds": 1.37
+  },
+  {
+    "gate": "vet",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit_code": 0,
+    "seconds": 10.11
+  },
+  {
+    "gate": "tests",
+    "command": [
+      "go",
+      "test",
+      "./..."
+    ],
+    "exit_code": 0,
+    "seconds": 74.87
+  },
+  {
+    "gate": "build",
+    "command": [
+      "go",
+      "build",
+      "./..."
+    ],
+    "exit_code": 0,
+    "seconds": 6.79
+  },
+  {
+    "gate": "race",
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "-p",
+      "1",
+      "./..."
+    ],
+    "exit_code": 0,
+    "seconds": 394.92
+  },
+  {
+    "gate": "darwin-cross-compile",
+    "exit_code": 0,
+    "packages": 15,
+    "seconds": 45.39
+  },
+  {
+    "gate": "windows-cross-compile",
+    "exit_code": 0,
+    "packages": 15,
+    "seconds": 32.69
+  }
+]

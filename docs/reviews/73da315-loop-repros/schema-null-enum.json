@@ -1,0 +1,32 @@
+{
+  "schema": {
+    "enum": [
+      "stop",
+      "length",
+      "tool_calls",
+      "content_filter",
+      "function_call"
+    ],
+    "nullable": true,
+    "type": "string",
+    "x-go-type": "string"
+  },
+  "oas_nullable_expansion": {
+    "enum": [
+      "stop",
+      "length",
+      "tool_calls",
+      "content_filter",
+      "function_call"
+    ],
+    "type": [
+      "string",
+      "null"
+    ]
+  },
+  "strict_enum_validation_of_null": [
+    "None is not one of ['stop', 'length', 'tool_calls', 'content_filter', 'function_call']"
+  ],
+  "scope": "OAS 3.0.3 nullable type expansion followed by Draft4 enum validation; not a tested SDK/client failure",
+  "spec": "https://spec.openapis.org/oas/v3.0.3.html#fixed-fields-20"
+}

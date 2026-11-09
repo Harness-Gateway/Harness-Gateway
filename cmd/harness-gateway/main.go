@@ -221,7 +221,7 @@ func run(options options, logger *slog.Logger) error {
 		ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 15 * time.Second, IdleTimeout: 60 * time.Second,
 		BaseContext: func(net.Listener) context.Context { return root },
 	}
-	listener, err := net.Listen("tcp", options.address)
+	listener, err := listenLoopback(options.address)
 	if err != nil {
 		return err
 	}
@@ -252,12 +252,37 @@ func run(options options, logger *slog.Logger) error {
 }
 
 func loopbackAddress(address string) error {
-	host, _, err := net.SplitHostPort(address)
+	_, err := numericLoopbackAddress(address)
+	return err
+}
+
+// Resolve the accepted localhost spelling ourselves: a system resolver must
+// never choose the interface for this unauthenticated listener or diagnostics.
+func numericLoopbackAddress(address string) (string, error) {
+	host, port, err := net.SplitHostPort(address)
 	if err != nil {
-		return err
+		return "", err
 	}
-	if host != "localhost" && !net.ParseIP(host).IsLoopback() {
-		return errors.New("this unauthenticated gateway requires a loopback listen address")
+	if strings.EqualFold(host, "localhost") {
+		host = "127.0.0.1"
 	}
-	return nil
+	if !net.ParseIP(host).IsLoopback() {
+		return "", errors.New("this unauthenticated gateway requires a loopback listen address")
+	}
+	return net.JoinHostPort(host, port), nil
+}
+
+func listenLoopback(address string) (net.Listener, error) {
+	address, err := numericLoopbackAddress(address)
+	if err != nil {
+		return nil, err
+	}
+	listener, err := net.Listen("tcp", address)
+	if err != nil {
+		return nil, err
+	}
+	if bound, ok := listener.Addr().(*net.TCPAddr); !ok || !bound.IP.IsLoopback() {
+		return nil, errors.Join(errors.New("listener did not bind a loopback address"), listener.Close())
+	}
+	return listener, nil
 }

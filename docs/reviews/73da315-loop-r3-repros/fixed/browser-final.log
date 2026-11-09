@@ -1,0 +1,30 @@
+
+> test
+> node --test interruption.test.mjs && node acceptance.mjs
+
+▶ targeted browser-runner signals retire owned processes and save diagnostics
+  ✔ launch/SIGTERM (14956.156392ms)
+  ✔ close-failure/SIGTERM (8303.612128ms)
+  ✔ codex/SIGTERM (10386.873743ms)
+  ✔ copilot/SIGINT (7723.708657ms)
+✔ targeted browser-runner signals retire owned processes and save diagnostics (41374.513071ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 41610.03565
+FAIL browser acceptance (0 cases)
+browserType.launch: Executable doesn't exist at /home/maurizio/.cache/ms-playwright/chromium_headless_shell-1254/chrome-headless-shell-linux64/chrome-headless-shell
+╔════════════════════════════════════════════════════════════╗
+║ Looks like Playwright was just installed or updated.       ║
+║ Please run the following command to download new browsers: ║
+║                                                            ║
+║     npx playwright install                                 ║
+║                                                            ║
+║ <3 Playwright Team                                         ║
+╚════════════════════════════════════════════════════════════╝
+    at checks (/mnt/DATA/workspace/AI/Harness-Gateway/tools/browser/acceptance.mjs:116:24)
+    at async file:///mnt/DATA/workspace/AI/Harness-Gateway/tools/browser/acceptance.mjs:323:3

@@ -17,6 +17,8 @@ import (
 	"runtime"
 	"syscall"
 	"time"
+
+	"github.com/harness-gateway/harness-gateway/internal/process"
 )
 
 func main() {
@@ -41,13 +43,40 @@ func main() {
 
 func command(ctx context.Context, name string, args ...string) error {
 	fmt.Fprintln(os.Stderr, "acceptance:", name, args)
-	cmd := exec.CommandContext(ctx, name, args...)
-	configureCommand(cmd)
+	cmd := exec.Command(name, args...)
 	cmd.Stdout, cmd.Stderr = os.Stdout, os.Stderr
-	if err := cmd.Run(); err != nil {
+	if err := runCommand(ctx, cmd); err != nil {
 		return fmt.Errorf("%s failed: %w", name, err)
 	}
 	return nil
+}
+
+// Own cancellation explicitly: exec.CommandContext's watcher may otherwise
+// signal a group concurrently with Cmd.Wait reaping its leader.
+func runCommand(ctx context.Context, cmd *exec.Cmd) error {
+	child, err := startCommand(ctx, cmd)
+	if err != nil {
+		return err
+	}
+	return waitCommand(ctx, child)
+}
+
+func startCommand(ctx context.Context, cmd *exec.Cmd) (*process.Child, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
+	if cmd.Cancel != nil {
+		return nil, errors.New("acceptance commands require owner-managed cancellation")
+	}
+	cmd.WaitDelay = 2 * time.Second
+	return process.Start(cmd)
+}
+
+func waitCommand(ctx context.Context, child *process.Child) error {
+	stopOnCancel := context.AfterFunc(ctx, func() { _ = stopCommand(child) })
+	waitErr := waitCommandExit(child)
+	stopOnCancel()
+	return errors.Join(waitErr, child.Stop(), ctx.Err())
 }
 
 func run(ctx context.Context, live bool, models, nativeModels, gatewayBinary, outputDirectory string, soak time.Duration) (runErr error) {
@@ -162,29 +191,33 @@ func resolveGateway(ctx context.Context, directory, supplied string) (string, er
 }
 
 type gatewayProcess struct {
-	cmd  *exec.Cmd
-	done chan struct{}
-	err  error // Read only after done closes.
-	log  *os.File
-	url  string
+	cmd   *exec.Cmd
+	child *process.Child
+	done  chan struct{}
+	err   error // Read only after done closes.
+	log   *os.File
+	url   string
 }
 
 var listeningURL = regexp.MustCompile(`url=(http://127\.0\.0\.1:[0-9]+)`)
 
 func startGateway(ctx context.Context, directory, name, executable string, env []string, args ...string) (*gatewayProcess, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
 	log, err := os.Create(filepath.Join(directory, name+".log"))
 	if err != nil {
 		return nil, err
 	}
 	p := &gatewayProcess{cmd: exec.Command(executable, append([]string{"-l", "127.0.0.1:0"}, args...)...), done: make(chan struct{}), log: log}
-	configureCommand(p.cmd)
 	p.cmd.Env = env
 	p.cmd.Stdout, p.cmd.Stderr = log, io.MultiWriter(log, os.Stderr)
-	if err := p.cmd.Start(); err != nil {
+	p.child, err = startCommand(ctx, p.cmd)
+	if err != nil {
 		_ = log.Close()
 		return nil, err
 	}
-	go func() { p.err = p.cmd.Wait(); close(p.done) }()
+	go func() { p.err = p.child.Wait(); close(p.done) }()
 	ready, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
 	client := &http.Client{Timeout: 500 * time.Millisecond}
@@ -233,17 +266,18 @@ func (p *gatewayProcess) stop() error {
 		return fmt.Errorf("gateway exited unexpectedly: %v", p.err)
 	default:
 	}
-	if err := p.cmd.Process.Signal(os.Interrupt); err != nil {
-		_ = killCommand(p.cmd)
+	var cleanupErr error
+	if err := interruptGateway(p.child); err != nil && !errors.Is(err, os.ErrProcessDone) {
+		cleanupErr = errors.Join(err, p.child.Stop())
 	}
 	timer := time.NewTimer(5 * time.Second)
 	defer timer.Stop()
 	select {
 	case <-p.done:
-		return p.err
+		return errors.Join(p.err, cleanupErr)
 	case <-timer.C:
-		_ = killCommand(p.cmd)
+		cleanupErr = errors.Join(cleanupErr, p.child.Stop())
 		<-p.done
-		return errors.New("gateway did not stop gracefully within 5s")
+		return errors.Join(errors.New("gateway did not stop gracefully within 5s"), cleanupErr)
 	}
 }

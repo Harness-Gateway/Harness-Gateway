@@ -1,0 +1,10 @@
+{
+  "node_exit": -15,
+  "node_pid": 2864650,
+  "gateway_pid": 2865009,
+  "gateway_still_running": true,
+  "runtime_directory_retained": true,
+  "acceptance_receipt_written": false,
+  "pause": "Playwright launch stub after actual gateway readiness; no browser launched",
+  "source": "unaltered tools/browser/acceptance.mjs with dependency loader hook"
+}

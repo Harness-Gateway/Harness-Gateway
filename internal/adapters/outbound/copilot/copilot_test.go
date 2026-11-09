@@ -198,6 +198,9 @@ func fixture(mode string) error {
 				return err
 			}
 		case "session.create":
+			if mode == "create-hold" {
+				continue
+			}
 			if mode == "contract" {
 				var captured struct {
 					Model, ReasoningEffort string
@@ -295,6 +298,9 @@ func fixture(mode string) error {
 				return err
 			}
 		case "models.list":
+			if mode == "models-hold" {
+				continue
+			}
 			if mode == "catalog-hold" || mode == "catalog-gate" {
 				if path := os.Getenv("HARNESS_GATEWAY_ACCEPTANCE_CATALOG"); path != "" {
 					if err := os.WriteFile(path, []byte("started"), 0600); err != nil {
@@ -382,6 +388,25 @@ func fixture(mode string) error {
 				}
 				continue
 			}
+			if mode == "aborted-pre" || mode == "aborted-post" {
+				if mode == "aborted-post" {
+					if err := reply(map[string]string{"messageId": "fixture-user"}); err != nil {
+						return err
+					}
+				}
+				if err := event(&sdk.AssistantMessageDeltaData{MessageID: "aborted-message", DeltaContent: "partial"}, nil); err != nil {
+					return err
+				}
+				if err := event(&sdk.SessionIdleData{Aborted: ptr(true)}, nil); err != nil {
+					return err
+				}
+				if mode == "aborted-pre" {
+					if err := reply(map[string]string{"messageId": "fixture-user"}); err != nil {
+						return err
+					}
+				}
+				continue
+			}
 			if err := reply(map[string]string{"messageId": "fixture-user"}); err != nil {
 				return err
 			}
@@ -454,7 +479,11 @@ func fixture(mode string) error {
 			if err := event(&sdk.AssistantUsageData{Model: "fixture", InputTokens: ptr(int64(12)), OutputTokens: ptr(int64(3)), FinishReason: ptr("length")}, nil); err != nil {
 				return err
 			}
-			if err := event(&sdk.SessionIdleData{}, nil); err != nil {
+			idle := &sdk.SessionIdleData{}
+			if mode == "idle-false" {
+				idle.Aborted = ptr(false)
+			}
+			if err := event(idle, nil); err != nil {
 				return err
 			}
 		case "ping":

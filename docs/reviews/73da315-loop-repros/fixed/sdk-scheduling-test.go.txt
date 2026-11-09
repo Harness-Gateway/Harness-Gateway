@@ -1,0 +1,25 @@
+package copilot
+import (
+ "context"
+ "testing"
+ "time"
+ sdk "github.com/github/copilot-sdk/go"
+)
+func TestReviewCancellationRetiresAfterSDKReturn(t *testing.T) {
+ h,_,_:=testHarness(t,"normal")
+ readReady:=make(chan struct{})
+ clearReady:=make(chan struct{})
+ release:=make(chan struct{})
+ sdk.HGReviewBeforeModelRead=func(){close(readReady); <-release}
+ sdk.HGReviewBeforeClientClear=func(){close(clearReady); <-release}
+ defer func(){sdk.HGReviewBeforeModelRead=nil; sdk.HGReviewBeforeClientClear=nil}()
+ ctx,cancel:=context.WithTimeout(t.Context(),8*time.Second)
+ defer cancel()
+ done:=make(chan error,1)
+ go func(){_,err:=h.Models(ctx);done<-err}()
+ select {case <-readReady:case <-time.After(5*time.Second): t.Fatal("model read not reached")}
+ cancel()
+ select {case <-clearReady: t.Error("SDK retired while its model read was still paused");case <-time.After(100*time.Millisecond):}
+ close(release)
+ select {case err:=<-done: t.Logf("cancellation returned: %v",err);case <-time.After(5*time.Second):t.Fatal("cleanup did not finish")}
+}

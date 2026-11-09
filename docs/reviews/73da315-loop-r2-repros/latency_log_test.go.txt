@@ -1,0 +1,10 @@
+package main
+import("strings";"testing")
+func TestReviewFirstTextLogFormatting(t *testing.T){
+ for _,n:=range []string{"1500000000","0"}{
+  line:=`{"msg":"completion finished","level":"INFO","duration":2000000000,"time_to_first_text":`+n+`}`
+  rendered:=formatJournalLine(line)
+  t.Log(rendered)
+  if !strings.Contains(rendered,"duration=2s")||!strings.Contains(rendered,"time_to_first_text="+n){t.Fatalf("candidate not reproduced: %s",rendered)}
+ }
+}

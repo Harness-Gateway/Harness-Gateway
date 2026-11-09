@@ -56,6 +56,24 @@ func TestPublishedGatewayContractIsCurrent(t *testing.T) {
 	}
 }
 
+func TestHealthDescriptionMatchesSafeReadPolicy(t *testing.T) {
+	var document struct {
+		Paths map[string]struct {
+			Get struct {
+				Responses map[string]struct{ Description string }
+			}
+		}
+	}
+	if err := json.Unmarshal(api.OpenAPI, &document); err != nil {
+		t.Fatal(err)
+	}
+	health := document.Paths["/health"].Get.Responses["403"].Description
+	models := document.Paths["/v1/models"].Get.Responses["403"].Description
+	if health != "Non-loopback Host is forbidden." || health == models {
+		t.Fatalf("health origin policy overstated: health=%q models=%q", health, models)
+	}
+}
+
 func TestChecksumRequired(t *testing.T) {
 	if _, err := project([]byte(`{"components":{"schemas":{}}}`)); err == nil {
 		t.Fatal("accepted an unpinned schema")
@@ -75,7 +93,7 @@ func TestObfuscationSchemaAllowsOnlyFalseOrNull(t *testing.T) {
 
 func TestNullableNormalization(t *testing.T) {
 	input := node{"anyOf": []any{node{"type": "string", "enum": []any{"stop", nil}}, node{"type": "null"}}, "description": "upstream", "examples": []any{"stop"}}
-	want := node{"type": "string", "enum": []any{"stop"}, "nullable": true, "x-go-type": "string"}
+	want := node{"type": "string", "enum": []any{"stop", nil}, "nullable": true, "x-go-type": "string"}
 	if actual := normalize(input); !reflect.DeepEqual(actual, want) {
 		t.Fatalf("got %#v, want %#v", actual, want)
 	}

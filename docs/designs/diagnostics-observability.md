@@ -26,9 +26,10 @@ Foreground flags describe the local checks and listener to contact. The caller
 must supply settings matching the foreground server. Passing those checks does
 not establish that the server uses the same configuration or executable.
 
-`doctor --service` requires a managed Linux user service. It inspects only an
-active/running invocation, reads that invocation's startup record, and uses its
-recorded listener, CLI paths, and working directory. Missing current metadata or
+`doctor --service` requires a managed Linux user service and verifies that the
+manager-selected fragment is the managed file before CLI or HTTP probes. It
+inspects only an active/running invocation, reads that invocation's startup
+record, and uses its recorded listener, CLI paths, and working directory. Missing current metadata or
 an inactive service fails without probing a historical listener. A pinned CLI
 path differing from shell PATH is informational, not itself a failure.
 

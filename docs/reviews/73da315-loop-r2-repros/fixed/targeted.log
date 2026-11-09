@@ -1,0 +1,4 @@
+ok  	github.com/harness-gateway/harness-gateway/internal/process	0.136s
+ok  	github.com/harness-gateway/harness-gateway/tools/acceptance	27.260s
+ok  	github.com/harness-gateway/harness-gateway/internal/adapters/outbound/copilot	14.794s
+ok  	github.com/harness-gateway/harness-gateway/cmd/harness-gateway	3.147s

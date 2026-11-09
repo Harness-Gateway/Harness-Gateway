@@ -1,0 +1,116 @@
+{
+  "status": "passed",
+  "base": "73da315fc9d384595c2bf229a37abf3963fcfb82",
+  "source_state": "accepted round1/round2/round3 fixes, uncommitted dev",
+  "go_version": "go1.27.3 linux/amd64",
+  "gates": [
+    {
+      "gate": "fmt",
+      "command": [
+        "go",
+        "fmt",
+        "./..."
+      ],
+      "exit_code": 0,
+      "seconds": 1.37
+    },
+    {
+      "gate": "vet",
+      "command": [
+        "go",
+        "vet",
+        "./..."
+      ],
+      "exit_code": 0,
+      "seconds": 10.11
+    },
+    {
+      "gate": "tests",
+      "command": [
+        "go",
+        "test",
+        "./..."
+      ],
+      "exit_code": 0,
+      "seconds": 74.87
+    },
+    {
+      "gate": "build",
+      "command": [
+        "go",
+        "build",
+        "./..."
+      ],
+      "exit_code": 0,
+      "seconds": 6.79
+    },
+    {
+      "gate": "race",
+      "command": [
+        "go",
+        "test",
+        "-race",
+        "-p",
+        "1",
+        "./..."
+      ],
+      "exit_code": 0,
+      "seconds": 394.92
+    },
+    {
+      "gate": "darwin-cross-compile",
+      "exit_code": 0,
+      "packages": 15,
+      "seconds": 45.39
+    },
+    {
+      "gate": "windows-cross-compile",
+      "exit_code": 0,
+      "packages": 15,
+      "seconds": 32.69
+    }
+  ],
+  "spring_ai": {
+    "tests": 61,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "runner_exit_code": 0,
+    "owned_gateways_stopped": true,
+    "private_gateway_sha256": "6efa7edf85abef6d33066cc5db60f33eeda10c5eb514ee2cff13f836a12f067b"
+  },
+  "browser": {
+    "interruption_cases": 4,
+    "interruption_exit_code": 0,
+    "real_ui_cases": 16,
+    "real_ui_exit_code": 0,
+    "version": "153.0.8010.12",
+    "executable_override": "/home/maurizio/.cache/ms-playwright/chromium_headless_shell-1243/chrome-headless-shell-linux64/chrome-headless-shell",
+    "normal_cleanup_succeeded": true,
+    "default_npm_test": "Failed because expected Chromium1254 was not installed locally; interruption stage passed; UI rerun passed via existing explicit executable override",
+    "interruption_test_runtime": "actual disposable gateways and CLI fixtures; controlled Playwright pause; Linux only"
+  },
+  "cross_compile": {
+    "darwin": {
+      "packages": 15,
+      "test_binaries": 11
+    },
+    "windows": {
+      "packages": 15,
+      "test_binaries": 11
+    }
+  },
+  "not_run": [
+    "native macOS/Windows execution",
+    "new remote CI",
+    "authenticated inference",
+    "installed-service changes",
+    "public-release verification"
+  ],
+  "superseded_failures": [
+    "Initial wait-hook regression fixed before the final full Go gates.",
+    "Initial fake Codex stream omitted required Be brief system message; corrected fixture and repeated all signal tests.",
+    "Default npm test could not find expected Chromium; real UI rerun used installed build through documented override."
+  ],
+  "self_review": "Shared cleanup/Wait policy selection, identity reservation, all acceptance wait paths, signal handling before spawn, cleanup-error isolation, diagnostic persistence, independent foreground CLI checks, regression handshakes and scope preservation reviewed. git diff --check passed."
+}

@@ -1,0 +1,313 @@
+package main
+
+import (
+	"bytes"
+	"context"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"io"
+	"net/http"
+	"net/http/httptest"
+	"os"
+ "path/filepath"
+	"strings"
+	"sync/atomic"
+	"testing"
+	"time"
+
+	"github.com/harness-gateway/harness-gateway/internal/buildinfo"
+	"github.com/harness-gateway/harness-gateway/internal/testutil"
+	"github.com/spf13/pflag"
+)
+
+func TestDoctorChecksAndExplicitInference(t *testing.T) {
+	for _, probe := range []bool{false, true} {
+		t.Run(fmt.Sprint(probe), func(t *testing.T) {
+			var health, models, completions atomic.Int32
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				switch r.URL.Path {
+				case "/health":
+					health.Add(1)
+					io.WriteString(w, `{"status":"ok"}`)
+				case "/v1/models":
+					models.Add(1)
+					io.WriteString(w, `{"object":"list","data":[{"id":"codex"}]}`)
+				case "/v1/chat/completions":
+					completions.Add(1)
+					var request struct{ Model string }
+					if r.Method != "POST" || json.NewDecoder(r.Body).Decode(&request) != nil || request.Model != "codex/native" {
+						t.Error("probe did not use the explicitly requested model")
+					}
+					io.WriteString(w, `{"object":"chat.completion","choices":[{"message":{"role":"assistant","content":"OK"}}]}`)
+				default:
+					t.Errorf("unexpected diagnostic request: %s", r.URL.Path)
+				}
+			}))
+			defer server.Close()
+			executable, err := os.Executable()
+			if err != nil {
+				t.Fatal(err)
+			}
+			t.Setenv("HARNESS_GATEWAY_VERSION_TEST", "ok")
+			// Loopback diagnostics must bypass proxy settings.
+			t.Setenv("HTTP_PROXY", "http://127.0.0.1:1")
+			t.Setenv("ALL_PROXY", "http://127.0.0.1:1")
+			args := []string{"--listen", server.Listener.Addr().String(), "--harnesses", "codex", "--codex-path", executable, "--directory", t.TempDir()}
+			if probe {
+				args = append(args, "--probe", "codex/native")
+			}
+			var output bytes.Buffer
+			if err := doctorCommand(t.Context(), args, &output); err != nil {
+				t.Fatalf("%v\n%s", err, &output)
+			}
+			for _, want := range []string{"PASS  installed gateway", "PASS  configuration", "PASS  codex CLI: 1.2.3", "PASS  gateway health", "PASS  model discovery"} {
+				if !strings.Contains(output.String(), want) {
+					t.Errorf("report lacks %q: %s", want, &output)
+				}
+			}
+			if health.Load() != 1 || models.Load() != 1 || (probe && completions.Load() != 1) || (!probe && completions.Load() != 0) {
+				t.Fatalf("unexpected calls: health=%d models=%d inference=%d", health.Load(), models.Load(), completions.Load())
+			}
+		})
+	}
+}
+
+func TestDoctorFlagsAndOfflineHelp(t *testing.T) {
+	for _, args := range [][]string{{"--help"}, {"--version"}} {
+		var output bytes.Buffer
+		err := doctorCommand(t.Context(), args, &output)
+		if err != nil && !errors.Is(err, pflag.ErrHelp) {
+			t.Fatal(err)
+		}
+		if output.Len() == 0 {
+			t.Fatal("empty offline help/version")
+		}
+	}
+	for _, args := range [][]string{{"--timeout=0"}, {"--probe="}, {"--service", "--listen=127.0.0.1:1234"}, {"--service", "--harnesses=codex"}, {"unexpected"}, {"--unknown"}} {
+		if err := doctorCommand(t.Context(), args, io.Discard); err == nil {
+			t.Fatalf("accepted invalid options: %v", args)
+		}
+	}
+}
+
+func TestDoctorHTTPFailuresAndBounds(t *testing.T) {
+	for _, test := range []struct {
+		name, health, models, want string
+		status                     int
+	}{
+		{"unhealthy", `{"status":"starting"}`, "", "health response", 200},
+		{"redirect", "", "", "HTTP 302", 302},
+		{"busy", `{"status":"ok"}`, "", "HTTP 429", 429},
+		{"invalid-json", `{"status":"ok"}`, `not json`, "invalid character", 200},
+		{"empty-models", `{"status":"ok"}`, `{"object":"list","data":[]}`, "no usable catalog", 200},
+		{"oversized", `{"status":"ok"}`, strings.Repeat("x", 1024*1024+1), "exceeds 1 MiB", 200},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if r.URL.Path == "/health" {
+					if test.name == "redirect" {
+						w.Header().Set("Location", "https://must-not-follow.invalid")
+						w.WriteHeader(302)
+						return
+					}
+					io.WriteString(w, test.health)
+					return
+				}
+				w.WriteHeader(test.status)
+				io.WriteString(w, test.models)
+			}))
+			defer server.Close()
+			var output bytes.Buffer
+			checks := doctorHTTPChecks(t.Context(), server.URL, "")
+			if printDoctorChecks(&output, checks) == nil || !strings.Contains(output.String(), test.want) {
+				t.Fatalf("failure lost: %s", &output)
+			}
+		})
+	}
+	for _, target := range []string{"http://example.com:80", "https://127.0.0.1:1234", "http://user@127.0.0.1:1234", "http://127.0.0.1:1234/path", "http://127.0.0.1:1234?query=1"} {
+		checks := doctorHTTPChecks(t.Context(), target, "")
+		if len(checks) != 1 || checks[0].name != "gateway URL" || checks[0].err == nil {
+			t.Fatalf("unsafe URL was accepted: %s", target)
+		}
+	}
+}
+
+func TestDoctorDeadline(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { <-r.Context().Done() }))
+	defer server.Close()
+	ctx, cancel := context.WithTimeout(t.Context(), 100*time.Millisecond)
+	defer cancel()
+	checks := doctorHTTPChecks(ctx, server.URL, "")
+	if len(checks) != 1 || !errors.Is(checks[0].err, context.DeadlineExceeded) {
+		t.Fatalf("diagnostics did not honor deadline: %+v", checks)
+	}
+}
+
+func TestDoctorServiceUsesCurrentInvocation(t *testing.T) {
+	for _, test := range []struct {
+		name, state, version string
+		wantFailure          string
+	}{
+		{"running", "active", buildinfo.Version, ""},
+		{"version-mismatch", "active", "0.0.1", "differs from running"},
+		{"inactive", "inactive", buildinfo.Version, "historical startup settings will not be probed"},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			_, calls := journalFixture(t)
+			path, pathErr := userServicePath()
+			if pathErr != nil {
+				t.Fatal(pathErr)
+			}
+			executable, err := os.Executable()
+			if err != nil {
+				t.Fatal(err)
+			}
+			t.Setenv("HARNESS_GATEWAY_VERSION_TEST", "directory")
+			var httpCalls atomic.Int32
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				httpCalls.Add(1)
+				if r.URL.Path == "/health" {
+					io.WriteString(w, `{"status":"ok"}`)
+				} else {
+					io.WriteString(w, `{"object":"list","data":[{"id":"codex"}]}`)
+				}
+			}))
+			defer server.Close()
+			var snapshot startupSnapshot
+			if err := json.Unmarshal([]byte(testStartupRecord()), &snapshot); err != nil {
+				t.Fatal(err)
+			}
+			snapshot.Version, snapshot.URL, snapshot.Directory = test.version, server.URL, t.TempDir()
+			t.Setenv("HARNESS_GATEWAY_VERSION_DIRECTORY", snapshot.Directory)
+			snapshot.HarnessDetails = []harnessSnapshot{{Name: "codex", Executable: executable}}
+			data, err := json.Marshal(snapshot)
+			if err != nil {
+				t.Fatal(err)
+			}
+			t.Setenv("JOURNAL_TEST_OUTPUT", string(data))
+			t.Setenv("SERVICE_TEST_OUTPUT", "LoadState=loaded\nFragmentPath="+path+"\nActiveState="+test.state+"\nSubState=running\nInvocationID="+testInvocation+"\nUnitFileState=enabled\n")
+			var output bytes.Buffer
+			err = doctorCommand(t.Context(), []string{"--service"}, &output)
+			if (err != nil) != (test.wantFailure != "") || !strings.Contains(output.String(), test.wantFailure) {
+				t.Fatalf("%v\n%s", err, &output)
+			}
+			if test.state == "inactive" {
+				if httpCalls.Load() != 0 {
+					t.Fatal("probed historical listener")
+				}
+				return
+			}
+			query, err := os.ReadFile(calls)
+			if err != nil || !strings.Contains(string(query), "_SYSTEMD_INVOCATION_ID="+testInvocation) {
+				t.Fatalf("diagnostics used an unscoped journal: %s %v", query, err)
+			}
+			if httpCalls.Load() != 2 || !strings.Contains(output.String(), executable) {
+				t.Fatalf("did not use running service settings: %s", &output)
+			}
+		})
+	}
+}
+
+func TestDoctorReportsMissingConfiguration(t *testing.T) {
+	var output bytes.Buffer
+	err := doctorCommand(t.Context(), []string{"--harnesses=codex", "--codex-path=" + t.TempDir() + "/missing", "--listen=127.0.0.1:0"}, &output)
+	if err == nil || !strings.Contains(output.String(), "FAIL  configuration") || !strings.Contains(output.String(), "FAIL  gateway health") {
+		t.Fatalf("independent failures were not reported: %v %s", err, &output)
+	}
+}
+
+func TestDoctorProbeRequiresAssistantMessage(t *testing.T) {
+	for _, role := range []string{"", "user", "assistant"} {
+		t.Run("role="+role, func(t *testing.T) {
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				switch r.URL.Path {
+				case "/health":
+					io.WriteString(w, `{"status":"ok"}`)
+				case "/v1/models":
+					io.WriteString(w, `{"object":"list","data":[{"id":"codex"}]}`)
+				default:
+					json.NewEncoder(w).Encode(map[string]any{"object": "chat.completion", "choices": []any{map[string]any{"message": map[string]string{"role": role, "content": "text"}}}})
+				}
+			}))
+			defer server.Close()
+			checks := doctorHTTPChecks(t.Context(), server.URL, "codex")
+			probe := checks[len(checks)-1]
+			if probe.name != "inference probe" || (probe.err == nil) != (role == "assistant") {
+				t.Fatalf("incorrect probe validation for role %q: %+v", role, probe)
+			}
+		})
+	}
+}
+
+func TestDoctorHealthFailureDoesNotSuppressOtherChecks(t *testing.T) {
+	var discovery, probes atomic.Int32
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/health":
+			w.WriteHeader(http.StatusServiceUnavailable)
+		case "/v1/models":
+			discovery.Add(1)
+			io.WriteString(w, `{"object":"list","data":[{"id":"codex"}]}`)
+		case "/v1/chat/completions":
+			probes.Add(1)
+			io.WriteString(w, `{"object":"chat.completion","choices":[{"message":{"role":"assistant","content":"OK"}}]}`)
+		}
+	}))
+	defer server.Close()
+	checks := doctorHTTPChecks(t.Context(), server.URL, "codex")
+	var output bytes.Buffer
+	if len(checks) != 3 || discovery.Load() != 1 || probes.Load() != 1 || printDoctorChecks(&output, checks) == nil || checks[1].err != nil || checks[2].err != nil {
+		t.Fatalf("independent checks were suppressed: checks=%+v discovery=%d probes=%d", checks, discovery.Load(), probes.Load())
+	}
+}
+
+func TestDoctorVersionUsesSelectedDirectory(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/health" {
+			io.WriteString(w, `{"status":"ok"}`)
+		} else {
+			io.WriteString(w, `{"object":"list","data":[{"id":"codex"}]}`)
+		}
+	}))
+	defer server.Close()
+	executable, err := os.Executable()
+	if err != nil {
+		t.Fatal(err)
+	}
+	directory := t.TempDir()
+	t.Setenv("HARNESS_GATEWAY_VERSION_TEST", "directory")
+	t.Setenv("HARNESS_GATEWAY_VERSION_DIRECTORY", directory)
+	var output bytes.Buffer
+	err = doctorCommand(t.Context(), []string{"--harnesses=codex", "--codex-path", testutil.CLIEntryPoint(t, executable), "--listen", server.Listener.Addr().String(), "--directory", directory}, &output)
+	if err != nil || !strings.Contains(output.String(), "PASS  codex CLI: 1.2.3") {
+		t.Fatalf("diagnostic did not use the selected working directory: %v\n%s", err, &output)
+	}
+}
+
+func TestR3DoctorDropsAvailableCLIVersion(t *testing.T) {
+ for _, order := range []string{"codex,copilot","copilot,codex"} {
+  for _, available := range []string{"codex","copilot"} {
+   t.Run(order+"-available-"+available,func(t *testing.T){
+    var health,models atomic.Int32
+    server:=httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter,r *http.Request){
+     if r.URL.Path=="/health" {health.Add(1);io.WriteString(w,`{"status":"ok"}`)} else {models.Add(1);io.WriteString(w,`{"object":"list","data":[{"id":"codex"}]}`)}
+    }));defer server.Close()
+    executable,err:=os.Executable();if err!=nil{t.Fatal(err)}
+    pids:=t.TempDir();t.Setenv("HARNESS_GATEWAY_VERSION_TEST","bare");t.Setenv("HARNESS_GATEWAY_VERSION_PIDS",pids)
+    args:=[]string{"--listen",server.Listener.Addr().String(),"--directory",t.TempDir(),"--harnesses",available,"--"+available+"-path",executable}
+    var control bytes.Buffer
+    if err:=doctorCommand(t.Context(),args,&control);err!=nil{t.Fatalf("valid CLI control failed: %v %s",err,&control)}
+    entries,_:=os.ReadDir(pids);if len(entries)!=1{t.Fatalf("control did not run exactly one version query: %d",len(entries))}
+    for _,e:=range entries{if err:=os.Remove(filepath.Join(pids,e.Name()));err!=nil{t.Fatal(err)}}
+    missing:="copilot";if available==missing{missing="codex"}
+    args=[]string{"--listen",server.Listener.Addr().String(),"--directory",t.TempDir(),"--harnesses",order,"--"+available+"-path",executable,"--"+missing+"-path",filepath.Join(t.TempDir(),"missing-cli")}
+    var output bytes.Buffer
+    err=doctorCommand(t.Context(),args,&output)
+    entries,_=os.ReadDir(pids)
+    if err==nil||len(entries)!=0||strings.Contains(output.String(),available+" CLI")||health.Load()!=2||models.Load()!=2 {t.Fatalf("unexpected probe result: err=%v queries=%d health=%d models=%d output=%s",err,len(entries),health.Load(),models.Load(),&output)}
+    t.Logf("PROOF order=%s valid=%s query_count=%d HTTP_checks_continue=true overall_failure=%v\n%s",order,available,len(entries),err,&output)
+   })
+  }
+ }
+}

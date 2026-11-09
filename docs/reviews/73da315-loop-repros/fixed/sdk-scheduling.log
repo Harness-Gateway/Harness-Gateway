@@ -1,0 +1,6 @@
+=== RUN   TestReviewCancellationRetiresAfterSDKReturn
+2026/11/09 02:00:03 Failed to close JSON-RPC writer: close tcp 127.0.0.1:58052->127.0.0.1:45615: use of closed network connection
+    review_race_probe_test.go:24: cancellation returned: copilot model discovery: context canceled
+--- PASS: TestReviewCancellationRetiresAfterSDKReturn (0.12s)
+PASS
+ok  	github.com/harness-gateway/harness-gateway/internal/adapters/outbound/copilot	1.135s

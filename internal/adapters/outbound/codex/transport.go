@@ -50,7 +50,7 @@ func (h *Harness) connect(ctx context.Context) (*connection, func() error, error
 	// Own pipe ends so Wait cannot truncate a fast-exiting CLI's last frames.
 	// Nil stderr discards diagnostics without another copying goroutine/pipe.
 	cmd.Stdin, cmd.Stdout = stdinChild, stdoutChild
-	kill, err := process.Start(cmd)
+	child, err := process.Start(cmd)
 	_ = stdinChild.Close()
 	_ = stdoutChild.Close()
 	if err != nil {
@@ -59,12 +59,12 @@ func (h *Harness) connect(ctx context.Context) (*connection, func() error, error
 		cancel()
 		return nil, nil, fmt.Errorf("start codex: %w", err)
 	}
+	kill := child.Stop
 	processDone := make(chan struct{})
 	go func() {
 		// The protocol reader reports EOF/errors after draining final output.
 		// Wait status can be a deliberate termination during owned cleanup.
-		_ = cmd.Wait()
-		_ = kill() // Release descendants retaining stdout when the parent exits.
+		_ = child.Wait() // Retire descendants before releasing the group identity.
 		close(processDone)
 	}()
 	output, readError := make(chan message), make(chan error, 1)

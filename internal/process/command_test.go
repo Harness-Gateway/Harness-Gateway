@@ -55,7 +55,7 @@ func runFixture(t *testing.T, cmd *exec.Cmd, wantArgs []string, wantExit int) {
 	t.Helper()
 	var output, diagnostics bytes.Buffer
 	cmd.Stdout, cmd.Stderr = &output, &diagnostics
-	stop, err := Start(cmd)
+	child, err := Start(cmd)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -63,8 +63,9 @@ func runFixture(t *testing.T, cmd *exec.Cmd, wantArgs []string, wantExit int) {
 	// and child executable startup on shared Windows runners.
 	ctx, cancel := context.WithTimeout(t.Context(), 30*time.Second)
 	defer cancel()
+	stop := child.Stop
 	stopOnCancel := context.AfterFunc(ctx, func() { _ = stop() })
-	err = cmd.Wait()
+	err = child.Wait()
 	stopOnCancel()
 	if cleanupErr := stop(); cleanupErr != nil {
 		t.Fatal(cleanupErr)

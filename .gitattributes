@@ -2,3 +2,7 @@
 
 # Preserve the checksum of the unmodified upstream Scalar bundle.
 internal/adapters/inbound/openai/docs/assets/scalar-1.70.0.js -whitespace linguist-vendored
+
+# Captured review output and unified-diff context retain their original bytes.
+docs/reviews/73da315-loop*-repros/**/*.log -whitespace
+docs/reviews/73da315-loop*-repros/**/*.patch -whitespace

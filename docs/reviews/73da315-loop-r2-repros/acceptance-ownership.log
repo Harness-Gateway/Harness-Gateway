@@ -1,0 +1,5 @@
+=== RUN   TestReviewCancellationSignalsAfterLeaderReaped
+    review_ownership_test.go:40: runtime=go1.27.3 wait=context canceled late-group-kill=true
+--- PASS: TestReviewCancellationSignalsAfterLeaderReaped (6.00s)
+PASS
+ok  	github.com/harness-gateway/harness-gateway/tools/acceptance	6.006s

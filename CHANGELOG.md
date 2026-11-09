@@ -1,5 +1,34 @@
 # Changelog
 
+## Unreleased
+
+- Give acceptance descendants TERM grace after independent command-leader exit,
+  preserving command status and process-group ownership until cleanup finishes.
+- Retire browser-acceptance gateways on targeted Unix SIGINT/SIGTERM, retain interrupted
+  diagnostics, and remove temporary files even if browser cleanup fails.
+- Continue foreground doctor version checks for available CLIs when another
+  enabled executable is missing; retain overall failure and HTTP diagnostics.
+- Treat Copilot aborted idle events as backend failures, including events before
+  Send acknowledgement; preserve partial SSE error semantics and cleanup/recovery.
+- Keep acceptance command groups owned through graceful TERM and forced cleanup,
+  and use the shared lifecycle owner for cancellation and gateway shutdown.
+- Format first-text latency as a readable duration in JSON journal output,
+  including zero latency. Record known-field case-insensitive JSON decoding as
+  an accepted compatibility limit; canonical schema property names stay unchanged.
+- Pin localhost listener and diagnostic addresses to numeric loopback endpoints,
+  and verify the bound listener before serving the unauthenticated API.
+- Close Copilot transport on cancellation before retiring the SDK after its
+  active operations return; cover canceled discovery and session creation.
+- Keep Unix process-group identity reserved until termination by observing
+  exit before reaping. Use Linux WNOWAIT and macOS exit notifications; retain
+  Windows Job Object ownership. Cover delayed cleanup and externally reaped IDs.
+- Validate the manager-selected service fragment before diagnostic CLI/HTTP
+  probes, using the same ownership rule as lifecycle mutations.
+- Ignore inherited CDPATH when resolving relative installer destinations.
+- Preserve null in nullable OpenAPI enums, document accepted optional nulls and
+  health origin behavior, regenerate API artifacts, and validate real SSE chunks
+  and request forms with strict enum constraints.
+
 ## v0.1.12 - 2026-11-08
 
 - Fix a Unix regression-fixture cleanup race: accept an already exited child

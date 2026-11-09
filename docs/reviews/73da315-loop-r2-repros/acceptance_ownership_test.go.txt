@@ -1,0 +1,42 @@
+//go:build linux
+package main
+import (
+ "context"
+ "errors"
+ "os"
+ "os/exec"
+ "path/filepath"
+ "runtime"
+ "syscall"
+ "testing"
+ "time"
+ "golang.org/x/sys/unix"
+)
+func TestReviewCancellationSignalsAfterLeaderReaped(t *testing.T) {
+ ctx,cancel:=context.WithCancel(t.Context());defer cancel()
+ ready:=filepath.Join(t.TempDir(),"ready")
+ cmd:=exec.CommandContext(ctx,"/bin/sh","-c",`trap 'exit 0' TERM; : > "$1"; while :; do sleep 0.02; done`,"sh",ready)
+ configureCommand(cmd)
+ original:=reviewKill
+ lateKill:=false
+ reviewKill=func(pid int,sig syscall.Signal)error{
+  if sig==0||sig==syscall.SIGKILL {
+   var info unix.Siginfo
+   err:=unix.Waitid(unix.P_PID,-pid,&info,unix.WEXITED|unix.WNOWAIT|unix.WNOHANG,nil)
+   if sig==syscall.SIGKILL&&errors.Is(err,unix.ECHILD){lateKill=true}
+   // Simulate the same numeric group still existing after identifier reuse;
+   // never send a forced signal to a potentially unrelated numeric group.
+   return nil
+  }
+  return original(pid,sig)
+ }
+ defer func(){reviewKill=original}()
+ if err:=cmd.Start();err!=nil{t.Fatal(err)}
+ done:=make(chan error,1);go func(){done<-cmd.Wait()}()
+ defer func(){cancel();_ = cmd.Process.Kill()}()
+ deadline:=time.Now().Add(3*time.Second)
+ for {if _,err:=os.Stat(ready);err==nil{break};if time.Now().After(deadline){t.Fatal("child not ready")};time.Sleep(time.Millisecond)}
+ cancel()
+ select {case err:=<-done:t.Logf("runtime=%s wait=%v late-group-kill=%t",runtime.Version(),err,lateKill);case <-time.After(9*time.Second):t.Fatal("cancel did not finish")}
+ if !lateKill{t.Fatal("post-reaping group signal not observed")}
+}

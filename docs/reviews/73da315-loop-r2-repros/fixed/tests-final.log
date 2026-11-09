@@ -1,0 +1,16 @@
+?   	github.com/harness-gateway/harness-gateway/api	[no test files]
+ok  	github.com/harness-gateway/harness-gateway/cmd/harness-gateway	4.146s
+ok  	github.com/harness-gateway/harness-gateway/internal/adapters/inbound/openai	22.951s
+ok  	github.com/harness-gateway/harness-gateway/internal/adapters/outbound/codex	16.683s
+ok  	github.com/harness-gateway/harness-gateway/internal/adapters/outbound/copilot	20.609s
+ok  	github.com/harness-gateway/harness-gateway/internal/adapters/outbound/prompt	(cached)
+ok  	github.com/harness-gateway/harness-gateway/internal/application	(cached)
+?   	github.com/harness-gateway/harness-gateway/internal/buildinfo	[no test files]
+?   	github.com/harness-gateway/harness-gateway/internal/domain	[no test files]
+ok  	github.com/harness-gateway/harness-gateway/internal/process	0.283s
+?   	github.com/harness-gateway/harness-gateway/internal/testutil	[no test files]
+ok  	github.com/harness-gateway/harness-gateway/tools/acceptance	33.885s
+ok  	github.com/harness-gateway/harness-gateway/tools/project-openapi	(cached)
+ok  	github.com/harness-gateway/harness-gateway/tools/releaseverify	0.067s
+ok  	github.com/harness-gateway/harness-gateway/tools/setup	30.086s
+ok  	github.com/harness-gateway/harness-gateway/tools/systemd	(cached)

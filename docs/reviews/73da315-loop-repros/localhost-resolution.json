@@ -1,0 +1,6 @@
+{
+  "returncode": 1,
+  "stdout": "",
+  "stderr": "{\"time\":\"2026-11-09T01:27:37.449114501+01:00\",\"level\":\"WARN\",\"msg\":\"Harness CLI version unavailable\",\"harness\":\"codex\",\"executable\":\"/bin/true\",\"error\":\"unrecognized --version output\"}\n{\"time\":\"2026-11-09T01:27:37.45746909+01:00\",\"level\":\"ERROR\",\"msg\":\"gateway stopped\",\"error\":\"listen tcp 192.0.2.1:0: bind: cannot assign requested address\"}\n",
+  "scope": "Released candidate; process-local libc resolver fixture maps localhost to unassigned TEST-NET IP. Host resolver files unchanged; nonlocal-bind disabled; no listener/API was served; no provider inference."
+}

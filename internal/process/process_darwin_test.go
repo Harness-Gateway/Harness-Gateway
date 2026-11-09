@@ -1,5 +1,3 @@
-//go:build darwin
-
 package process
 
 import (
@@ -8,54 +6,55 @@ import (
 	"syscall"
 	"testing"
 	"time"
-
-	"golang.org/x/sys/unix"
 )
 
-func TestStopWhileExitedLeaderIsBeingReaped(t *testing.T) {
+func TestStopUnreapedZombieOnlyGroup(t *testing.T) {
 	cmd := exec.Command("/bin/sh", "-c", "exit 0")
-	stop, err := Start(cmd)
+	child, err := Start(cmd)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer func() {
-		if cmd.ProcessState == nil {
-			_ = cmd.Process.Kill()
-			_ = cmd.Wait()
-		}
-	}()
-	deadline := time.Now().Add(2 * time.Second)
-	for {
-		info, err := unix.SysctlKinfoProc("kern.proc.pid", cmd.Process.Pid)
-		if err != nil {
-			t.Fatal(err)
-		}
-		// Darwin's SZOMB state is 5: keep the exited leader unreaped until
-		// the group terminator encounters the kernel's zombie-only group.
-		if info.Proc.P_stat == 5 {
-			break
-		}
-		if time.Now().After(deadline) {
-			t.Fatal("fixture never entered the zombie state")
-		}
-		time.Sleep(time.Millisecond)
+	defer func() { _ = child.Stop(); _ = child.Wait() }()
+	if err := waitForExit(cmd.Process.Pid); err != nil {
+		t.Fatal(err)
 	}
 	if err := syscall.Kill(-cmd.Process.Pid, syscall.SIGKILL); !errors.Is(err, syscall.EPERM) {
-		t.Fatalf("expected Darwin's zombie-group EPERM, got %v", err)
+		t.Fatalf("expected Darwin zombie-group EPERM, got %v", err)
 	}
-	reaped := make(chan error, 1)
-	go func() {
-		time.Sleep(10 * time.Millisecond)
-		reaped <- cmd.Wait()
-	}()
-	err = stop()
-	if waitErr := <-reaped; waitErr != nil {
-		t.Fatal(waitErr)
+	if err := child.Stop(); err != nil {
+		t.Fatalf("unreaped zombie group cleanup: %v", err)
 	}
+	if cmd.ProcessState != nil {
+		t.Fatal("Stop reaped the leader before Wait")
+	}
+	if err := child.Wait(); err != nil {
+		t.Fatal(err)
+	}
+	if err := child.Stop(); err != nil {
+		t.Fatalf("repeated cleanup: %v", err)
+	}
+}
+
+func TestStoppedChildIsNotTreatedAsExited(t *testing.T) {
+	cmd := exec.Command("/bin/sh", "-c", "kill -STOP $$; exit 0")
+	child, err := Start(cmd)
 	if err != nil {
-		t.Fatalf("reaped group was reported as a cleanup failure: %v", err)
+		t.Fatal(err)
 	}
-	if err := stop(); err != nil {
-		t.Fatalf("repeated cleanup changed its result: %v", err)
+	done := make(chan error, 1)
+	go func() { done <- child.Wait() }()
+	defer func() { _ = child.Stop(); _ = child.Wait() }()
+	select {
+	case err := <-done:
+		t.Fatalf("stopped child was reaped: %v", err)
+	case <-time.After(100 * time.Millisecond):
+	}
+	if err := child.Stop(); err != nil {
+		t.Fatal(err)
+	}
+	select {
+	case <-done:
+	case <-time.After(5 * time.Second):
+		t.Fatal("kqueue did not observe stopped-child termination")
 	}
 }

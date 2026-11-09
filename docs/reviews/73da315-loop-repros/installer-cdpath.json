@@ -1,0 +1,14 @@
+{
+  "GOBIN": "/tmp/hg-egm-r1/cdpath-9nxsjt9n/bin\n/tmp/hg-egm-r1/cdpath-9nxsjt9n/bin",
+  "argv": [
+    "/tmp/hg-egm-r1/cdpath-9nxsjt9n/fake-bin/go",
+    "install",
+    "github.com/harness-gateway/harness-gateway/cmd/harness-gateway@v0.1.12"
+  ],
+  "returncode": 0,
+  "stdout": "Installing harness-gateway@v0.1.12 into /tmp/hg-egm-r1/cdpath-9nxsjt9n/bin\n/tmp/hg-egm-r1/cdpath-9nxsjt9n/bin\nfixture-gateway\nWarning: harness-gateway resolves to /home/maurizio/go/bin/harness-gateway, which shadows this installation.\nFor this terminal, run:\n  export PATH=$'/tmp/hg-egm-r1/cdpath-9nxsjt9n/bin\\n/tmp/hg-egm-r1/cdpath-9nxsjt9n/bin':$PATH\nRun: harness-gateway\nCustom port: harness-gateway --listen 127.0.0.1:8090\n",
+  "stderr": "",
+  "expected_binary": "/tmp/hg-egm-r1/cdpath-9nxsjt9n/bin/harness-gateway",
+  "expected_exists": false,
+  "scope": "actual setup.sh and Bash; fixture Go writes only under private /tmp directory; no real installation or shell-profile changes"
+}

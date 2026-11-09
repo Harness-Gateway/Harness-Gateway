@@ -13,8 +13,8 @@ import (
 )
 
 // Each operation owns its client/process. Authentication stays in the CLI.
-// The bridge can close its transport to unblock pending writes. The stop
-// callback then retires the SDK and collects errors after operations return.
+// Cancellation closes the bridge to unblock pending I/O. The operation owner
+// retires the SDK and collects errors only after SDK calls return.
 func (h *Harness) connect(ctx context.Context) (*sdk.Client, *rpc.ServerRPC, *cliBridge, func() error, error) {
 	path := h.Path
 	if path == "" {
@@ -32,25 +32,19 @@ func (h *Harness) connect(ctx context.Context) (*sdk.Client, *rpc.ServerRPC, *cl
 		Connection: sdk.URIConnection{URL: bridge.listener.Addr().String(), ConnectionToken: bridge.token},
 		ClientInfo: &sdk.ClientInfo{ApplicationName: "Harness-Gateway", ApplicationVersion: buildinfo.Version},
 	})
-	// ForceStop mutates the SDK's connection fields. Serialize the snapshot and
-	// stop only once if cancellation races an operation's return.
-	var lifecycle sync.Mutex
+	// Cancellation only closes our transport. SDK operations may still be
+	// reading client fields; retire the SDK after those operations have returned.
 	stopClient := sync.OnceValue(func() error {
-		lifecycle.Lock()
-		defer lifecycle.Unlock()
-		// Close the bridge first to unblock SDK startup and in-flight writes.
 		closeErr := bridge.Close()
 		client.ForceStop()
 		return errors.Join(bridge.Err(), closeErr)
 	})
-	stopOnCancel := context.AfterFunc(ctx, func() { _ = stopClient() })
+	stopOnCancel := context.AfterFunc(ctx, func() { _ = bridge.Close() })
 	stop := func() error { stopOnCancel(); return stopClient() }
 	if err := client.Start(ctx); err != nil {
 		return nil, nil, nil, nil, fmt.Errorf("start copilot: %w", errors.Join(err, stop()))
 	}
-	lifecycle.Lock()
 	connection := client.RPC
-	lifecycle.Unlock()
 	if err := ctx.Err(); err != nil {
 		_ = stop()
 		return nil, nil, nil, nil, err

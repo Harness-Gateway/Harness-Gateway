@@ -92,7 +92,9 @@ Version output works without either harness CLI installed. Builds from modified
 sources include `+dirty` in their revision; release binaries use a clean checkout.
 
 The default listener is `http://127.0.0.1:8789` from v0.1.10; earlier releases
-used port 8080. Only loopback listen addresses are accepted. `GET /v1/models`
+used port 8080. Only loopback listen addresses are accepted. The `localhost`
+spelling is pinned to `127.0.0.1` for listening and diagnostics, without DNS
+resolution; use `[::1]:PORT` for IPv6 loopback. `GET /v1/models`
 discovers the CLIs' native model catalogs and returns IDs such as
 `codex/<native-model-id>` and `copilot/<native-model-id>`.
 Use one of these IDs in a completion's `model` field to select that exact model.
@@ -669,8 +671,17 @@ prevent publication of a bad tag and never moves or rewrites a tag.
 | Local access | Host must be `localhost` or a loopback IP; cross-origin browser completions and model GET/HEAD requests return 403. No auth is required for curl or Spring AI |
 | Harness request errors | Explicit JSON-RPC invalid-parameter rejections and Copilot structured upstream HTTP 400 invalid-request errors return sanitized 400 errors; unclassified CLI failures return 502 |
 | Cancellation | HTTP disconnect/deadline stops the request-owned CLI process |
-| Other request fields | Rejected with HTTP 400 and an OpenAI-style error envelope |
+| Other request fields | Rejected with HTTP 400 and an OpenAI-style error envelope; known-field case aliases follow the compatibility limit below |
 | Responses, embeddings, images, audio, client tool calls | Unsupported |
+
+Request property names in the schema and examples are canonical. The Go JSON
+decoder also accepts case-insensitive matches for known fields, including nested
+message, stream-option and text-part fields. Different spellings can target the
+same field; for scalars such as `model`, the later matching member wins. For
+example, `MODEL` can match `model`. This is an accepted compatibility limit: the
+closed, case-sensitive OpenAPI schema does not describe these extra spellings.
+Clients should use canonical names and avoid duplicate or case-variant members.
+Unknown semantic fields remain rejected.
 
 This is an adaptation of coding harnesses, so it does not provide exact model-API
 semantics. History is contextual text, not native role-preserving history import.

@@ -1,0 +1,26 @@
+--- a/client.go
++++ b/client.go
+@@ -803,6 +803,7 @@
+ 	// Close JSON-RPC client
+ 	if c.client != nil {
+ 		c.client.Stop()
++		if HGReviewBeforeClientClear != nil { HGReviewBeforeClientClear() }
+ 		c.client = nil
+ 	}
+ 
+@@ -2126,6 +2127,7 @@
+ 			return nil, err
+ 		}
+ 	} else {
++		if HGReviewBeforeModelRead != nil { HGReviewBeforeModelRead() }
+ 		if c.client == nil {
+ 			return nil, fmt.Errorf("client not connected")
+ 		}
+@@ -3164,3 +3166,7 @@
+ 	}
+ 	return resp, nil
+ }
++
++// Review-only rendezvous hooks: do not change production logic.
++var HGReviewBeforeClientClear func()
++var HGReviewBeforeModelRead func()

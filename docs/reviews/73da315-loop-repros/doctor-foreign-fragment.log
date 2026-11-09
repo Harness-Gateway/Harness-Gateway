@@ -1,0 +1,34 @@
+=== RUN   TestReviewDoctorForeignFragment
+=== RUN   TestReviewDoctorForeignFragment/running
+    doctor_test.go:187: foreign loaded fragment diagnostic result: <nil>
+        PASS  installed gateway: Harness-Gateway v0.1.12 (unknown; linux/amd64); /tmp/go-build2787511892/b001/harness-gateway.test
+        PASS  service: active/running; autostart enabled
+        PASS  running gateway: v0.1.12; running-service-build; http://127.0.0.1:35229
+        PASS  gateway version: installed and running release versions match (build identities shown above)
+        PASS  service directory: /tmp/TestReviewDoctorForeignFragmentrunning2954225934/006
+        PASS  codex CLI: 1.2.3; /tmp/go-build2787511892/b001/harness-gateway.test
+        INFO  codex PATH: shell lookup differs; service uses /tmp/go-build2787511892/b001/harness-gateway.test
+        PASS  gateway health: http://127.0.0.1:35229/health (liveness only)
+        PASS  model discovery: 1 models/aliases; discovery does not prove inference access
+        Diagnostics passed. Inference is checked only with --probe MODEL.
+=== RUN   TestReviewDoctorForeignFragment/version-mismatch
+    doctor_test.go:187: foreign loaded fragment diagnostic result: diagnostic checks failed; see the report above
+        PASS  installed gateway: Harness-Gateway v0.1.12 (unknown; linux/amd64); /tmp/go-build2787511892/b001/harness-gateway.test
+        PASS  service: active/running; autostart enabled
+        PASS  running gateway: v0.0.1; running-service-build; http://127.0.0.1:38455
+        FAIL  gateway version: installed v0.1.12 differs from running v0.0.1; review the service executable and restart after upgrading
+        PASS  service directory: /tmp/TestReviewDoctorForeignFragmentversion-mismatch1898170804/006
+        PASS  codex CLI: 1.2.3; /tmp/go-build2787511892/b001/harness-gateway.test
+        INFO  codex PATH: shell lookup differs; service uses /tmp/go-build2787511892/b001/harness-gateway.test
+        PASS  gateway health: http://127.0.0.1:38455/health (liveness only)
+        PASS  model discovery: 1 models/aliases; discovery does not prove inference access
+=== RUN   TestReviewDoctorForeignFragment/inactive
+    doctor_test.go:187: foreign loaded fragment diagnostic result: diagnostic checks failed; see the report above
+        PASS  installed gateway: Harness-Gateway v0.1.12 (unknown; linux/amd64); /tmp/go-build2787511892/b001/harness-gateway.test
+        FAIL  service: service is inactive/running; historical startup settings will not be probed
+--- PASS: TestReviewDoctorForeignFragment (0.04s)
+    --- PASS: TestReviewDoctorForeignFragment/running (0.02s)
+    --- PASS: TestReviewDoctorForeignFragment/version-mismatch (0.01s)
+    --- PASS: TestReviewDoctorForeignFragment/inactive (0.00s)
+PASS
+ok  	github.com/harness-gateway/harness-gateway/cmd/harness-gateway	0.042s

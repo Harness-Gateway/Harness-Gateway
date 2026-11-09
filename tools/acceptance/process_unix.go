@@ -3,53 +3,23 @@
 package main
 
 import (
-	"errors"
 	"os"
-	"os/exec"
 	"syscall"
 	"time"
+
+	"github.com/harness-gateway/harness-gateway/internal/process"
 )
 
-func configureCommand(cmd *exec.Cmd) {
-	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
-	cmd.WaitDelay = 2 * time.Second
-	if cmd.Cancel != nil {
-		cmd.Cancel = func() error {
-			// Java-owned gateways share this group, while their CLIs have their
-			// own groups. Let gateways cancel requests and reap those CLIs before
-			// forcibly retiring an unresponsive Maven/Java process tree.
-			if err := syscall.Kill(-cmd.Process.Pid, syscall.SIGTERM); err != nil {
-				if errors.Is(err, syscall.ESRCH) {
-					return os.ErrProcessDone
-				}
-				return err
-			}
-			deadline := time.NewTimer(6 * time.Second)
-			defer deadline.Stop()
-			ticker := time.NewTicker(25 * time.Millisecond)
-			defer ticker.Stop()
-			for {
-				select {
-				case <-ticker.C:
-					if errors.Is(syscall.Kill(-cmd.Process.Pid, 0), syscall.ESRCH) {
-						return nil
-					}
-				case <-deadline.C:
-					err := killCommand(cmd)
-					if errors.Is(err, os.ErrProcessDone) {
-						return nil
-					}
-					return err
-				}
-			}
-		}
-	}
+func stopCommand(child *process.Child) error {
+	// Java-owned gateways share the command group, while their CLIs have their
+	// own groups. Keep the leader unreaped through TERM grace and final cleanup.
+	return child.StopGracefully(syscall.SIGTERM, 6*time.Second)
 }
 
-func killCommand(cmd *exec.Cmd) error {
-	err := syscall.Kill(-cmd.Process.Pid, syscall.SIGKILL)
-	if errors.Is(err, syscall.ESRCH) {
-		return os.ErrProcessDone
-	}
-	return err
+func waitCommandExit(child *process.Child) error {
+	// The leader can exit independently while Java-owned gateways still need
+	// to retire separately grouped CLIs. Keep ownership through that grace too.
+	return child.WaitGracefully(syscall.SIGTERM, 6*time.Second)
 }
+
+func interruptGateway(child *process.Child) error { return child.Signal(os.Interrupt) }

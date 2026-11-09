@@ -90,6 +90,26 @@ func doctorCommand(parent context.Context, args []string, output io.Writer) erro
 		directory = resolved
 		checks = append(checks, doctorCheck{name: "configuration", detail: directory, err: err})
 		harnesses = configured
+		if err != nil {
+			// Startup remains fail-fast. Diagnostics can still resolve and query
+			// independent enabled CLIs after one executable lookup fails.
+			seen := map[string]bool{}
+			for _, name := range strings.Split(options.harnesses, ",") {
+				name = strings.TrimSpace(name)
+				if seen[name] {
+					continue
+				}
+				seen[name] = true
+				individual := options
+				individual.harnesses = name
+				_, _, resolved, resolveErr := prepareGateway(individual)
+				if resolveErr != nil {
+					checks = append(checks, doctorCheck{name: name + " CLI", err: resolveErr})
+					continue
+				}
+				harnesses = append(harnesses, resolved...)
+			}
+		}
 	}
 	for _, harness := range harnesses {
 		probeCtx, stop := context.WithTimeout(ctx, 20*time.Second)
@@ -114,6 +134,13 @@ func doctorService(ctx context.Context) ([]doctorCheck, startupSnapshot, error) 
 		return []doctorCheck{{name: "service", err: err}}, startupSnapshot{}, err
 	}
 	inspection, err := inspectService(ctx)
+	if err != nil {
+		return []doctorCheck{{name: "service", err: err}}, startupSnapshot{}, err
+	}
+	path, err := userServicePath()
+	if err == nil {
+		err = validateLoadedManagedService(path, inspection.properties)
+	}
 	if err != nil {
 		return []doctorCheck{{name: "service", err: err}}, startupSnapshot{}, err
 	}
@@ -167,12 +194,12 @@ func doctorHTTPChecks(ctx context.Context, baseURL, probe string) []doctorCheck 
 		err = errors.New("diagnostics require a plain loopback HTTP URL")
 	}
 	if err == nil {
-		err = loopbackAddress(u.Host)
+		u.Host, err = numericLoopbackAddress(u.Host)
 	}
 	if err != nil {
 		return []doctorCheck{{name: "gateway URL", err: err}}
 	}
-	baseURL = strings.TrimRight(baseURL, "/")
+	baseURL = strings.TrimRight(u.String(), "/")
 	transport := &http.Transport{Proxy: nil, DisableKeepAlives: true}
 	defer transport.CloseIdleConnections()
 	client := &http.Client{Transport: transport, CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}

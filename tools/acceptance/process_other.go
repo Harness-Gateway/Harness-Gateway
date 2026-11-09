@@ -2,11 +2,8 @@
 
 package main
 
-import (
-	"os/exec"
-	"time"
-)
+import "github.com/harness-gateway/harness-gateway/internal/process"
 
-func configureCommand(cmd *exec.Cmd) { cmd.WaitDelay = 2 * time.Second }
-
-func killCommand(cmd *exec.Cmd) error { return cmd.Process.Kill() }
+func stopCommand(child *process.Child) error      { return child.Stop() }
+func waitCommandExit(child *process.Child) error  { return child.Wait() }
+func interruptGateway(child *process.Child) error { return child.Stop() }

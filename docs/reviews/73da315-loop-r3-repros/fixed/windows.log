@@ -1,0 +1,19 @@
+?   	github.com/harness-gateway/harness-gateway/api	[no test files]
+github.com/harness-gateway/harness-gateway/api
+github.com/harness-gateway/harness-gateway/cmd/harness-gateway
+github.com/harness-gateway/harness-gateway/internal/adapters/inbound/openai
+github.com/harness-gateway/harness-gateway/internal/adapters/outbound/codex
+github.com/harness-gateway/harness-gateway/internal/adapters/outbound/copilot
+github.com/harness-gateway/harness-gateway/internal/adapters/outbound/prompt
+github.com/harness-gateway/harness-gateway/internal/application
+?   	github.com/harness-gateway/harness-gateway/internal/buildinfo	[no test files]
+github.com/harness-gateway/harness-gateway/internal/buildinfo
+?   	github.com/harness-gateway/harness-gateway/internal/domain	[no test files]
+github.com/harness-gateway/harness-gateway/internal/domain
+github.com/harness-gateway/harness-gateway/internal/process
+?   	github.com/harness-gateway/harness-gateway/internal/testutil	[no test files]
+github.com/harness-gateway/harness-gateway/internal/testutil
+github.com/harness-gateway/harness-gateway/tools/acceptance
+github.com/harness-gateway/harness-gateway/tools/project-openapi
+github.com/harness-gateway/harness-gateway/tools/releaseverify
+github.com/harness-gateway/harness-gateway/tools/setup

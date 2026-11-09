@@ -234,7 +234,7 @@ func formatJournalLine(line string) string {
 					text = fmt.Sprint(value)
 				}
 			}
-			if key == "duration" || key == "timeout" {
+			if key == "duration" || key == "timeout" || key == "time_to_first_text" {
 				if nanos, err := strconv.ParseInt(text, 10, 64); err == nil {
 					text = time.Duration(nanos).String()
 				}

@@ -1,0 +1,29 @@
+--- a/copilot_test.go
++++ b/copilot_test.go
+@@ -388,6 +388,11 @@
+ 				}
+ 				continue
+ 			}
++
++            if mode == "review-aborted-pre" {
++                if err := event(&sdk.AssistantMessageDeltaData{MessageID:"review-message",DeltaContent:"partial"},nil); err != nil {return err}
++                if err := event(&sdk.SessionIdleData{Aborted:ptr(true)},nil); err != nil {return err}
++            }
+ 			if err := reply(map[string]string{"messageId": "fixture-user"}); err != nil {
+ 				return err
+ 			}
+@@ -396,7 +401,13 @@
+ 					return err
+ 				}
+ 			}
+-			if mode == "silent" {
++
++            if mode == "review-aborted-post" {
++                if err := event(&sdk.AssistantMessageDeltaData{MessageID:"review-message",DeltaContent:"partial"},nil); err != nil {return err}
++                if err := event(&sdk.SessionIdleData{Aborted:ptr(true)},nil); err != nil {return err}
++                continue
++            }
++			if mode == "silent" || mode == "review-aborted-pre" {
+ 				continue
+ 			}
+ 			if mode == "crash" || mode == "hold" {

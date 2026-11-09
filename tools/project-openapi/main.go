@@ -233,13 +233,8 @@ func normalize(value any) any {
 			}
 		}
 		if values, ok := result["enum"].([]any); ok {
-			filtered := []any{}
-			for _, field := range values {
-				if field != nil {
-					filtered = append(filtered, field)
-				}
-			}
-			result["enum"], result["x-go-type"] = filtered, "string"
+			// nullable widens the type, but does not relax enum membership.
+			result["enum"], result["x-go-type"] = values, "string"
 		}
 		if result["format"] == "unixtime" {
 			result["format"] = "int64"

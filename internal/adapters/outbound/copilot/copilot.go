@@ -74,11 +74,11 @@ func (h *Harness) Complete(ctx context.Context, request domain.Request, emit fun
 		// Retire the SDK event consumer before stopping the transport.
 		// Disconnect uses a background RPC context internally; closing our owned
 		// transport bounds it if a legacy/misbehaving CLI never answers.
-		stopOnDeadline := context.AfterFunc(cleanup, func() { _ = stop() })
+		stopOnDeadline := context.AfterFunc(cleanup, func() { _ = bridge.Close() })
 		detachErr := session.Disconnect()
 		if !stopOnDeadline() {
-			// Join a deadline callback already running before inspecting SDK state.
-			_ = stop()
+			// Join transport cleanup without retiring the SDK during Disconnect.
+			_ = bridge.Close()
 		}
 		var rpcError *sdk.RPCError
 		unsupported := errors.As(detachErr, &rpcError) && rpcError.Code == -32601
@@ -196,6 +196,9 @@ func (h *Harness) Complete(ctx context.Context, request domain.Request, emit fun
 				}
 				return result, err
 			case *sdk.SessionIdleData:
+				if data.Aborted != nil && *data.Aborted {
+					return result, errors.New("copilot session aborted before completion")
+				}
 				idle = true
 				if sendResult == nil {
 					return result, nil

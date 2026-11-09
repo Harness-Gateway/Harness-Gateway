@@ -34,14 +34,15 @@ func smoke(ctx context.Context, root, binary, version string, fixtures map[strin
 	cmd.Env = append(os.Environ(), "HARNESS_GATEWAY_CODEX_TEST=acceptance", "HARNESS_GATEWAY_COPILOT_TEST=acceptance",
 		"HARNESS_GATEWAY_COPILOT_PID="+filepath.Join(root, "copilot-pid"),
 		"HARNESS_GATEWAY_COPILOT_LOG="+filepath.Join(root, "copilot-methods.log"))
-	stop, err := process.Start(cmd)
+	child, err := process.Start(cmd)
 	if err != nil {
 		return 0, err
 	}
+	stop := child.Stop
 	defer func() { runErr = errors.Join(runErr, stop()) }()
 	done := make(chan struct{})
 	var waitErr error
-	go func() { waitErr = cmd.Wait(); close(done) }()
+	go func() { waitErr = child.Wait(); close(done) }()
 	defer func() {
 		select {
 		case <-done:

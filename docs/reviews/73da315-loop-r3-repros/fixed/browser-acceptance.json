@@ -1,0 +1,113 @@
+{
+  "cases": [
+    "gateway root redirects to interactive documentation on the configured port",
+    "UI renders with bundled assets, no cloud assistant, and off-origin requests blocked",
+    "cross-origin no-CORS Blob POST is denied before CLI startup",
+    "cross-origin model GET/HEAD denied with cold gateway cache",
+    "cross-origin model GET/HEAD denied with warm gateway cache",
+    "health request through Scalar",
+    "discovered aliases and native IDs through Scalar",
+    "default documented Codex example works without editing",
+    "codex: buffered completion",
+    "codex: successful SSE visible, including [DONE] and usage",
+    "codex: text arrives before stream completion; Cancel reaps PID 3137403 and capacity recovers",
+    "copilot: buffered completion",
+    "copilot: successful SSE visible, including [DONE] and usage",
+    "copilot: text arrives before stream completion; Cancel reaps PID 3138254 and capacity recovers",
+    "unsupported request returns a visible HTTP 400 error",
+    "mobile render"
+  ],
+  "external": [],
+  "errors": [],
+  "requests": [
+    {
+      "url": "http://127.0.0.1:46075/",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:46075/docs/assets/scalar-1.70.0.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:46075/docs/init.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:46075/openapi.json",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:46075/v1/models",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:46075/health",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:46075/v1/models",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:46075/v1/chat/completions",
+      "method": "POST"
+    },
+    {
+      "url": "http://127.0.0.1:46075/v1/chat/completions",
+      "method": "POST"
+    },
+    {
+      "url": "http://127.0.0.1:46075/v1/chat/completions",
+      "method": "POST"
+    },
+    {
+      "url": "http://127.0.0.1:46075/v1/chat/completions",
+      "method": "POST"
+    },
+    {
+      "url": "http://127.0.0.1:46075/v1/chat/completions",
+      "method": "POST"
+    },
+    {
+      "url": "http://127.0.0.1:46075/v1/chat/completions",
+      "method": "POST"
+    },
+    {
+      "url": "http://127.0.0.1:46075/v1/chat/completions",
+      "method": "POST"
+    },
+    {
+      "url": "http://127.0.0.1:46075/v1/chat/completions",
+      "method": "POST"
+    },
+    {
+      "url": "http://127.0.0.1:46075/v1/chat/completions",
+      "method": "POST"
+    },
+    {
+      "url": "http://127.0.0.1:46075/v1/chat/completions",
+      "method": "POST"
+    },
+    {
+      "url": "http://127.0.0.1:46075/docs",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:46075/docs/assets/scalar-1.70.0.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:46075/docs/init.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:46075/openapi.json",
+      "method": "GET"
+    }
+  ],
+  "runtime": "/mnt/DATA/workspace/AI/Harness-Gateway/.egm-r3-validation/tmp/harness-gateway-browser-3s479J",
+  "gatewayPID": 3135727,
+  "base": "http://127.0.0.1:46075",
+  "browser": "153.0.8010.12",
+  "passed": true
+}

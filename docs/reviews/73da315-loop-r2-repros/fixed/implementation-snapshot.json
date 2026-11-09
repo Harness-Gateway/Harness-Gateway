@@ -1,0 +1,246 @@
+{
+  "base": "73da315fc9d384595c2bf229a37abf3963fcfb82",
+  "state": "round 1 and round 2 accepted fixes, uncommitted",
+  "files": [
+    {
+      "path": "CHANGELOG.md",
+      "lines": 240,
+      "sha256": "27c317f5028c4cbcdaa42a0d163a546c9a112016518d48750dedcc2e90c3299e"
+    },
+    {
+      "path": "README.md",
+      "lines": 901,
+      "sha256": "db5038b9d1a80f6bd05125cdb3fe65106a602934872c69d4c4bbb0c6dcba6d57"
+    },
+    {
+      "path": "api/openapi.json",
+      "lines": 880,
+      "sha256": "af9196353489dcf173668939d2a0d120f03d8c8fd2a640fa7b7583258af4c331"
+    },
+    {
+      "path": "cmd/harness-gateway/doctor.go",
+      "lines": 269,
+      "sha256": "7b70925ea6ae4f245685e847c84c143f1c4a08b41a0ddc77be55e3a772b816f5"
+    },
+    {
+      "path": "cmd/harness-gateway/doctor_identity_test.go",
+      "lines": 70,
+      "sha256": "4627bbf0167288327845815cee0694af60cc474749fc8d2c71cc2f558c5fede6"
+    },
+    {
+      "path": "cmd/harness-gateway/doctor_test.go",
+      "lines": 285,
+      "sha256": "12922f6f1e6f889654a2d010185c67b2e27f600e7dfa37fbf0591f7794e550c5"
+    },
+    {
+      "path": "cmd/harness-gateway/loopback_test.go",
+      "lines": 57,
+      "sha256": "ab623d7032aa4f8c3a27342339968b85a731965cae67af19faf30ed27fdf3b1d"
+    },
+    {
+      "path": "cmd/harness-gateway/main.go",
+      "lines": 288,
+      "sha256": "e26e7208911aae556c6d760da3653cf65b8b2ec79809d257fc74b1f4be07842c"
+    },
+    {
+      "path": "cmd/harness-gateway/service.go",
+      "lines": 409,
+      "sha256": "4100968b9065c45c5cb36b634803f477e6daa1a117b0f35e2711ee5892abc188"
+    },
+    {
+      "path": "cmd/harness-gateway/service_log_latency_test.go",
+      "lines": 22,
+      "sha256": "b263840e7794229b938e430cebff59e06b2e9844288eba34c2a3ca164dc2f676"
+    },
+    {
+      "path": "cmd/harness-gateway/service_logs.go",
+      "lines": 273,
+      "sha256": "31740a35b99f1246f0f71fef18783f05411beeddd88b6bfadb9e089f176b9ac5"
+    },
+    {
+      "path": "cmd/harness-gateway/versions.go",
+      "lines": 120,
+      "sha256": "f17cb6563acdbb9e3f5802116bd595a3d626abf07312ff5806bc5e5cc812f669"
+    },
+    {
+      "path": "docs/designs/diagnostics-observability.md",
+      "lines": 150,
+      "sha256": "315d5b6ac60946efab998de73fe22cd9de9cb6b3c68a13758443b6ad96cd6470"
+    },
+    {
+      "path": "go.mod",
+      "lines": 23,
+      "sha256": "823870fb98175d4b03949a57f5f68c0673ca948ffd391b3af9ed70b9615d09c8"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/contract_test.go",
+      "lines": 183,
+      "sha256": "f7551211169b49a7d37fdbae297e72e8db4987a93034dad056d2ea45019eb247"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/types.gen.go",
+      "lines": 135,
+      "sha256": "a4e722ad7646d988943df8135ab5ce8e2baf8f0d53dd327b99ecfbc54e8a59e8"
+    },
+    {
+      "path": "internal/adapters/outbound/codex/transport.go",
+      "lines": 171,
+      "sha256": "4dd8d8f95fe49d19c0164433d00556e89b99443593e1c218512ab30c9136ae4c"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/aborted_test.go",
+      "lines": 91,
+      "sha256": "0816698b2bb451fa600844d04cb270d8fb4dc070c468f6aafce3c4613f181ed8"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/bridge.go",
+      "lines": 228,
+      "sha256": "a62744d24a892f9fe1126d3cd3c93915d87b2a95ed81cd0c3cf0b7dd102bae9f"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/client.go",
+      "lines": 78,
+      "sha256": "dfefe955de547e31249d9fce941636758bd2608b302b01347edc96deb40c022e"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/client_lifecycle_test.go",
+      "lines": 66,
+      "sha256": "a9ff322722f35d522ea38e53a60933cbecef17137af82a3ad9cfd897f0f10af9"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/copilot.go",
+      "lines": 243,
+      "sha256": "e996f02a603c9900655d210340ba9534dc6b415661d8c73752a5b5feaed8eeb4"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/copilot_test.go",
+      "lines": 797,
+      "sha256": "edc68563209c0efaff85310706de7813fd0d3b57f45536f7c68be22cdadb1ada"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/storage_test.go",
+      "lines": 152,
+      "sha256": "6476a9ce00947ee4270ddb9d2d4aa24fe7920c090d66b601fd6dd6dbd498ef25"
+    },
+    {
+      "path": "internal/process/command_test.go",
+      "lines": 136,
+      "sha256": "d81367f915900d70f4b6468dd224813b69eed130f0a0615b44b098c7626fcc1b"
+    },
+    {
+      "path": "internal/process/grace_linux_test.go",
+      "lines": 109,
+      "sha256": "cba4530839dbee13e09bfc6c0daf6855b5c8e0d2b41284470ef25ed9c723d47b"
+    },
+    {
+      "path": "internal/process/process.go",
+      "lines": 136,
+      "sha256": "44b8b07a8c2d8f127e0cf08c87f826022adaf8c171659129bb9b974e5bfcaf4a"
+    },
+    {
+      "path": "internal/process/process_darwin_test.go",
+      "lines": 60,
+      "sha256": "4645ad981dac123a016bb5bb8d0be8a5e1051ed134f01a072372c33e7422d290"
+    },
+    {
+      "path": "internal/process/process_other.go",
+      "lines": 19,
+      "sha256": "9f350507acd27a5d64bc546a9487896f447af47d960dbae3212e1677235c6748"
+    },
+    {
+      "path": "internal/process/process_unix.go",
+      "lines": 56,
+      "sha256": "bfec23d1e19415203421d535128458d3a3581718caee5fb8d67ac49b525f1704"
+    },
+    {
+      "path": "internal/process/process_unix_test.go",
+      "lines": 131,
+      "sha256": "529ee0f93784bccce3bde1d3d3d8c993a421f9f92e304b61709e96cf7bac8a12"
+    },
+    {
+      "path": "internal/process/process_windows.go",
+      "lines": 149,
+      "sha256": "78ca0e24d01acce18dcaf5bee3572b82cec6ee8506ea1e7bfb0246f222a422ba"
+    },
+    {
+      "path": "internal/process/wait_darwin.go",
+      "lines": 93,
+      "sha256": "fdf1e4d7f1d4f3da9b7a28330a054e4c4dfa9f15b71e916b9d42a4a54e03aa16"
+    },
+    {
+      "path": "internal/process/wait_linux.go",
+      "lines": 19,
+      "sha256": "393f3fb098e656698b78bd572c8fe9f7c4f22e1bb140bb3ead85c09f7e69f30e"
+    },
+    {
+      "path": "internal/process/wait_linux_test.go",
+      "lines": 83,
+      "sha256": "cbe60bfcbf13d1205b2a35c04e7310867e1897a4c610b2b0b182e0cb74df8ba9"
+    },
+    {
+      "path": "setup.sh",
+      "lines": 75,
+      "sha256": "af155f24691b389054b2cd3b2d127e4034a01cac3c5c459baedf588cb1552b96"
+    },
+    {
+      "path": "tools/acceptance/command_test.go",
+      "lines": 48,
+      "sha256": "c48d9f1ff5c0e5f05cffcaa4016c25e76f96bf68adf21029ca684dae5163f1ea"
+    },
+    {
+      "path": "tools/acceptance/main.go",
+      "lines": 283,
+      "sha256": "de26a6efec0527c28bbade9df5aeda7c6bba2e9154df2aadc9b735adf641453d"
+    },
+    {
+      "path": "tools/acceptance/ownership_linux_test.go",
+      "lines": 61,
+      "sha256": "a66bac406876a76fdfc12b18233ef41bfa28b172709a262117f04aed3f968e29"
+    },
+    {
+      "path": "tools/acceptance/process_other.go",
+      "lines": 8,
+      "sha256": "dca39480555fde5f877254124b58aeba4b423cd25409ecf93a424c409ca2092a"
+    },
+    {
+      "path": "tools/acceptance/process_unix.go",
+      "lines": 19,
+      "sha256": "d210d078ee4d4b15cac3e8d4e0ce480180503c60e20ab07c470cbcabda84f879"
+    },
+    {
+      "path": "tools/acceptance/process_unix_test.go",
+      "lines": 185,
+      "sha256": "507af4b9678efa437913006cf013104e0b8f26c7c827d19a328d3d7caf5358a3"
+    },
+    {
+      "path": "tools/project-openapi/contract.go",
+      "lines": 119,
+      "sha256": "7f35cb02cc889a6d06dfb0c9b6dc39c6864a72d5b746dbe752279ad37027dd5c"
+    },
+    {
+      "path": "tools/project-openapi/main.go",
+      "lines": 246,
+      "sha256": "17c7abc1f1741e8c6cb50d4228209e0934bbfe65a74a5075ed2a224f45b8cbd9"
+    },
+    {
+      "path": "tools/project-openapi/main_test.go",
+      "lines": 117,
+      "sha256": "63c3ddb02b57dbe7718172446a4efc59211fcbb2612c59e6283af7ac6d63c012"
+    },
+    {
+      "path": "tools/releaseverify/main.go",
+      "lines": 308,
+      "sha256": "d875634679e9a1123b243513052bb536fc7e9cc77251a053864a6355fbeb920e"
+    },
+    {
+      "path": "tools/releaseverify/smoke.go",
+      "lines": 307,
+      "sha256": "a52da5194ee14035928c598d38ba5eb38de609588450e2e4edd49781aa9a1d88"
+    },
+    {
+      "path": "tools/setup/canonical_test.go",
+      "lines": 65,
+      "sha256": "96c11921a11e8880f8b317dcfdd40fa7fe9537c75c7d25ac28c64e167a1885ab"
+    }
+  ]
+}

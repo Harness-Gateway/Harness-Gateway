@@ -1,0 +1,5 @@
+=== RUN   TestReviewCaseVariantRoutesDespiteSchemaRejection
+    review_case_test.go:26: HTTP=200 selected=copilot schema=rejected
+--- PASS: TestReviewCaseVariantRoutesDespiteSchemaRejection (0.01s)
+PASS
+ok  	github.com/harness-gateway/harness-gateway/internal/adapters/inbound/openai	0.009s

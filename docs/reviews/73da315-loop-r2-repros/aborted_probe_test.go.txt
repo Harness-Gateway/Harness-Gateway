@@ -1,0 +1,28 @@
+package copilot
+import (
+ "io"
+ "log/slog"
+ "net/http/httptest"
+ "strings"
+ "testing"
+ "time"
+ "github.com/harness-gateway/harness-gateway/internal/adapters/inbound/openai"
+ "github.com/harness-gateway/harness-gateway/internal/application"
+)
+func TestReviewAbortedIdleReportsSuccess(t *testing.T) {
+ for _,mode:=range []string{"review-aborted-pre","review-aborted-post"} {
+  for _,stream:=range []bool{false,true} {
+   t.Run(mode+map[bool]string{false:"-buffered",true:"-stream"}[stream],func(t *testing.T){
+    h,_,_:=testHarness(t,mode)
+    gateway:=application.New([]application.Backend{{Model:application.Model{ID:"copilot",Provider:"copilot"},Harness:h}},1)
+    body:=`{"model":"copilot","messages":[{"role":"user","content":"hi"}],"stream":`+map[bool]string{false:"false",true:"true"}[stream]+`}`
+    request:=httptest.NewRequest("POST","http://127.0.0.1/v1/chat/completions",strings.NewReader(body))
+    w:=httptest.NewRecorder()
+    openai.New(gateway,5*time.Second,slog.New(slog.NewTextHandler(io.Discard,nil))).ServeHTTP(w,request)
+    success:=w.Code==200&&strings.Contains(w.Body.String(),`"finish_reason":"stop"`)&&(!stream||strings.Contains(w.Body.String(),"[DONE]"))
+    t.Logf("status=%d stream=%t aborted=true success=%t body=%s",w.Code,stream,success,w.Body.String())
+    if !success||!strings.Contains(w.Body.String(),"partial"){t.Fatalf("candidate not reproduced: %s",w.Body)}
+   })
+  }
+ }
+}

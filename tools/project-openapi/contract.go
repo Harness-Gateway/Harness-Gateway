@@ -18,9 +18,11 @@ func gatewayDocument(schemas node) node {
 	request["model"].(node)["example"] = "codex"
 	request["n"].(node)["maximum"] = 1
 	request["n"].(node)["description"] = "Only one completion is supported; omit this field or use 1."
-	request["reasoning_effort"] = node{"type": "string", "x-go-type": "string", "enum": []any{"none", "minimal", "low", "medium", "high", "xhigh", "max"}, "description": "Optional reasoning effort forwarded to the CLI. Supported levels depend on the selected native model; omission preserves its default."}
+	request["reasoning_effort"] = node{"type": "string", "nullable": true, "x-go-type": "string", "enum": []any{"none", "minimal", "low", "medium", "high", "xhigh", "max", nil}, "description": "Optional reasoning effort forwarded to the CLI. Supported levels depend on the selected native model; omission or null preserves its default."}
 	request["stream"].(node)["description"] = "When true, return incremental server-sent events instead of a buffered JSON response."
 	schemas["StreamOptions"].(node)["description"] = "Only valid with stream=true."
+	schemas["StreamOptions"].(node)["nullable"] = true
+	properties(schemas["StreamOptions"].(node))["include_usage"].(node)["nullable"] = true
 	obfuscation := properties(schemas["StreamOptions"].(node))["include_obfuscation"].(node)
 	obfuscation["nullable"] = true
 	obfuscation["enum"], obfuscation["x-go-type"] = []any{false, nil}, "bool"
@@ -69,6 +71,7 @@ func gatewayDocument(schemas node) node {
 		node{"id": "copilot", "object": "model", "owned_by": "copilot", "created": 0},
 	}}}}}
 	healthResponses := errorResponses("403", "405")
+	healthResponses["403"].(node)["description"] = "Non-loopback Host is forbidden."
 	healthResponses["200"] = node{"description": "The gateway is running.", "content": node{"application/json": node{"schema": ref("Health"), "example": node{"status": "ok"}}}}
 	return node{
 		"openapi": "3.0.3",

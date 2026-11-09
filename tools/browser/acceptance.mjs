@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { execFileSync, spawn } from 'node:child_process';
+import { spawn } from 'node:child_process';
 import { mkdir, mkdtemp, readdir, readlink, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -10,30 +10,26 @@ import { chromium } from 'playwright';
 
 const repository = fileURLToPath(new URL('../..', import.meta.url));
 const artifacts = process.env.HARNESS_GATEWAY_BROWSER_OUTPUT_DIR || fileURLToPath(new URL('./artifacts', import.meta.url));
-await mkdir(artifacts, { recursive: true });
-const runtime = await mkdtemp(join(tmpdir(), 'harness-gateway-browser-'));
-await mkdir(`${runtime}/pids`);
-try {
-  execFileSync('go', ['build', '-o', `${runtime}/gateway`, './cmd/harness-gateway'], { cwd: repository, stdio: 'inherit' });
-  for (const model of ['codex', 'copilot']) {
-    execFileSync('go', ['test', '-c', '-o', `${runtime}/${model}-fixture`, `./internal/adapters/outbound/${model}`], { cwd: repository, stdio: 'inherit' });
-  }
-} catch (error) {
-  await rm(runtime, { recursive: true, force: true });
-  throw error;
-}
+const report = { cases: [], external: [], errors: [], requests: [] };
+const interruption = new AbortController();
+const interrupted = new Promise((_, reject) => interruption.signal.addEventListener('abort', () => reject(interruption.signal.reason), { once: true }));
+// A signal may arrive during setup, before the check-phase race is installed.
+interrupted.catch(() => {});
+const onSignal = signal => {
+  if (interruption.signal.aborted) return;
+  report.interrupted = signal;
+  report.passed = false;
+  process.exitCode = signal === 'SIGINT' ? 130 : 143;
+  interruption.abort(new Error(`Browser acceptance interrupted by ${signal}`));
+};
+const onInterrupt = () => onSignal('SIGINT');
+const onTerminate = () => onSignal('SIGTERM');
+process.on('SIGINT', onInterrupt);
+process.on('SIGTERM', onTerminate);
+
+let runtime, gateway, gatewayDone, building, buildDone, launching, browser, page;
 let log = '';
-const gateway = spawn(`${runtime}/gateway`, [
-  '-l', '127.0.0.1:0', '-c', '1', '-t', '30s',
-  '--codex-path', `${runtime}/codex-fixture`, '--copilot-path', `${runtime}/copilot-fixture`,
-], { env: { ...process.env,
-  HARNESS_GATEWAY_CODEX_TEST: 'acceptance', HARNESS_GATEWAY_COPILOT_TEST: 'acceptance',
-  HARNESS_GATEWAY_ACCEPTANCE_PIDS: `${runtime}/pids`,
-  HARNESS_GATEWAY_COPILOT_LOG: `${runtime}/copilot.log`,
-  HARNESS_GATEWAY_COPILOT_PID: `${runtime}/copilot.pid`,
-} });
-gateway.stderr.on('data', data => { log += data; });
-gateway.on('error', error => { log += error.message; });
+const servers = new Set();
 const alive = pid => { try { process.kill(Number(pid), 0); return true; } catch { return false; } };
 const liveCLIs = async () => (await readdir(`${runtime}/pids`)).filter(alive);
 async function until(check, description, timeout = 5000) {
@@ -41,16 +37,85 @@ async function until(check, description, timeout = 5000) {
   while (Date.now() < end) { if (await check()) return; await delay(50); }
   throw new Error(`Timed out: ${description}`);
 }
-let browser, page;
-const report = { cases: [], external: [], errors: [], requests: [] };
-try {
+async function bounded(promise, description, timeout) {
+  let timer;
+  try {
+    return await Promise.race([promise, new Promise((_, reject) => {
+      timer = setTimeout(() => reject(new Error(`Timed out: ${description}`)), timeout);
+    })]);
+  } finally { clearTimeout(timer); }
+}
+async function build(args) {
+  interruption.signal.throwIfAborted();
+  building = spawn('go', args, { cwd: repository, stdio: 'inherit', signal: interruption.signal });
+  buildDone = new Promise(resolve => building.once('close', resolve));
+  await new Promise((resolve, reject) => {
+    building.once('error', reject);
+    building.once('exit', (code, signal) => code === 0 ? resolve() : reject(new Error(`go ${args.join(' ')} failed: ${code ?? signal}`)));
+  });
+  interruption.signal.throwIfAborted();
+}
+async function closeServer(server) {
+  server.closeAllConnections();
+  await new Promise((resolve, reject) => server.close(error => error && error.code !== 'ERR_SERVER_NOT_RUNNING' ? reject(error) : resolve()));
+}
+let cleanupPromise;
+function cleanup() {
+  return cleanupPromise ??= (async () => {
+    const step = async (name, action) => {
+      try { await action(); } catch (error) {
+        report.passed = false;
+        (report.cleanupFailures ??= []).push(`${name}: ${error.stack}`);
+        if (!report.interrupted) process.exitCode = 1;
+      }
+    };
+    await step('build shutdown', async () => {
+      if (!building || building.exitCode !== null || building.signalCode !== null) return;
+      building.kill('SIGTERM');
+      try { await bounded(buildDone, 'build shutdown', 3000); } catch (error) {
+        building.kill('SIGKILL');
+        await bounded(buildDone, 'forced build shutdown', 2000);
+        throw error;
+      }
+    });
+    await step('gateway shutdown', async () => {
+      if (!gateway?.pid) return;
+      gateway.kill('SIGINT');
+      try { await bounded(gatewayDone, 'gateway shutdown', 6000); } catch (error) {
+        gateway.kill('SIGKILL');
+        await bounded(gatewayDone, 'forced gateway shutdown', 2000);
+        throw error;
+      }
+      assert.equal(gateway.exitCode, 0);
+    });
+    await step('browser shutdown', async () => {
+      if (launching) browser ??= await bounded(launching, 'browser launch settlement', 6000);
+      if (browser) await bounded(browser.close(), 'browser close', 3000);
+    });
+    for (const server of servers) await step('auxiliary HTTP shutdown', () => bounded(closeServer(server), 'HTTP close', 2000));
+    if (gateway?.pid) await step('fixture CLI cleanup', () => until(async () => (await liveCLIs()).length === 0, 'fixture CLI cleanup'));
+    if (runtime) await step('runtime removal', () => rm(runtime, { recursive: true, force: true }));
+    if (report.interrupted) report.passed = false;
+    await step('diagnostic directory', () => mkdir(artifacts, { recursive: true }));
+    await step('gateway diagnostic', () => writeFile(`${artifacts}/gateway.log`, log));
+    await step('acceptance receipt', () => writeFile(`${artifacts}/acceptance.json`, JSON.stringify(report, null, 2)));
+    console.log(`${report.passed ? 'PASS' : 'FAIL'} browser acceptance (${report.cases.length} cases)`);
+    for (const test of report.cases) console.log(`  ${test}`);
+    if (report.failure || report.cleanupFailures) console.error(report.failure || report.cleanupFailures);
+  })();
+}
+
+async function checks() {
   await until(() => log.includes('Harness-Gateway listening'), 'gateway readiness', 10000);
   const base = log.match(/url=(http:\/\/127\.0\.0\.1:\d+)/)[1];
   assert(log.includes('codex:0.0.0-fixture') && log.includes('copilot:0.0.0-fixture'), 'startup must identify both fixture CLI versions');
   assert(!log.includes('Harness CLI version unavailable'), 'fixture version discovery failed');
   report.base = base;
   assert.notEqual(new URL(base).port, '8789');
-  browser = await chromium.launch({ executablePath: process.env.HARNESS_GATEWAY_BROWSER_EXECUTABLE || undefined, headless: true });
+  interruption.signal.throwIfAborted();
+  launching = chromium.launch({ executablePath: process.env.HARNESS_GATEWAY_BROWSER_EXECUTABLE || undefined, headless: true, timeout: 5000 });
+  browser = await launching;
+  interruption.signal.throwIfAborted();
   report.browser = browser.version();
   const context = await browser.newContext({ viewport: { width: 1440, height: 1080 } });
   await context.route('**/*', route => {
@@ -74,12 +139,15 @@ try {
 
   // A different localhost port is a different browser origin. A no-CORS Blob
   // POST needs no preflight and must still be rejected before starting a CLI.
+  interruption.signal.throwIfAborted();
   const attacker = createServer((request, response) => {
     response.writeHead(200, { 'Content-Type': 'text/html' });
     response.end('<!doctype html><title>Cross-origin request fixture</title>');
   });
+  servers.add(attacker);
   const attackerContext = await browser.newContext();
   try {
+    interruption.signal.throwIfAborted();
     await new Promise((resolve, reject) => {
       attacker.once('error', reject);
       attacker.listen(0, '127.0.0.1', resolve);
@@ -125,8 +193,10 @@ try {
       report.cases.push(`cross-origin model GET/HEAD denied with ${cached ? 'warm' : 'cold'} gateway cache`);
     }
   } finally {
-    await attackerContext.close();
-    await new Promise((resolve, reject) => attacker.close(error => error ? reject(error) : resolve()));
+    try { await attackerContext.close(); } finally {
+      await closeServer(attacker);
+      servers.delete(attacker);
+    }
   }
 
   const open = async (method, path) => {
@@ -227,32 +297,43 @@ try {
   await until(async () => (await liveCLIs()).length === 0, 'all fixture CLIs stopped');
   report.passed = true;
   delete report.activeButtons;
+}
+
+try {
+  await mkdir(artifacts, { recursive: true });
+  runtime = await mkdtemp(join(tmpdir(), 'harness-gateway-browser-'));
+  report.runtime = runtime;
+  await mkdir(`${runtime}/pids`);
+  await build(['build', '-o', `${runtime}/gateway`, './cmd/harness-gateway']);
+  for (const model of ['codex', 'copilot']) await build(['test', '-c', '-o', `${runtime}/${model}-fixture`, `./internal/adapters/outbound/${model}`]);
+  interruption.signal.throwIfAborted();
+  gateway = spawn(`${runtime}/gateway`, [
+    '-l', '127.0.0.1:0', '-c', '1', '-t', '30s',
+    '--codex-path', `${runtime}/codex-fixture`, '--copilot-path', `${runtime}/copilot-fixture`,
+  ], { env: { ...process.env,
+    HARNESS_GATEWAY_CODEX_TEST: 'acceptance', HARNESS_GATEWAY_COPILOT_TEST: 'acceptance',
+    HARNESS_GATEWAY_ACCEPTANCE_PIDS: `${runtime}/pids`,
+    HARNESS_GATEWAY_COPILOT_LOG: `${runtime}/copilot.log`,
+    HARNESS_GATEWAY_COPILOT_PID: `${runtime}/copilot.pid`,
+  } });
+  report.gatewayPID = gateway.pid;
+  gatewayDone = new Promise(resolve => gateway.once('close', resolve));
+  gateway.stderr.on('data', data => { log += data; });
+  gateway.on('error', error => { log += error.message; });
+  await Promise.race([checks(), interrupted]);
 } catch (error) {
   report.passed = false;
   report.failure = error.stack;
-  if (page) {
-    await page.screenshot({ path: `${artifacts}/failure.png` }).catch(() => {});
-    await writeFile(`${artifacts}/failure-body.txt`, await page.locator('body').innerText().catch(() => ''));
-    report.buttons = await page.getByRole('button').allTextContents().catch(() => []);
+  if (page && !report.interrupted) {
+    await bounded(page.screenshot({ path: `${artifacts}/failure.png` }), 'failure screenshot', 2000).catch(() => {});
+    await bounded(page.locator('body').innerText(), 'failure body', 2000).then(text => writeFile(`${artifacts}/failure-body.txt`, text)).catch(() => {});
   }
-  process.exitCode = 1;
+  if (!report.interrupted) process.exitCode = 1;
 } finally {
-  await browser?.close();
-  gateway.kill('SIGINT');
-  try {
-    await until(() => gateway.exitCode !== null || gateway.signalCode !== null, 'gateway shutdown', 6000);
-    assert.equal(gateway.exitCode, 0);
-    await until(async () => (await liveCLIs()).length === 0, 'fixture CLI cleanup');
-  } catch (error) {
-    gateway.kill('SIGKILL');
-    report.passed = false;
-    report.cleanupFailure = error.stack;
-    process.exitCode = 1;
-  }
-  await writeFile(`${artifacts}/gateway.log`, log);
-  await writeFile(`${artifacts}/acceptance.json`, JSON.stringify(report, null, 2));
-  await rm(runtime, { recursive: true, force: true });
-  console.log(`${report.passed ? 'PASS' : 'FAIL'} browser acceptance (${report.cases.length} cases)`);
-  for (const test of report.cases) console.log(`  ${test}`);
-  if (report.failure || report.cleanupFailure) console.error(report.failure || report.cleanupFailure);
+  await cleanup();
+  process.off('SIGINT', onInterrupt);
+  process.off('SIGTERM', onTerminate);
 }
+// Interruption or a failed close may leave an unrelated pending Playwright
+// promise. Owned resources and diagnostics have been handled before exiting.
+if (report.interrupted || report.cleanupFailures) process.exit(process.exitCode || 1);

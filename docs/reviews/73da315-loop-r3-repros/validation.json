@@ -1,0 +1,58 @@
+{
+  "baseline_commit": "73da315fc9d384595c2bf229a37abf3963fcfb82",
+  "snapshot_sha256": "be5f7f63d85065876f8691c6c261e7bd06513f64d3fc99cf9ea5829c6c7a2ceb",
+  "source_edits": "none; test overlays and loader hook only",
+  "platform": "Linux amd64",
+  "parent_probes": [
+    {
+      "finding": "process-lifecycle-r3-1",
+      "exit_code": 0,
+      "cases": 4,
+      "observation": "Both gated CLI fixtures survived independent owner exit at status0 and7 with live runner context; emergency fixture cleanup followed",
+      "command": "go test -overlay <private>/overlay.json -run ^TestR3IndependentLeaderExitLeavesGatedCLIs$ -count=1 -v ./tools/acceptance",
+      "evidence": "probe.log",
+      "method": "Private copy of existing Unix acceptance owner test; file-triggered owner exit, existing actual gateway and catalog-gate CLI test binaries."
+    },
+    {
+      "finding": "browser runner targeted SIGTERM cleanup",
+      "exit_code": 0,
+      "cases": 1,
+      "observation": "Actual Node script died from SIGTERM, real fixture gateway remained running, runtime directory remained, no acceptance.json; gateway then interrupted and probe group retired",
+      "command": "python3 <private>/browser-probe.py",
+      "evidence": "browser-proof.json",
+      "limits": "Playwright dependency replaced by a controlled launch pause after actual gateway readiness. No browser/UI run or installed provider claim."
+    },
+    {
+      "finding": "cli-service-r3-1",
+      "exit_code": 0,
+      "cases": 4,
+      "observation": "Available CLI valid alone, queried zero times with one missing CLI in both harness orders; HTTP checks continue and overall result fails",
+      "command": "go test -overlay <private>/doctor-overlay.json -run ^TestR3DoctorDropsAvailableCLIVersion$ -count=1 -v ./cmd/harness-gateway",
+      "evidence": "doctor-probe.log",
+      "method": "Private doctor_test.go copy adds fixture-only checks with local httptest endpoints, test binary version fixture and PID records."
+    }
+  ],
+  "production_source_hashes": {
+    "cmd/harness-gateway/doctor.go": "7b70925ea6ae4f245685e847c84c143f1c4a08b41a0ddc77be55e3a772b816f5",
+    "cmd/harness-gateway/main.go": "e26e7208911aae556c6d760da3653cf65b8b2ec79809d257fc74b1f4be07842c",
+    "internal/process/process.go": "44b8b07a8c2d8f127e0cf08c87f826022adaf8c171659129bb9b974e5bfcaf4a",
+    "internal/process/process_unix.go": "bfec23d1e19415203421d535128458d3a3581718caee5fb8d67ac49b525f1704",
+    "tools/acceptance/main.go": "de26a6efec0527c28bbade9df5aeda7c6bba2e9154df2aadc9b735adf641453d",
+    "tools/browser/acceptance.mjs": "28611f681abc0a4d842bb5beb452e533e3169906520fdf3d2b4c03d5b44dc4d6"
+  },
+  "prior_validation_reuse": {
+    "snapshot": "../73da315-loop-r2-repros/fixed/implementation-snapshot.json",
+    "all_48_hashes_match": true,
+    "all_current_source_changes_covered": true,
+    "new_full_suite_run": false,
+    "native_windows_macos": "not run"
+  },
+  "post_probe_pid_states": {
+    "2851280": "absent",
+    "2851756": "absent",
+    "2851840": "absent",
+    "2851957": "absent",
+    "2865009": "absent"
+  },
+  "cleanup": "All recorded fixture/gateway PIDs absent or non-running zombies; task-only scratch/cache/runtime removed after evidence retention"
+}

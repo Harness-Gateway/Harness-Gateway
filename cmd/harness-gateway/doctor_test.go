@@ -154,6 +154,10 @@ func TestDoctorServiceUsesCurrentInvocation(t *testing.T) {
 	} {
 		t.Run(test.name, func(t *testing.T) {
 			_, calls := journalFixture(t)
+			path, pathErr := userServicePath()
+			if pathErr != nil {
+				t.Fatal(pathErr)
+			}
 			executable, err := os.Executable()
 			if err != nil {
 				t.Fatal(err)
@@ -181,7 +185,7 @@ func TestDoctorServiceUsesCurrentInvocation(t *testing.T) {
 				t.Fatal(err)
 			}
 			t.Setenv("JOURNAL_TEST_OUTPUT", string(data))
-			t.Setenv("SERVICE_TEST_OUTPUT", "ActiveState="+test.state+"\nSubState=running\nInvocationID="+testInvocation+"\nUnitFileState=enabled\n")
+			t.Setenv("SERVICE_TEST_OUTPUT", "LoadState=loaded\nFragmentPath="+path+"\nActiveState="+test.state+"\nSubState=running\nInvocationID="+testInvocation+"\nUnitFileState=enabled\n")
 			var output bytes.Buffer
 			err = doctorCommand(t.Context(), []string{"--service"}, &output)
 			if (err != nil) != (test.wantFailure != "") || !strings.Contains(output.String(), test.wantFailure) {

@@ -1,0 +1,14 @@
+▶ targeted browser-runner signals retire owned processes and save diagnostics
+  ✔ launch/SIGTERM (10431.519512ms)
+  ✔ close-failure/SIGTERM (5473.22296ms)
+  ✔ codex/SIGTERM (4346.122168ms)
+  ✔ copilot/SIGINT (4333.143761ms)
+✔ targeted browser-runner signals retire owned processes and save diagnostics (24595.719366ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 24792.03747

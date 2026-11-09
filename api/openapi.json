@@ -88,7 +88,7 @@
             "type": "integer"
           },
           "reasoning_effort": {
-            "description": "Optional reasoning effort forwarded to the CLI. Supported levels depend on the selected native model; omission preserves its default.",
+            "description": "Optional reasoning effort forwarded to the CLI. Supported levels depend on the selected native model; omission or null preserves its default.",
             "enum": [
               "none",
               "minimal",
@@ -96,8 +96,10 @@
               "medium",
               "high",
               "xhigh",
-              "max"
+              "max",
+              null
             ],
+            "nullable": true,
             "type": "string",
             "x-go-type": "string"
           },
@@ -168,7 +170,8 @@
               "length",
               "tool_calls",
               "content_filter",
-              "function_call"
+              "function_call",
+              null
             ],
             "nullable": true,
             "type": "string",
@@ -376,6 +379,7 @@
       "StreamOptions": {
         "additionalProperties": false,
         "description": "Only valid with stream=true.",
+        "nullable": true,
         "properties": {
           "include_obfuscation": {
             "enum": [
@@ -387,6 +391,7 @@
             "x-go-type": "bool"
           },
           "include_usage": {
+            "nullable": true,
             "type": "boolean"
           }
         },
@@ -477,7 +482,7 @@
                 }
               }
             },
-            "description": "Non-loopback Host or cross-origin browser request is forbidden."
+            "description": "Non-loopback Host is forbidden."
           },
           "405": {
             "content": {

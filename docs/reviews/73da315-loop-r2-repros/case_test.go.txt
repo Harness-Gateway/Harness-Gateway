@@ -1,0 +1,28 @@
+package openai
+import (
+ "context"
+ "encoding/json"
+ "io"
+ "log/slog"
+ "net/http/httptest"
+ "strings"
+ "testing"
+ "time"
+ "github.com/harness-gateway/harness-gateway/internal/application"
+ "github.com/harness-gateway/harness-gateway/internal/domain"
+)
+func TestReviewCaseVariantRoutesDespiteSchemaRejection(t *testing.T) {
+ chosen:=""
+ backends:=[]application.Backend{}
+ for _,name:=range []string{"codex","copilot"} {
+  backends=append(backends,application.Backend{Model:application.Model{ID:name,Provider:name},Harness:harnessFunc(func(_ context.Context,_ domain.Request,emit func(string)error)(domain.Result,error){chosen=name;return domain.Result{},emit("ok")})})
+ }
+ body:=`{"model":"codex","MODEL":"copilot","messages":[{"role":"user","content":"hello"}]}`
+ var value any
+ if err:=json.Unmarshal([]byte(body),&value);err!=nil{t.Fatal(err)}
+ if err:=strictContract(t,"ChatRequest").Validate(value);err==nil{t.Fatal("schema accepted undeclared MODEL property")}
+ w:=httptest.NewRecorder()
+ New(application.New(backends,1),time.Second,slog.New(slog.NewTextHandler(io.Discard,nil))).ServeHTTP(w,localRequest("POST","/v1/chat/completions",strings.NewReader(body)))
+ t.Logf("HTTP=%d selected=%s schema=rejected",w.Code,chosen)
+ if w.Code!=200||chosen!="copilot"{t.Fatalf("candidate not reproduced: %d %s %s",w.Code,chosen,w.Body)}
+}

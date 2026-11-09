@@ -264,12 +264,13 @@ func runCommand(ctx context.Context, directory string, env []string, name string
 	cmd.Dir, cmd.Env, cmd.Stderr, cmd.WaitDelay = directory, env, os.Stderr, 2*time.Second
 	var output bytes.Buffer
 	cmd.Stdout = &output
-	stop, err := process.Start(cmd)
+	child, err := process.Start(cmd)
 	if err != nil {
 		return nil, err
 	}
+	stop := child.Stop
 	stopOnCancel := context.AfterFunc(ctx, func() { _ = stop() })
-	err = cmd.Wait()
+	err = child.Wait()
 	stopOnCancel()
 	err = errors.Join(err, stop(), ctx.Err())
 	if err != nil {

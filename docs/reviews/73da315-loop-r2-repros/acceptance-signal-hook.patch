@@ -1,0 +1,33 @@
+--- a/process_unix.go
++++ b/process_unix.go
+@@ -18,7 +18,7 @@
+ 			// Java-owned gateways share this group, while their CLIs have their
+ 			// own groups. Let gateways cancel requests and reap those CLIs before
+ 			// forcibly retiring an unresponsive Maven/Java process tree.
+-			if err := syscall.Kill(-cmd.Process.Pid, syscall.SIGTERM); err != nil {
++			if err := reviewKill(-cmd.Process.Pid, syscall.SIGTERM); err != nil {
+ 				if errors.Is(err, syscall.ESRCH) {
+ 					return os.ErrProcessDone
+ 				}
+@@ -31,7 +31,7 @@
+ 			for {
+ 				select {
+ 				case <-ticker.C:
+-					if errors.Is(syscall.Kill(-cmd.Process.Pid, 0), syscall.ESRCH) {
++					if errors.Is(reviewKill(-cmd.Process.Pid, 0), syscall.ESRCH) {
+ 						return nil
+ 					}
+ 				case <-deadline.C:
+@@ -47,9 +47,11 @@
+ }
+ 
+ func killCommand(cmd *exec.Cmd) error {
+-	err := syscall.Kill(-cmd.Process.Pid, syscall.SIGKILL)
++	err := reviewKill(-cmd.Process.Pid, syscall.SIGKILL)
+ 	if errors.Is(err, syscall.ESRCH) {
+ 		return os.ErrProcessDone
+ 	}
+ 	return err
+ }
++
++var reviewKill = syscall.Kill

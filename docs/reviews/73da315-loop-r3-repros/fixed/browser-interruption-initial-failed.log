@@ -1,0 +1,37 @@
+▶ targeted browser-runner signals retire owned processes and save diagnostics
+  ✔ launch/SIGTERM (16984.506946ms)
+  ✔ close-failure/SIGTERM (9055.283477ms)
+  ✖ codex/SIGTERM (5425.614737ms)
+  ✔ copilot/SIGINT (4660.313477ms)
+✖ targeted browser-runner signals retire owned processes and save diagnostics (36133.093418ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 3
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 36302.341915
+
+✖ failing tests:
+
+test at tools/browser/interruption.test.mjs:28:13
+✖ codex/SIGTERM (5425.614737ms)
+  Error: runner exited before fixture readiness: {"code":1,"signal":null}
+  (node:3088777) ExperimentalWarning: `--experimental-loader` may be removed in the future; instead use `register()`:
+  --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("/mnt/DATA/workspace/AI/Harness-Gateway/tools/browser/testdata/pause-loader.mjs", pathToFileURL("./"));'
+  (Use `node --trace-warnings ...` to show where the warning was created)
+  FAIL browser acceptance (0 cases)
+  Error: stream ended before hold marker
+      at Object.launch (file:///mnt/DATA/workspace/AI/Harness-Gateway/tools/browser/testdata/playwright-pause.mjs:41:29)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async checks (file:///mnt/DATA/workspace/AI/Harness-Gateway/tools/browser/acceptance.mjs:117:13)
+      at async file:///mnt/DATA/workspace/AI/Harness-Gateway/tools/browser/acceptance.mjs:323:3
+  
+      at file:///mnt/DATA/workspace/AI/Harness-Gateway/tools/browser/interruption.test.mjs:56:27
+      at until (file:///mnt/DATA/workspace/AI/Harness-Gateway/tools/browser/interruption.test.mjs:20:18)
+      at async TestContext.<anonymous> (file:///mnt/DATA/workspace/AI/Harness-Gateway/tools/browser/interruption.test.mjs:55:7)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async TestContext.<anonymous> (file:///mnt/DATA/workspace/AI/Harness-Gateway/tools/browser/interruption.test.mjs:28:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)

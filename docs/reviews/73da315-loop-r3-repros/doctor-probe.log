@@ -1,0 +1,32 @@
+=== RUN   TestR3DoctorDropsAvailableCLIVersion
+=== RUN   TestR3DoctorDropsAvailableCLIVersion/codex,copilot-available-codex
+    doctor_test.go:309: PROOF order=codex,copilot valid=codex query_count=0 HTTP_checks_continue=true overall_failure=diagnostic checks failed; see the report above
+        PASS  installed gateway: Harness-Gateway v0.1.12 (unknown; linux/amd64); /mnt/DATA/workspace/AI/Harness-Gateway/.egm-r3-probes/tmp/go-build2763090003/b001/harness-gateway.test
+        FAIL  configuration: find copilot CLI: exec: "/mnt/DATA/workspace/AI/Harness-Gateway/.egm-r3-probes/tmp/TestR3DoctorDropsAvailableCLIVersioncodex,copilot-available-cod2325029763/004/missing-cli": stat /mnt/DATA/workspace/AI/Harness-Gateway/.egm-r3-probes/tmp/TestR3DoctorDropsAvailableCLIVersioncodex,copilot-available-cod2325029763/004/missing-cli: no such file or directory
+        PASS  gateway health: http://127.0.0.1:35543/health (liveness only)
+        PASS  model discovery: 1 models/aliases; discovery does not prove inference access
+=== RUN   TestR3DoctorDropsAvailableCLIVersion/codex,copilot-available-copilot
+    doctor_test.go:309: PROOF order=codex,copilot valid=copilot query_count=0 HTTP_checks_continue=true overall_failure=diagnostic checks failed; see the report above
+        PASS  installed gateway: Harness-Gateway v0.1.12 (unknown; linux/amd64); /mnt/DATA/workspace/AI/Harness-Gateway/.egm-r3-probes/tmp/go-build2763090003/b001/harness-gateway.test
+        FAIL  configuration: find codex CLI: exec: "/mnt/DATA/workspace/AI/Harness-Gateway/.egm-r3-probes/tmp/TestR3DoctorDropsAvailableCLIVersioncodex,copilot-available-cop707234693/004/missing-cli": stat /mnt/DATA/workspace/AI/Harness-Gateway/.egm-r3-probes/tmp/TestR3DoctorDropsAvailableCLIVersioncodex,copilot-available-cop707234693/004/missing-cli: no such file or directory
+        PASS  gateway health: http://127.0.0.1:34559/health (liveness only)
+        PASS  model discovery: 1 models/aliases; discovery does not prove inference access
+=== RUN   TestR3DoctorDropsAvailableCLIVersion/copilot,codex-available-codex
+    doctor_test.go:309: PROOF order=copilot,codex valid=codex query_count=0 HTTP_checks_continue=true overall_failure=diagnostic checks failed; see the report above
+        PASS  installed gateway: Harness-Gateway v0.1.12 (unknown; linux/amd64); /mnt/DATA/workspace/AI/Harness-Gateway/.egm-r3-probes/tmp/go-build2763090003/b001/harness-gateway.test
+        FAIL  configuration: find copilot CLI: exec: "/mnt/DATA/workspace/AI/Harness-Gateway/.egm-r3-probes/tmp/TestR3DoctorDropsAvailableCLIVersioncopilot,codex-available-cod2852107579/004/missing-cli": stat /mnt/DATA/workspace/AI/Harness-Gateway/.egm-r3-probes/tmp/TestR3DoctorDropsAvailableCLIVersioncopilot,codex-available-cod2852107579/004/missing-cli: no such file or directory
+        PASS  gateway health: http://127.0.0.1:34103/health (liveness only)
+        PASS  model discovery: 1 models/aliases; discovery does not prove inference access
+=== RUN   TestR3DoctorDropsAvailableCLIVersion/copilot,codex-available-copilot
+    doctor_test.go:309: PROOF order=copilot,codex valid=copilot query_count=0 HTTP_checks_continue=true overall_failure=diagnostic checks failed; see the report above
+        PASS  installed gateway: Harness-Gateway v0.1.12 (unknown; linux/amd64); /mnt/DATA/workspace/AI/Harness-Gateway/.egm-r3-probes/tmp/go-build2763090003/b001/harness-gateway.test
+        FAIL  configuration: find codex CLI: exec: "/mnt/DATA/workspace/AI/Harness-Gateway/.egm-r3-probes/tmp/TestR3DoctorDropsAvailableCLIVersioncopilot,codex-available-cop4137399900/004/missing-cli": stat /mnt/DATA/workspace/AI/Harness-Gateway/.egm-r3-probes/tmp/TestR3DoctorDropsAvailableCLIVersioncopilot,codex-available-cop4137399900/004/missing-cli: no such file or directory
+        PASS  gateway health: http://127.0.0.1:41535/health (liveness only)
+        PASS  model discovery: 1 models/aliases; discovery does not prove inference access
+--- PASS: TestR3DoctorDropsAvailableCLIVersion (0.02s)
+    --- PASS: TestR3DoctorDropsAvailableCLIVersion/codex,copilot-available-codex (0.01s)
+    --- PASS: TestR3DoctorDropsAvailableCLIVersion/codex,copilot-available-copilot (0.00s)
+    --- PASS: TestR3DoctorDropsAvailableCLIVersion/copilot,codex-available-codex (0.00s)
+    --- PASS: TestR3DoctorDropsAvailableCLIVersion/copilot,codex-available-copilot (0.01s)
+PASS
+ok  	github.com/harness-gateway/harness-gateway/cmd/harness-gateway	0.026s

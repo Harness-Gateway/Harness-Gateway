@@ -1,0 +1,16 @@
+=== RUN   TestR3IndependentLeaderExitLeavesGatedCLIs
+=== RUN   TestR3IndependentLeaderExitLeavesGatedCLIs/codex-exit-0
+    process_unix_test.go:156: PROOF harness=codex leader_exit=0 runner_context=<nil> CLI_PID=2851280 remains_running=true after owner Wait
+=== RUN   TestR3IndependentLeaderExitLeavesGatedCLIs/copilot-exit-0
+    process_unix_test.go:156: PROOF harness=copilot leader_exit=0 runner_context=<nil> CLI_PID=2851756 remains_running=true after owner Wait
+=== RUN   TestR3IndependentLeaderExitLeavesGatedCLIs/codex-exit-7
+    process_unix_test.go:156: PROOF harness=codex leader_exit=7 runner_context=<nil> CLI_PID=2851840 remains_running=true after owner Wait
+=== RUN   TestR3IndependentLeaderExitLeavesGatedCLIs/copilot-exit-7
+    process_unix_test.go:156: PROOF harness=copilot leader_exit=7 runner_context=<nil> CLI_PID=2851957 remains_running=true after owner Wait
+--- PASS: TestR3IndependentLeaderExitLeavesGatedCLIs (13.70s)
+    --- PASS: TestR3IndependentLeaderExitLeavesGatedCLIs/codex-exit-0 (1.83s)
+    --- PASS: TestR3IndependentLeaderExitLeavesGatedCLIs/copilot-exit-0 (2.32s)
+    --- PASS: TestR3IndependentLeaderExitLeavesGatedCLIs/codex-exit-7 (0.37s)
+    --- PASS: TestR3IndependentLeaderExitLeavesGatedCLIs/copilot-exit-7 (0.40s)
+PASS
+ok  	github.com/harness-gateway/harness-gateway/tools/acceptance	13.703s

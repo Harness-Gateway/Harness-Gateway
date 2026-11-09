@@ -1,6 +1,7 @@
 package process
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -11,6 +12,14 @@ import (
 
 	"golang.org/x/sys/windows"
 )
+
+func signal(cmd *exec.Cmd, sig os.Signal) error { return cmd.Process.Signal(sig) }
+
+func wait(cmd *exec.Cmd, child *Child, cleanup func() error) error {
+	// The open Job Object pins descendant ownership independently of PID reuse.
+	err := cmd.Wait()
+	return errors.Join(err, cleanup())
+}
 
 func start(cmd *exec.Cmd) (func() error, error) {
 	if err := prepareBatchCommand(cmd); err != nil {

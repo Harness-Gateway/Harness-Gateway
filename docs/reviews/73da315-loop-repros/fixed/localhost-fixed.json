@@ -1,0 +1,5 @@
+{
+  "result": "passed",
+  "url": "http://127.0.0.1:45423",
+  "scope": "Private fixed candidate under process-local localhost-to-TEST-NET resolver override; health only, no inference or system resolver/service changes"
+}

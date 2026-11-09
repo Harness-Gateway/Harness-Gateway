@@ -1,0 +1,6 @@
+=== RUN   TestReviewFirstTextLogFormatting
+    review_latency_test.go:7: INFO  completion finished  duration=2s time_to_first_text=1500000000
+    review_latency_test.go:7: INFO  completion finished  duration=2s time_to_first_text=0
+--- PASS: TestReviewFirstTextLogFormatting (0.00s)
+PASS
+ok  	github.com/harness-gateway/harness-gateway/cmd/harness-gateway	0.005s

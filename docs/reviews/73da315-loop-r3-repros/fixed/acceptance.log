@@ -1,0 +1,113 @@
+acceptance: testing gateway executable /mnt/DATA/workspace/AI/Harness-Gateway/.egm-r3-validation/gateway
+acceptance: go [test -c -o /mnt/DATA/workspace/AI/Harness-Gateway/.egm-r3-validation/tmp/harness-gateway-acceptance-1745342756/codex-fixture ./internal/adapters/outbound/codex]
+acceptance: go [test -c -o /mnt/DATA/workspace/AI/Harness-Gateway/.egm-r3-validation/tmp/harness-gateway-acceptance-1745342756/copilot-fixture ./internal/adapters/outbound/copilot]
+time=2026-11-09T10:27:16.196+01:00 level=INFO msg="Harness-Gateway listening" version=0.1.12 build=73da315fc9d384595c2bf229a37abf3963fcfb82+dirty repository=https://github.com/Harness-Gateway/Harness-Gateway url=http://127.0.0.1:43305 api=http://127.0.0.1:43305/v1 docs=http://127.0.0.1:43305/docs openapi=http://127.0.0.1:43305/openapi.json health=http://127.0.0.1:43305/health harnesses=codex,copilot harness_versions="map[codex:0.0.0-fixture copilot:0.0.0-fixture]" harness_details="[{\"name\":\"codex\",\"executable\":\"/mnt/DATA/workspace/AI/Harness-Gateway/.egm-r3-validation/tmp/harness-gateway-acceptance-1745342756/codex-fixture\",\"model\":\"\",\"version\":\"0.0.0-fixture\"},{\"name\":\"copilot\",\"executable\":\"/mnt/DATA/workspace/AI/Harness-Gateway/.egm-r3-validation/tmp/harness-gateway-acceptance-1745342756/copilot-fixture\",\"model\":\"\",\"version\":\"0.0.0-fixture\"}]" platform=linux/amd64 directory=/mnt/DATA/workspace/AI/Harness-Gateway concurrency=1 timeout=4s
+acceptance: mvn [--batch-mode --file examples/spring-ai/pom.xml -Dtest=GatewayFailureTest,GatewayStressTest,GatewayContractTest,NativeModelsTest -Dgateway.failure.url=http://127.0.0.1:43305/v1 -Dgateway.failure.pids=/mnt/DATA/workspace/AI/Harness-Gateway/.egm-r3-validation/spring/harness-gateway-acceptance-logs-119674598/pids -Dgateway.failure.directory=/mnt/DATA/workspace/AI/Harness-Gateway/.egm-r3-validation/spring/harness-gateway-acceptance-logs-119674598 -Dgateway.failure.executable=/mnt/DATA/workspace/AI/Harness-Gateway/.egm-r3-validation/gateway -Dgateway.failure.codex=/mnt/DATA/workspace/AI/Harness-Gateway/.egm-r3-validation/tmp/harness-gateway-acceptance-1745342756/codex-fixture -Dgateway.failure.copilot=/mnt/DATA/workspace/AI/Harness-Gateway/.egm-r3-validation/tmp/harness-gateway-acceptance-1745342756/copilot-fixture -Dsurefire.reportNameSuffix=failure test]
+[INFO] Scanning for projects...
+[INFO] Loaded 24413 auto-discovered prefixes for remote repository central (prefixes-central.txt)
+[INFO] 
+[INFO] ---------------< io.harnessgateway:spring-ai-acceptance >---------------
+[INFO] Building spring-ai-acceptance 0.1.12
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.5.0:resources (default-resources) @ spring-ai-acceptance ---
+[INFO] skip non existing resourceDirectory /mnt/DATA/workspace/AI/Harness-Gateway/examples/spring-ai/src/main/resources
+[INFO] 
+[INFO] --- compiler:3.14.1:compile (default-compile) @ spring-ai-acceptance ---
+[INFO] Loaded 64 auto-discovered prefixes for remote repository apache.snapshots (prefixes-apache.snapshots.txt)
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.5.0:testResources (default-testResources) @ spring-ai-acceptance ---
+[INFO] Copying 1 resource from src/test/resources to target/test-classes
+[INFO] 
+[INFO] --- compiler:3.14.1:testCompile (default-testCompile) @ spring-ai-acceptance ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- surefire:3.6.1:test (default-test) @ spring-ai-acceptance ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running io.harnessgateway.NativeModelsTest
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.273 s -- in io.harnessgateway.NativeModelsTest
+[INFO] Running io.harnessgateway.GatewayContractTest
+[INFO] Tests run: 24, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 106.1 s -- in io.harnessgateway.GatewayContractTest
+[INFO] Running io.harnessgateway.GatewayFailureTest
+time=2026-11-09T10:29:20.590+01:00 level=INFO msg="completion started" request_id=chatcmpl-a5f3af220550a92ceb6467dfc78eb672 model=codex stream=true
+time=2026-11-09T10:29:20.604+01:00 level=INFO msg="completion finished" request_id=chatcmpl-a5f3af220550a92ceb6467dfc78eb672 method=POST path=/v1/chat/completions http_status=200 outcome=canceled duration=14.584524ms model=codex stream=true time_to_first_text=11.345866ms
+time=2026-11-09T10:29:20.618+01:00 level=INFO msg="completion started" request_id=chatcmpl-d8484277b0bca812e7f07679970bef73 model=codex stream=false
+time=2026-11-09T10:29:20.628+01:00 level=INFO msg="completion finished" request_id=chatcmpl-d8484277b0bca812e7f07679970bef73 method=POST path=/v1/chat/completions http_status=200 outcome=success duration=9.173876ms model=codex stream=false time_to_first_text=8.236886ms
+time=2026-11-09T10:29:20.950+01:00 level=INFO msg="completion started" request_id=chatcmpl-a3a33dcef89d33369e8d05cadc5ca838 model=copilot stream=true
+time=2026-11-09T10:29:20.973+01:00 level=INFO msg="completion finished" request_id=chatcmpl-a3a33dcef89d33369e8d05cadc5ca838 method=POST path=/v1/chat/completions http_status=200 outcome=canceled duration=23.485366ms model=copilot stream=true time_to_first_text=14.231298ms
+time=2026-11-09T10:29:21.013+01:00 level=INFO msg="completion started" request_id=chatcmpl-82a6d007e266b51ad357f0b32800dcc5 model=copilot stream=false
+time=2026-11-09T10:29:21.028+01:00 level=INFO msg="completion finished" request_id=chatcmpl-82a6d007e266b51ad357f0b32800dcc5 method=POST path=/v1/chat/completions http_status=200 outcome=success duration=15.059448ms model=copilot stream=false time_to_first_text=11.216406ms
+time=2026-11-09T10:29:21.342+01:00 level=INFO msg="completion started" request_id=chatcmpl-6a89dc5c5986a6fb567aa2ab719c9863 model=codex stream=false
+time=2026-11-09T10:29:21.347+01:00 level=ERROR msg="completion failed" request_id=chatcmpl-6a89dc5c5986a6fb567aa2ab719c9863 model=codex error="unexpected EOF"
+time=2026-11-09T10:29:21.348+01:00 level=INFO msg="completion finished" request_id=chatcmpl-6a89dc5c5986a6fb567aa2ab719c9863 method=POST path=/v1/chat/completions http_status=502 outcome=backend_error duration=5.792314ms code=harness_error model=codex stream=false time_to_first_text=5.204365ms
+time=2026-11-09T10:29:21.352+01:00 level=INFO msg="completion started" request_id=chatcmpl-8bca65872338955bf490dd22b83aeb73 model=codex stream=false
+time=2026-11-09T10:29:21.356+01:00 level=INFO msg="completion finished" request_id=chatcmpl-8bca65872338955bf490dd22b83aeb73 method=POST path=/v1/chat/completions http_status=200 outcome=success duration=4.425258ms model=codex stream=false time_to_first_text=3.987451ms
+time=2026-11-09T10:29:21.608+01:00 level=INFO msg="completion started" request_id=chatcmpl-d2d1f9c60a5cd988147873e609cf0cb1 model=copilot stream=false
+time=2026-11-09T10:29:21.868+01:00 level=ERROR msg="completion failed" request_id=chatcmpl-d2d1f9c60a5cd988147873e609cf0cb1 model=copilot error="copilot connection lost: connection closed\ncopilot transport: EOF"
+time=2026-11-09T10:29:21.868+01:00 level=INFO msg="completion finished" request_id=chatcmpl-d2d1f9c60a5cd988147873e609cf0cb1 method=POST path=/v1/chat/completions http_status=502 outcome=backend_error duration=260.017962ms code=harness_error model=copilot stream=false time_to_first_text=10.226531ms
+time=2026-11-09T10:29:21.877+01:00 level=INFO msg="completion started" request_id=chatcmpl-3186adcd26bb2064d2f5c80e5d49d2ad model=copilot stream=false
+time=2026-11-09T10:29:21.897+01:00 level=INFO msg="completion finished" request_id=chatcmpl-3186adcd26bb2064d2f5c80e5d49d2ad method=POST path=/v1/chat/completions http_status=200 outcome=success duration=19.821967ms model=copilot stream=false time_to_first_text=18.152748ms
+time=2026-11-09T10:29:24.453+01:00 level=INFO msg="completion started" request_id=chatcmpl-25231483c87115c8961b401c08012f13 model=codex stream=true
+time=2026-11-09T10:29:24.487+01:00 level=ERROR msg="completion failed" request_id=chatcmpl-25231483c87115c8961b401c08012f13 model=codex error="unexpected EOF"
+time=2026-11-09T10:29:24.487+01:00 level=INFO msg="completion finished" request_id=chatcmpl-25231483c87115c8961b401c08012f13 method=POST path=/v1/chat/completions http_status=200 outcome=backend_error duration=34.412694ms code=harness_error model=codex stream=true time_to_first_text=25.321568ms
+time=2026-11-09T10:29:24.504+01:00 level=INFO msg="completion started" request_id=chatcmpl-84fd3419151f0b04cfbc2509775fb736 model=codex stream=false
+time=2026-11-09T10:29:24.517+01:00 level=INFO msg="completion finished" request_id=chatcmpl-84fd3419151f0b04cfbc2509775fb736 method=POST path=/v1/chat/completions http_status=200 outcome=success duration=13.283211ms model=codex stream=false time_to_first_text=12.155041ms
+time=2026-11-09T10:29:24.861+01:00 level=INFO msg="completion started" request_id=chatcmpl-33c85a818429392c53f1ec2e40401ab0 model=copilot stream=true
+time=2026-11-09T10:29:25.138+01:00 level=ERROR msg="completion failed" request_id=chatcmpl-33c85a818429392c53f1ec2e40401ab0 model=copilot error="copilot connection lost: connection closed\ncopilot transport: EOF"
+time=2026-11-09T10:29:25.138+01:00 level=INFO msg="completion finished" request_id=chatcmpl-33c85a818429392c53f1ec2e40401ab0 method=POST path=/v1/chat/completions http_status=200 outcome=backend_error duration=277.733385ms code=harness_error model=copilot stream=true time_to_first_text=29.08364ms
+time=2026-11-09T10:29:25.143+01:00 level=INFO msg="completion started" request_id=chatcmpl-75c152fa6c77f2a9ed23bae4cdab8d96 model=copilot stream=false
+time=2026-11-09T10:29:25.151+01:00 level=INFO msg="completion finished" request_id=chatcmpl-75c152fa6c77f2a9ed23bae4cdab8d96 method=POST path=/v1/chat/completions http_status=200 outcome=success duration=7.189543ms model=copilot stream=false time_to_first_text=6.036083ms
+time=2026-11-09T10:29:26.884+01:00 level=INFO msg="completion started" request_id=chatcmpl-d686208bdc31cb8be57badf2d0c44805 model=codex stream=true
+time=2026-11-09T10:29:30.889+01:00 level=INFO msg="completion finished" request_id=chatcmpl-d686208bdc31cb8be57badf2d0c44805 method=POST path=/v1/chat/completions http_status=200 outcome=timeout duration=4.005056998s code=harness_timeout model=codex stream=true time_to_first_text=14.914446ms
+time=2026-11-09T10:29:30.893+01:00 level=INFO msg="completion started" request_id=chatcmpl-9f0097ce3b4066ab0b622ea5278a12dd model=codex stream=false
+time=2026-11-09T10:29:30.906+01:00 level=INFO msg="completion finished" request_id=chatcmpl-9f0097ce3b4066ab0b622ea5278a12dd method=POST path=/v1/chat/completions http_status=200 outcome=success duration=13.149752ms model=codex stream=false time_to_first_text=11.376551ms
+time=2026-11-09T10:29:31.152+01:00 level=INFO msg="completion started" request_id=chatcmpl-0f0a5dadc8fd04fab8834aa1be6ae5ad model=copilot stream=true
+time=2026-11-09T10:29:35.155+01:00 level=INFO msg="completion finished" request_id=chatcmpl-0f0a5dadc8fd04fab8834aa1be6ae5ad method=POST path=/v1/chat/completions http_status=200 outcome=timeout duration=4.003398561s code=harness_timeout model=copilot stream=true time_to_first_text=15.891167ms
+time=2026-11-09T10:29:35.161+01:00 level=INFO msg="completion started" request_id=chatcmpl-97e42e7d6a66b7612b56da62f93bd683 model=copilot stream=false
+time=2026-11-09T10:29:35.174+01:00 level=INFO msg="completion finished" request_id=chatcmpl-97e42e7d6a66b7612b56da62f93bd683 method=POST path=/v1/chat/completions http_status=200 outcome=success duration=13.039139ms model=copilot stream=false time_to_first_text=10.39378ms
+time=2026-11-09T10:29:35.332+01:00 level=INFO msg="completion started" request_id=chatcmpl-0dff45a46beb9a13b3fc7acca0502e2c model=codex stream=false
+time=2026-11-09T10:29:39.334+01:00 level=INFO msg="completion finished" request_id=chatcmpl-0dff45a46beb9a13b3fc7acca0502e2c method=POST path=/v1/chat/completions http_status=504 outcome=timeout duration=4.002139006s code=harness_timeout model=codex stream=false time_to_first_text=3.968751ms
+time=2026-11-09T10:29:39.338+01:00 level=INFO msg="completion started" request_id=chatcmpl-0fe0be9acf5f1d80134cb4689c991d34 model=codex stream=false
+time=2026-11-09T10:29:39.344+01:00 level=INFO msg="completion finished" request_id=chatcmpl-0fe0be9acf5f1d80134cb4689c991d34 method=POST path=/v1/chat/completions http_status=200 outcome=success duration=6.290216ms model=codex stream=false time_to_first_text=5.86791ms
+time=2026-11-09T10:29:39.524+01:00 level=INFO msg="completion started" request_id=chatcmpl-a45f86c201a907fb0a7d3a7a930ec00e model=copilot stream=false
+time=2026-11-09T10:29:43.529+01:00 level=INFO msg="completion finished" request_id=chatcmpl-a45f86c201a907fb0a7d3a7a930ec00e method=POST path=/v1/chat/completions http_status=504 outcome=timeout duration=4.0046735s code=harness_timeout model=copilot stream=false time_to_first_text=8.454003ms
+time=2026-11-09T10:29:43.534+01:00 level=INFO msg="completion started" request_id=chatcmpl-b1542ccdcc716e68db710c7fd3025579 model=copilot stream=false
+time=2026-11-09T10:29:43.552+01:00 level=INFO msg="completion finished" request_id=chatcmpl-b1542ccdcc716e68db710c7fd3025579 method=POST path=/v1/chat/completions http_status=200 outcome=success duration=17.911154ms model=copilot stream=false time_to_first_text=14.485958ms
+time=2026-11-09T10:29:43.849+01:00 level=INFO msg="completion started" request_id=chatcmpl-1038365d468d964f37f5ce39b8f255a1 model=codex stream=true
+time=2026-11-09T10:29:43.867+01:00 level=INFO msg="completion started" request_id=chatcmpl-1695ad247f66ebb74afce3cf47418776 model=copilot stream=false
+time=2026-11-09T10:29:43.867+01:00 level=INFO msg="completion finished" request_id=chatcmpl-1695ad247f66ebb74afce3cf47418776 method=POST path=/v1/chat/completions http_status=429 outcome=rejected duration=155.714µs code=gateway_busy model=copilot stream=false
+time=2026-11-09T10:29:43.879+01:00 level=INFO msg="completion finished" request_id=chatcmpl-1038365d468d964f37f5ce39b8f255a1 method=POST path=/v1/chat/completions http_status=200 outcome=canceled duration=29.697523ms model=codex stream=true time_to_first_text=11.750423ms
+time=2026-11-09T10:29:43.925+01:00 level=INFO msg="completion started" request_id=chatcmpl-43064b06770a91d12d01af983d885c0a model=codex stream=false
+time=2026-11-09T10:29:43.935+01:00 level=INFO msg="completion finished" request_id=chatcmpl-43064b06770a91d12d01af983d885c0a method=POST path=/v1/chat/completions http_status=200 outcome=success duration=10.093716ms model=codex stream=false time_to_first_text=9.358915ms
+time=2026-11-09T10:29:44.163+01:00 level=INFO msg="completion started" request_id=chatcmpl-09d06708bd116d399c7c1baa25f20f65 model=copilot stream=true
+time=2026-11-09T10:29:44.178+01:00 level=INFO msg="completion started" request_id=chatcmpl-f22ab086c20ae1cc624568907609ea6f model=codex stream=false
+time=2026-11-09T10:29:44.178+01:00 level=INFO msg="completion finished" request_id=chatcmpl-f22ab086c20ae1cc624568907609ea6f method=POST path=/v1/chat/completions http_status=429 outcome=rejected duration=168.064µs code=gateway_busy model=codex stream=false
+time=2026-11-09T10:29:44.189+01:00 level=INFO msg="completion finished" request_id=chatcmpl-09d06708bd116d399c7c1baa25f20f65 method=POST path=/v1/chat/completions http_status=200 outcome=canceled duration=26.970049ms model=copilot stream=true time_to_first_text=10.77185ms
+time=2026-11-09T10:29:44.208+01:00 level=INFO msg="completion started" request_id=chatcmpl-df2bc1291e86372ed88ad427918dfec9 model=copilot stream=false
+time=2026-11-09T10:29:44.219+01:00 level=INFO msg="completion finished" request_id=chatcmpl-df2bc1291e86372ed88ad427918dfec9 method=POST path=/v1/chat/completions http_status=200 outcome=success duration=10.970984ms model=copilot stream=false time_to_first_text=7.828163ms
+[INFO] Tests run: 29, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 25.49 s -- in io.harnessgateway.GatewayFailureTest
+[INFO] Running io.harnessgateway.GatewayStressTest
+Fixture stress codex: requests=66, peak active CLIs=2, FDs baseline=7 max=11 rounds=[11, 11, 11, 11]
+Fixture stress copilot: requests=66, peak active CLIs=2, FDs baseline=7 max=11 rounds=[9, 11, 11, 11]
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.255 s -- in io.harnessgateway.GatewayStressTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 61, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  02:29 min
+[INFO] Finished at: 2026-11-09T10:29:50+01:00
+[INFO] ------------------------------------------------------------------------
+time=2026-11-09T10:29:56.830+01:00 level=INFO msg="Harness-Gateway shutting down"
+time=2026-11-09T10:29:56.831+01:00 level=INFO msg="Harness-Gateway stopped"
+acceptance: passed; owned gateways stopped
+acceptance: logs retained in /mnt/DATA/workspace/AI/Harness-Gateway/.egm-r3-validation/spring/harness-gateway-acceptance-logs-119674598

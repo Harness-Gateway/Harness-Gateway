@@ -1,0 +1,21 @@
+{
+  "status": "passed",
+  "ordinary_tests": "passed",
+  "race_tests": "passed",
+  "vet": "passed",
+  "build": "passed",
+  "spring_ai": {
+    "tests": 61,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "cross_compile": {
+    "macos_amd64": "passed",
+    "windows_amd64": "passed"
+  },
+  "native_macos_windows": "not run",
+  "authenticated_inference": "not run",
+  "private_gateway_sha256": "ac67f5e303e4f467994a4013f8b65723a93e5d4656baef06aa6b4470ae92ae2f",
+  "source_state": "uncommitted dev based on 73da315fc9d384595c2bf229a37abf3963fcfb82"
+}

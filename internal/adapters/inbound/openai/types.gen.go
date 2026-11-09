@@ -32,14 +32,14 @@ type ChatRequest struct {
 	// N Only one completion is supported; omit this field or use 1.
 	N *int `json:"n"`
 
-	// ReasoningEffort Optional reasoning effort forwarded to the CLI. Supported levels depend on the selected native model; omission preserves its default.
-	ReasoningEffort *string `json:"reasoning_effort,omitempty"`
+	// ReasoningEffort Optional reasoning effort forwarded to the CLI. Supported levels depend on the selected native model; omission or null preserves its default.
+	ReasoningEffort *string `json:"reasoning_effort"`
 
 	// Stream When true, return incremental server-sent events instead of a buffered JSON response.
 	Stream *bool `json:"stream"`
 
 	// StreamOptions Only valid with stream=true.
-	StreamOptions *StreamOptions `json:"stream_options,omitempty"`
+	StreamOptions *StreamOptions `json:"stream_options"`
 }
 
 // Chunk defines model for Chunk.
@@ -115,7 +115,7 @@ type ResponseMessage struct {
 // StreamOptions Only valid with stream=true.
 type StreamOptions struct {
 	IncludeObfuscation *bool `json:"include_obfuscation"`
-	IncludeUsage       *bool `json:"include_usage,omitempty"`
+	IncludeUsage       *bool `json:"include_usage"`
 }
 
 // TextPart defines model for TextPart.

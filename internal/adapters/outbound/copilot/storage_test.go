@@ -12,7 +12,7 @@ import (
 )
 
 func TestRequestStateRemovedOnEveryExit(t *testing.T) {
-	for _, mode := range []string{"normal", "hold", "silent", "crash", "create-error", "send-error", "session-error", "detach-error", "detach-hold", "detach-unsupported", "emit-error"} {
+	for _, mode := range []string{"normal", "hold", "silent", "crash", "create-error", "send-error", "session-error", "aborted-pre", "aborted-post", "detach-error", "detach-hold", "detach-unsupported", "emit-error"} {
 		t.Run(mode, func(t *testing.T) {
 			fixtureMode := mode
 			if mode == "emit-error" {

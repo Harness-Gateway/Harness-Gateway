@@ -1,0 +1,52 @@
+=== RUN   TestReviewCancellationSDKClientRace
+2026/11/09 01:24:19 Failed to close JSON-RPC writer: close tcp 127.0.0.1:46858->127.0.0.1:45053: use of closed network connection
+==================
+WARNING: DATA RACE
+Read at 0x00c0001d8118 by goroutine 10:
+  github.com/github/copilot-sdk/go.(*Client).ListModels()
+      /tmp/hg-egm-r1/copilot-sdk/client.go:2131 +0x26f
+  github.com/harness-gateway/harness-gateway/internal/adapters/outbound/copilot.(*Harness).Models()
+      /mnt/DATA/workspace/AI/Harness-Gateway/internal/adapters/outbound/copilot/client.go:70 +0x14f
+  github.com/harness-gateway/harness-gateway/internal/adapters/outbound/copilot.TestReviewCancellationSDKClientRace.func4()
+      /mnt/DATA/workspace/AI/Harness-Gateway/internal/adapters/outbound/copilot/review_race_probe_test.go:19 +0x55
+
+Previous write at 0x00c0001d8118 by goroutine 15:
+  github.com/github/copilot-sdk/go.(*Client).ForceStop()
+      /tmp/hg-egm-r1/copilot-sdk/client.go:807 +0x757
+  github.com/harness-gateway/harness-gateway/internal/adapters/outbound/copilot.(*Harness).connect.func1()
+      /mnt/DATA/workspace/AI/Harness-Gateway/internal/adapters/outbound/copilot/client.go:43 +0x15d
+  sync.OnceValue[go.shape.interface { Error() string }].func1.1()
+      /home/maurizio/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.27.3.linux-amd64/src/sync/oncefunc.go:66 +0x57
+
+Goroutine 10 (running) created at:
+  github.com/harness-gateway/harness-gateway/internal/adapters/outbound/copilot.TestReviewCancellationSDKClientRace()
+      /mnt/DATA/workspace/AI/Harness-Gateway/internal/adapters/outbound/copilot/review_race_probe_test.go:19 +0x46a
+  testing.tRunner()
+      /home/maurizio/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.27.3.linux-amd64/src/testing/testing.go:2195 +0x21c
+  testing.(*T).Run.gowrap1()
+      /home/maurizio/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.27.3.linux-amd64/src/testing/testing.go:2260 +0x38
+
+Goroutine 15 (running) created at:
+  context.(*afterFuncCtx).cancel.func1()
+      /home/maurizio/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.27.3.linux-amd64/src/context/context.go:359 +0x44
+  sync.(*Once).doSlow()
+      /home/maurizio/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.27.3.linux-amd64/src/sync/once.go:78 +0xa1
+  context.(*cancelCtx).cancel()
+      /home/maurizio/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.27.3.linux-amd64/src/context/context.go:572 +0x267
+  context.(*timerCtx).cancel()
+      /home/maurizio/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.27.3.linux-amd64/src/context/context.go:681 +0x64
+  context.WithDeadlineCause.func3()
+      /home/maurizio/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.27.3.linux-amd64/src/context/context.go:657 +0x52
+  github.com/harness-gateway/harness-gateway/internal/adapters/outbound/copilot.TestReviewCancellationSDKClientRace()
+      /mnt/DATA/workspace/AI/Harness-Gateway/internal/adapters/outbound/copilot/review_race_probe_test.go:21 +0x56b
+  testing.tRunner()
+      /home/maurizio/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.27.3.linux-amd64/src/testing/testing.go:2195 +0x21c
+  testing.(*T).Run.gowrap1()
+      /home/maurizio/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.27.3.linux-amd64/src/testing/testing.go:2260 +0x38
+==================
+    review_race_probe_test.go:24: cancellation returned: copilot model discovery: client not connected
+    testing.go:1867: race detected during execution of test
+--- FAIL: TestReviewCancellationSDKClientRace (0.02s)
+FAIL
+FAIL	github.com/harness-gateway/harness-gateway/internal/adapters/outbound/copilot	0.032s
+FAIL

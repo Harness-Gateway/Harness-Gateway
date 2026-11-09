@@ -63,12 +63,13 @@ func queryHarnessVersionInDirectory(ctx context.Context, name, executable, direc
 	command.WaitDelay = 200 * time.Millisecond
 	var output versionOutput
 	command.Stdout, command.Stderr = &output, io.Discard
-	stop, err := process.Start(command)
+	child, err := process.Start(command)
 	if err != nil {
 		return "", fmt.Errorf("--version failed: %w", err)
 	}
+	stop := child.Stop
 	stopOnCancel := context.AfterFunc(ctx, func() { _ = stop() })
-	runErr := command.Wait()
+	runErr := child.Wait()
 	stopOnCancel()
 	cleanupErr := stop()
 	if output.exceeded {

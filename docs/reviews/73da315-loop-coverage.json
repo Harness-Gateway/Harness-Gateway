@@ -1,0 +1,1471 @@
+{
+  "baseline": "73da315fc9d384595c2bf229a37abf3963fcfb82",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "reviewer": "delivery",
+      "bytes": 178,
+      "lines": 4,
+      "sha256": "39beb16e40874bc9bd42b7ab3eca44585a0b0329e9c4c5919cc5c4c349472cb6",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": ".github/workflows/cli-canary.yml",
+      "reviewer": "delivery",
+      "bytes": 2397,
+      "lines": 67,
+      "sha256": "4f43e7f9144c47ed2d9aa8eb5259de3c83f53829a5e8af7e0b64fab1a833d943",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": ".github/workflows/release-verify.yml",
+      "reviewer": "delivery",
+      "bytes": 3354,
+      "lines": 91,
+      "sha256": "c42fc95234ba3570ebc0b1a48051149a7799c2af00627b35651b510e6e941be4",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": ".github/workflows/validate.yml",
+      "reviewer": "delivery",
+      "bytes": 8906,
+      "lines": 240,
+      "sha256": "d8d6d4aed96782bc7bb0b02f4abf4d57400d62b2d8f20617e29621ee76e27817",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": ".gitignore",
+      "reviewer": "delivery",
+      "bytes": 109,
+      "lines": 5,
+      "sha256": "5483d5ce2828efdd33d74a703f39a0b26bf4a53e3da2dade7c04581a93456340",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "AGENTS.md",
+      "reviewer": "docs-examples",
+      "bytes": 1893,
+      "lines": 51,
+      "sha256": "00ab542f0ab49bb6c6c5c8aaaf2c8d6c945cd817eb153399f83c5e4318a63a76",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "reviewer": "docs-examples",
+      "bytes": 13781,
+      "lines": 217,
+      "sha256": "39037c3ec6faebe258b11393e2465853e6c1b98358b6ab746709044b7b942995",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "LICENSE",
+      "reviewer": "docs-examples",
+      "bytes": 11358,
+      "lines": 202,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "README.md",
+      "reviewer": "docs-examples",
+      "bytes": 49195,
+      "lines": 890,
+      "sha256": "8a76ae3f3727961e71049f950e764de553143f3babb0f1af2ee1ac1795f66526",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "api/LICENSE.openai",
+      "reviewer": "api-http",
+      "bytes": 1083,
+      "lines": 21,
+      "sha256": "bcba3de214851cce46ed5af42d6698044616eeace887c3231bc7a20474ab639e",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "api/document.go",
+      "reviewer": "api-http",
+      "bytes": 153,
+      "lines": 8,
+      "sha256": "4f66dba0dfd34cc15cc58ec1f55e106e331c1bf9853e3f236d2db6223e93cabb",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "api/generate.go",
+      "reviewer": "api-http",
+      "bytes": 201,
+      "lines": 4,
+      "sha256": "edbaa066f5540623a4e52dac5cafb24a66ffa8f9c1db344fa2ab93356887f7ad",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "api/oapi-codegen.yaml",
+      "reviewer": "api-http",
+      "bytes": 133,
+      "lines": 6,
+      "sha256": "688701652fd4f48b29323173357af91ae93ecbb5c7cb3dcf793914540da9f430",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "api/openapi.json",
+      "reviewer": "api-http",
+      "bytes": 24816,
+      "lines": 875,
+      "sha256": "e51001182cc30412fd595f47ec20a4b87974fec1f7cf11ffc44ac3d8c8d99a5b",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "cmd/harness-gateway/console.go",
+      "reviewer": "cli-service",
+      "bytes": 6327,
+      "lines": 202,
+      "sha256": "6af6f9b2ea27a3b2e9f8f5d6e6f024449fd1744d6d920d23285b4189e8687f6a",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "cmd/harness-gateway/console_test.go",
+      "reviewer": "cli-service",
+      "bytes": 4160,
+      "lines": 102,
+      "sha256": "418833df2cdbbc11d54274e2461e01a6a5e353a4700ad05c15bbda5a03a3ce60",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "cmd/harness-gateway/diagnostics.go",
+      "reviewer": "cli-service",
+      "bytes": 1110,
+      "lines": 30,
+      "sha256": "ca1b0ac2b99fdb4689cb131a716bcadf52cc7ee60a64bafb2093f619f3b1d648",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "cmd/harness-gateway/diagnostics_test.go",
+      "reviewer": "cli-service",
+      "bytes": 1842,
+      "lines": 59,
+      "sha256": "58ff69656868939e0e891d33d459c3ab7762b485810286e5a748d9341c5835cf",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "cmd/harness-gateway/doctor.go",
+      "reviewer": "cli-service",
+      "bytes": 11032,
+      "lines": 262,
+      "sha256": "79565f41dc585e9b168666d659f90cd99f2c16d5ab9acc19b762ee385f02ae7a",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "cmd/harness-gateway/doctor_test.go",
+      "reviewer": "cli-service",
+      "bytes": 10908,
+      "lines": 281,
+      "sha256": "eba8f38a5dc8da67bca76da0cfbe44148b23e5f4c7bba55b81b27294c3b7d412",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "cmd/harness-gateway/installed_test.go",
+      "reviewer": "cli-service",
+      "bytes": 1570,
+      "lines": 44,
+      "sha256": "5f9ae2c81888430d6b76d2ce34d93b0e71a2d389f9a0e8d2841937e51079244c",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "cmd/harness-gateway/main.go",
+      "reviewer": "cli-service",
+      "bytes": 9512,
+      "lines": 263,
+      "sha256": "aa14aa2a2b55543c81a92a2a4f7c91914934e0ad67a3290040d8a2f227e27007",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "cmd/harness-gateway/main_test.go",
+      "reviewer": "cli-service",
+      "bytes": 4068,
+      "lines": 101,
+      "sha256": "759137041e327b59ac8344733f71e540bc8c99f492243da3b11395f990ca17b9",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "cmd/harness-gateway/service.go",
+      "reviewer": "cli-service",
+      "bytes": 13370,
+      "lines": 401,
+      "sha256": "71c13b8ed150c6ff5e82d9f5fbb75ea31f0830032496b69b29299ad4e81f424d",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "cmd/harness-gateway/service_identity_test.go",
+      "reviewer": "cli-service",
+      "bytes": 1527,
+      "lines": 46,
+      "sha256": "377d32b4027a8d544e4a138c2f1d6f5b5093c4362c03e77730bf069d8e3e8ad9",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "cmd/harness-gateway/service_logs.go",
+      "reviewer": "cli-service",
+      "bytes": 7523,
+      "lines": 273,
+      "sha256": "114abf0aa2a85aacea443883e5be039d60fd047245ea76c8d3c84c36197bb72f",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "cmd/harness-gateway/service_observe_test.go",
+      "reviewer": "cli-service",
+      "bytes": 17137,
+      "lines": 371,
+      "sha256": "fff6134c3b78d8eebc51f66925e8675deb0bdbb574ab131d72306f7919e5b0fb",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "cmd/harness-gateway/service_status.go",
+      "reviewer": "cli-service",
+      "bytes": 7961,
+      "lines": 201,
+      "sha256": "5cf341a3b3953040763cce120b1dd8d3169a5a0428b3fdacedc26e1268f2083f",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "cmd/harness-gateway/service_test.go",
+      "reviewer": "cli-service",
+      "bytes": 17054,
+      "lines": 453,
+      "sha256": "516e878e0425af0ee8bc8715121efb9c2e1e932daff91df5f250214bad9115bd",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "cmd/harness-gateway/soak_test.go",
+      "reviewer": "cli-service",
+      "bytes": 2728,
+      "lines": 99,
+      "sha256": "3f3dd64ee44bf9de9dcdcb91736da669c5659e088b273d77508c9148ebcceecc",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "cmd/harness-gateway/versions.go",
+      "reviewer": "cli-service",
+      "bytes": 3837,
+      "lines": 119,
+      "sha256": "4162482e806bd5669d5145e534847cf243e9723d7c4fbf6aee33549185d8eee3",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "cmd/harness-gateway/versions_process_test.go",
+      "reviewer": "cli-service",
+      "bytes": 1370,
+      "lines": 51,
+      "sha256": "f7b27a4d7dfaa41cf7875114baed4544c4a89ce35f0bd48fc92102c8394acfa1",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "cmd/harness-gateway/versions_test.go",
+      "reviewer": "cli-service",
+      "bytes": 6099,
+      "lines": 179,
+      "sha256": "544583ead53cbd9e0a439f11caba1490899f85aa4796c6f3b195b77d8816bafc",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "docs/designs/diagnostics-observability.md",
+      "reviewer": "docs-examples",
+      "bytes": 8825,
+      "lines": 149,
+      "sha256": "155df32b746bdd0c8bd746e25530b1d2d70e3bbb6627a3d879916a93a2ea3d0c",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "docs/reviews/624c4da-adjudication.md",
+      "reviewer": "docs-examples",
+      "bytes": 3813,
+      "lines": 54,
+      "sha256": "12756ce335b3289d095422ab0075b275a74e05ba630a23cba29fb0226445d81a",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "docs/reviews/624c4da-coverage.json",
+      "reviewer": "docs-examples",
+      "bytes": 8863,
+      "lines": 197,
+      "sha256": "340f9e6a5324163b3f3496021df74700d6e38256119301aafe82638821cecc27",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "docs/reviews/624c4da-fix-validation.md",
+      "reviewer": "docs-examples",
+      "bytes": 4369,
+      "lines": 55,
+      "sha256": "400ec155d88fd08208c11094907f077470c4cfb27f02e54e82f26d01b0904de3",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "docs/reviews/624c4da-project-baseline.md",
+      "reviewer": "docs-examples",
+      "bytes": 5518,
+      "lines": 84,
+      "sha256": "b8293eddb9735181f00b59ebf456c6f3f843f60af8e9c8ce2b484e9636e9bacc",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "docs/reviews/624c4da-project-review.md",
+      "reviewer": "docs-examples",
+      "bytes": 15882,
+      "lines": 254,
+      "sha256": "b9efc3e12076d22f6baaa3b32ca3db6ff86c35ff023244164748f95ec0a9b5ba",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "docs/reviews/624c4da-repros/README.md",
+      "reviewer": "docs-examples",
+      "bytes": 1835,
+      "lines": 36,
+      "sha256": "2c8971579f989be597a6d9f3ebf4f6c7b7493357a6db65bb1f6bd02c6bdf494f",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "docs/reviews/624c4da-repros/ReviewGate.java.txt",
+      "reviewer": "docs-examples",
+      "bytes": 518,
+      "lines": 10,
+      "sha256": "ecaeb22c0a9350fe02a641b06ddaa15d52f644ace87d61cdd419f37fbb36fa43",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "docs/reviews/624c4da-repros/burst-result.txt",
+      "reviewer": "docs-examples",
+      "bytes": 602,
+      "lines": 8,
+      "sha256": "11753518bebb0a082c0684e8084f6cb599d4142823dcafa062a3a9e6fa79e697",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "docs/reviews/624c4da-repros/cleanup-receipt.json",
+      "reviewer": "docs-examples",
+      "bytes": 582,
+      "lines": 18,
+      "sha256": "24ea343f5b3d65616f1afd662620960e3365be75a5ea34403b963430af6fa6c3",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "docs/reviews/624c4da-repros/copilot-probes.go.txt",
+      "reviewer": "docs-examples",
+      "bytes": 853,
+      "lines": 24,
+      "sha256": "63e5833f3120c2e1323872b72441bef157ead644c836fcba2f59eb2d98e9cf23",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "docs/reviews/624c4da-repros/http-probes.go.txt",
+      "reviewer": "docs-examples",
+      "bytes": 1124,
+      "lines": 10,
+      "sha256": "615231aeac6e40becbe168c5f22aba2cddc13b1beae865b5c43850b6bc611a65",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "docs/reviews/624c4da-repros/installer-probes.go.txt",
+      "reviewer": "docs-examples",
+      "bytes": 869,
+      "lines": 15,
+      "sha256": "f38ec3a8af19250902be2c79701a1c2c0b923a734627df9d79fced34f7224d82",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "docs/reviews/624c4da-repros/installer-result.txt",
+      "reviewer": "docs-examples",
+      "bytes": 935,
+      "lines": 15,
+      "sha256": "66b38d9582cc7c73a680744180b72ee1d6ebea7d067de16585bb96618181178e",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "docs/reviews/624c4da-repros/interrupt-probes.go.txt",
+      "reviewer": "docs-examples",
+      "bytes": 1631,
+      "lines": 22,
+      "sha256": "7bbad607dee9fe61ed3a57d4ab9b32fb2eff723686d303bb32b59382bf0f2194",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "docs/reviews/624c4da-repros/interrupt-result.txt",
+      "reviewer": "docs-examples",
+      "bytes": 353,
+      "lines": 6,
+      "sha256": "18898b2652ae24b749b51e73c31b44dcd5ef9fc16ed10e1b7b7c69d7661fbc2a",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "docs/reviews/624c4da-repros/race-result.txt",
+      "reviewer": "docs-examples",
+      "bytes": 191,
+      "lines": 4,
+      "sha256": "ad5933974eeec977c2bdcedf68798fa2f26fd45f92057bacfb7a8ce5f7217e57",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "docs/reviews/624c4da-repros/run.py",
+      "reviewer": "docs-examples",
+      "bytes": 4668,
+      "lines": 92,
+      "sha256": "48838b13d526a4765727ffaa01191b7a58facd68e5cf2f63827219e37ea842c9",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "docs/reviews/624c4da-repros/schema-result.txt",
+      "reviewer": "docs-examples",
+      "bytes": 398,
+      "lines": 7,
+      "sha256": "f7602be9ac3fa130ffd697a273b887eb82e98a80bacd09c3f05de4b2cd3da4a7",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "docs/reviews/624c4da-repros/service-probes.go.txt",
+      "reviewer": "docs-examples",
+      "bytes": 686,
+      "lines": 10,
+      "sha256": "a789ecbce1f46af93795225e5a51441d240e759f0b3ba37da55de61721c29552",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "docs/reviews/624c4da-repros/service-result.txt",
+      "reviewer": "docs-examples",
+      "bytes": 361,
+      "lines": 7,
+      "sha256": "fb690b09200b98c093148a8c035b147f0fbebe64562dedcccf376bb174b36ed4",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "docs/reviews/624c4da-review-standard.md",
+      "reviewer": "docs-examples",
+      "bytes": 3032,
+      "lines": 56,
+      "sha256": "4ff16de4bce51ce69841e2876683b566faa36fd431b8bb5545e36de8d77a4647",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "docs/reviews/6476397-egm-followup.md",
+      "reviewer": "docs-examples",
+      "bytes": 3369,
+      "lines": 59,
+      "sha256": "0035c546293eb05a6b5690a67c202c2bdbbaab3efb521e069ce2d1d529cb7932",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "docs/reviews/6476397-egm-review.md",
+      "reviewer": "docs-examples",
+      "bytes": 11223,
+      "lines": 209,
+      "sha256": "3afcd53b6995e5cebb791688b52391ccf61e8a84a87ad0d03fe1d8f15aef9950",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "docs/reviews/6476397-review-standard.md",
+      "reviewer": "docs-examples",
+      "bytes": 3027,
+      "lines": 57,
+      "sha256": "94fac94c064c71e540ba119a92dec20b606f409f97307448ad41d3af20366622",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "docs/reviews/b6179f2-gap-closure.md",
+      "reviewer": "docs-examples",
+      "bytes": 5906,
+      "lines": 95,
+      "sha256": "608875baa91a1abb8996c0b67e858e0d849218a5ea31b9e95f06158eb57b3b95",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "examples/spring-ai/pom.xml",
+      "reviewer": "docs-examples",
+      "bytes": 2532,
+      "lines": 72,
+      "sha256": "e4a3e7e7379c3095eff29f9df52d542169cb8b88cff2b2cb252a1d40fec44f8d",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "examples/spring-ai/src/main/java/io/harnessgateway/GatewayHttpConfiguration.java",
+      "reviewer": "docs-examples",
+      "bytes": 1974,
+      "lines": 51,
+      "sha256": "035c8e79fdd6d8233d2b0f9213d9b637ddb06c4eddc3516fe4a4a6596f82e18e",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "examples/spring-ai/src/test/java/io/harnessgateway/FixtureGateway.java",
+      "reviewer": "docs-examples",
+      "bytes": 7777,
+      "lines": 183,
+      "sha256": "c490e930e82f62023769bcdf8921352b7a84755fe07bf03748a5ad66fea47269",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "examples/spring-ai/src/test/java/io/harnessgateway/GatewayContractTest.java",
+      "reviewer": "docs-examples",
+      "bytes": 25093,
+      "lines": 389,
+      "sha256": "e403bfccc066ae1f68567e44943f16243bc0893c174278a5276ca3f1f9557429",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "examples/spring-ai/src/test/java/io/harnessgateway/GatewayFailureTest.java",
+      "reviewer": "docs-examples",
+      "bytes": 23287,
+      "lines": 467,
+      "sha256": "d2f487f79b1bfe5cf8c029dab6c28744a91fd768e85d2401e0f06f3dfc214b71",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "examples/spring-ai/src/test/java/io/harnessgateway/GatewaySoakTest.java",
+      "reviewer": "docs-examples",
+      "bytes": 11391,
+      "lines": 195,
+      "sha256": "f6b7ae8d9e4f2e320b0c51e9d6fe1bb8a0d68e100d6d2ac96440a0194e69a55b",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "examples/spring-ai/src/test/java/io/harnessgateway/GatewayStressTest.java",
+      "reviewer": "docs-examples",
+      "bytes": 8405,
+      "lines": 173,
+      "sha256": "fe20a01b81db4a7898f02732d1d5a5a19251811e3cca640b9f60b8e39930f501",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "examples/spring-ai/src/test/java/io/harnessgateway/GatewayTest.java",
+      "reviewer": "docs-examples",
+      "bytes": 12343,
+      "lines": 239,
+      "sha256": "4ac424d28c1ec4c7152ed5ef9b1ade9ef30628f0be34d31c7768da4aef6b9ce6",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "examples/spring-ai/src/test/java/io/harnessgateway/NativeModels.java",
+      "reviewer": "docs-examples",
+      "bytes": 2135,
+      "lines": 41,
+      "sha256": "4ecc761c86b6ff4f1672ab3af97ed908e0f50c47fdcb50e2ff026f21ac1206b9",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "examples/spring-ai/src/test/java/io/harnessgateway/NativeModelsTest.java",
+      "reviewer": "docs-examples",
+      "bytes": 2206,
+      "lines": 42,
+      "sha256": "4a9f6222a3edbdeef276f7a4953bd0ad780a44703807767e1435564c87e37e1b",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "examples/spring-ai/src/test/resources/application.properties",
+      "reviewer": "docs-examples",
+      "bytes": 488,
+      "lines": 13,
+      "sha256": "e33920d1559d02fa010328f9e11fcecc2473addd347aafa6d912214ab55e9f7d",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "go.mod",
+      "reviewer": "delivery",
+      "bytes": 694,
+      "lines": 23,
+      "sha256": "d1abf4329e34bfdffc39336ec2b70ef79cc9ce5ac655d7050a2f67f6da211fa5",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "go.sum",
+      "reviewer": "delivery",
+      "bytes": 3315,
+      "lines": 39,
+      "sha256": "989238514c14fd2ab367b50d549a064f9147df80dda7cb0c1e732527ab1ed872",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/docs.go",
+      "reviewer": "api-http",
+      "bytes": 2228,
+      "lines": 64,
+      "sha256": "7c25e09513f68e6307e1bde13c7b1d255ff91fd4e9d036a5f53bd419d2921bfc",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/docs/assets/LICENSE.scalar",
+      "reviewer": "api-http",
+      "bytes": 1071,
+      "lines": 21,
+      "sha256": "380cd0a6ad700e1f821f2a509f0dd9ff835041cee2d43daf5dedc1adb2bcc620",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/docs/assets/README.md",
+      "reviewer": "api-http",
+      "bytes": 1631,
+      "lines": 25,
+      "sha256": "3a998a1a8716d25faa653f7bcb990a8347a4ce7968fb781b46968ad352fb78b9",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/docs/assets/scalar-1.70.0.js",
+      "reviewer": "api-http",
+      "bytes": 3798913,
+      "lines": 2471,
+      "sha256": "ab654f973a5e5aa5ba0cb0f53635db8c9b2a0f3b454a613238c4fa223b2046e2",
+      "format": "text",
+      "review_status": "integration-and-provenance-only",
+      "review_limit": "Full third-party minified implementation not semantically reviewed."
+    },
+    {
+      "path": "internal/adapters/inbound/openai/docs/index.html",
+      "reviewer": "api-http",
+      "bytes": 638,
+      "lines": 16,
+      "sha256": "b1a680c045fa7f78fdb7ddf365e2df8ebaa879c5f3b7d7cedf0f2c573c367849",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/docs/init.js",
+      "reviewer": "api-http",
+      "bytes": 349,
+      "lines": 12,
+      "sha256": "d33ceba9ae36ebd2c04050fb22a15b7fe64ac1cfe2537f1116a3fd45fac84ebb",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/docs_test.go",
+      "reviewer": "api-http",
+      "bytes": 7096,
+      "lines": 190,
+      "sha256": "8948173861dc004a09b58227697469ae7ff9d23bac52be07aa5ecfff2d313fb5",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/error_classification_test.go",
+      "reviewer": "api-http",
+      "bytes": 3350,
+      "lines": 78,
+      "sha256": "c6708376a191f7bf42df4a4ad2f071a92a7b8d60c7bed9443e77f9c90fbbe7da",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/handler.go",
+      "reviewer": "api-http",
+      "bytes": 14930,
+      "lines": 411,
+      "sha256": "777180ccb66161d28c0381a71719ce7433cc6342f22501e0f91df01792273810",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/handler_test.go",
+      "reviewer": "api-http",
+      "bytes": 17216,
+      "lines": 425,
+      "sha256": "b08efdb4a5425cb3f3307aec7bdc309c947ec2a396cf34d924376125fc8ee1df",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/http_test.go",
+      "reviewer": "api-http",
+      "bytes": 3865,
+      "lines": 99,
+      "sha256": "2eaa071517d1719f4ebf75878c713701430e5b2b08d628b08047a95e0efb0c6c",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/limits_test.go",
+      "reviewer": "api-http",
+      "bytes": 10478,
+      "lines": 301,
+      "sha256": "1df1ed58aed2a7d877e3dff88168f6b6aa9bb677552fed377acaf633400ac911",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/models_lifecycle_test.go",
+      "reviewer": "api-http",
+      "bytes": 6433,
+      "lines": 210,
+      "sha256": "ee5e9818232b3e8aa481efe2334144fb1b6a0e5fa4adc5811b75ad98fc10cf0e",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/models_test.go",
+      "reviewer": "api-http",
+      "bytes": 4346,
+      "lines": 101,
+      "sha256": "4d21a760c685054e3cfa0255e94f2cf7fafc73b6828e11afa5542a034d141bc9",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/observe.go",
+      "reviewer": "api-http",
+      "bytes": 3658,
+      "lines": 123,
+      "sha256": "8e22f8b738a084129f1f5fc9622a092e1241e133a6fcefcefbfd2a4f696381fe",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/observe_test.go",
+      "reviewer": "api-http",
+      "bytes": 11050,
+      "lines": 271,
+      "sha256": "125610456a76d0f94ae7697dd35ab86b2c1bf8dc111da3e4adfc59c900e80024",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/security.go",
+      "reviewer": "api-http",
+      "bytes": 1757,
+      "lines": 54,
+      "sha256": "bf60581a44dbb95150fd80d210660367cc7b2c1721e6d870f01833fb033538fd",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/security_test.go",
+      "reviewer": "api-http",
+      "bytes": 6030,
+      "lines": 166,
+      "sha256": "71a909315a2b6adee02a69f2c604fd4356f4e8f53f9a1ea5d7f9162afb1d42a1",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/inbound/openai/types.gen.go",
+      "reviewer": "api-http",
+      "bytes": 4062,
+      "lines": 135,
+      "sha256": "cb98f72f885965a525a6e51323bfbc16187ec1007e73a39c87b2ba260422cc94",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/outbound/codex/codex.go",
+      "reviewer": "providers",
+      "bytes": 6776,
+      "lines": 244,
+      "sha256": "da3a8aff3207ec5b32b3f3cbe7ce3d4a7b9f6fc889b8b1b2362ebbaf152b2d3d",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/outbound/codex/codex_test.go",
+      "reviewer": "providers",
+      "bytes": 15654,
+      "lines": 469,
+      "sha256": "261c57fa7bc0fcdc9f8d581b551c1a07efb320a2233b6dd23784c30309cfcb41",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/outbound/codex/installed_test.go",
+      "reviewer": "providers",
+      "bytes": 646,
+      "lines": 26,
+      "sha256": "3590f55646f8f9631e614451ede043ca6535258297afe0f455b2d05c923d4d2e",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/outbound/codex/regression_test.go",
+      "reviewer": "providers",
+      "bytes": 6407,
+      "lines": 172,
+      "sha256": "a2545de0092e9dc3e006fbbf9bcccf2fd507aeff2936de7e44e4d0c3df7851a4",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/outbound/codex/transport.go",
+      "reviewer": "providers",
+      "bytes": 4989,
+      "lines": 171,
+      "sha256": "2ee989b6a6922f73fdf73beabfac48fe6f2a194c0dc55f0aefe00e8ab6d63f5c",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/bridge.go",
+      "reviewer": "providers",
+      "bytes": 5824,
+      "lines": 228,
+      "sha256": "56439dbb21d5a8f9b95dbb058ab7ba89c8ae32cf129da7e0378e2ef74f10d6e6",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/bridge_linux_test.go",
+      "reviewer": "providers",
+      "bytes": 1493,
+      "lines": 61,
+      "sha256": "712b738f7fbeefbadaa6fd28a767539711324582836c6027a05cdb46649b3fb8",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/bridge_test.go",
+      "reviewer": "providers",
+      "bytes": 6772,
+      "lines": 206,
+      "sha256": "f371a35f33a6b5a0183fe477f7279c5f2af4d0c9916056e6e035723d2f65facb",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/client.go",
+      "reviewer": "providers",
+      "bytes": 2717,
+      "lines": 84,
+      "sha256": "28020e3abe0b158104a07dcd0907699a6f4187104ce9a3cd960ca46aea136925",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/copilot.go",
+      "reviewer": "providers",
+      "bytes": 7982,
+      "lines": 240,
+      "sha256": "92fdb2dc0d4e8f7f8d89fecb9a1c34c55876f4c4749712cc51d04be8a12260cb",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/copilot_test.go",
+      "reviewer": "providers",
+      "bytes": 25062,
+      "lines": 768,
+      "sha256": "a23c577896118e88965aa1a03e5d6b6fc8758fba56637d8f4511cf064133bbaf",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/errors_test.go",
+      "reviewer": "providers",
+      "bytes": 1035,
+      "lines": 33,
+      "sha256": "e6b0c49e6dd3eaefc278e06f1ac2ddaf1ebb3472e66c6e4b14cdee4ee20f311b",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/event_budget.go",
+      "reviewer": "providers",
+      "bytes": 3060,
+      "lines": 122,
+      "sha256": "71e59f063efb2497e64dab6ff288e5aa2721e45339b4f5b15b0dd505b51bf485",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/event_budget_test.go",
+      "reviewer": "providers",
+      "bytes": 6798,
+      "lines": 196,
+      "sha256": "2a8cfb4e7d8c155a1ee36637b55152b219a3fd27be0e5775b43b3ad68050abc6",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/frames.go",
+      "reviewer": "providers",
+      "bytes": 1707,
+      "lines": 58,
+      "sha256": "f0f25b2ea2f92b79f651fb08c1042cf7a51afe5f353308f07ab451274f6fd7db",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/frames_fuzz_test.go",
+      "reviewer": "providers",
+      "bytes": 4266,
+      "lines": 126,
+      "sha256": "2211ba2612a5e9fb2309dbb3307b8ad4b468914d58474a05b3c87ac870ea39c0",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/frames_test.go",
+      "reviewer": "providers",
+      "bytes": 3771,
+      "lines": 95,
+      "sha256": "e75f7598ad0491f31d4c43855176fd5d297b4e80282518df1750512e9ffee479",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/installed_storage_test.go",
+      "reviewer": "providers",
+      "bytes": 5003,
+      "lines": 129,
+      "sha256": "97d2ab87a9d6c85853cad8ebcbf35e5ebf728c3aaa01467ad62a4ee97e33b4f4",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/installed_test.go",
+      "reviewer": "providers",
+      "bytes": 725,
+      "lines": 30,
+      "sha256": "032f076e209c5cdff312d434e75098a8fd94f9b79f471acad6de4d070f412bae",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/lifecycle_test.go",
+      "reviewer": "providers",
+      "bytes": 2534,
+      "lines": 83,
+      "sha256": "5308702c4bc991ad7cbae716a87cb286b78f4a75b11a184409efd6d519d3ba16",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/process_unix_test.go",
+      "reviewer": "providers",
+      "bytes": 955,
+      "lines": 46,
+      "sha256": "c191a952313ecc7193a2797ab1ac586f0723b97d3f538016f3af045d5ea6fedd",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/send_test.go",
+      "reviewer": "providers",
+      "bytes": 3855,
+      "lines": 117,
+      "sha256": "83f32fe70d7168ed85ad503a9ca3f94682e0870c9ecd57f342e4049f9b5aa37a",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/outbound/copilot/storage_test.go",
+      "reviewer": "providers",
+      "bytes": 5184,
+      "lines": 152,
+      "sha256": "19c9b1b2baac5a12b2235edf4c75e9d95b6aa71c952831703758bf5944e1d94b",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/outbound/prompt/prompt.go",
+      "reviewer": "providers",
+      "bytes": 1128,
+      "lines": 33,
+      "sha256": "88855656684d7bdb6b04e2d39875462f9646a804ebf836a4d08c946caa825ff2",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/adapters/outbound/prompt/prompt_test.go",
+      "reviewer": "providers",
+      "bytes": 770,
+      "lines": 19,
+      "sha256": "600c93786383b867176e246a2d9a7945c49c68e801b8fa6a9e75669c1381a565",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/application/gateway.go",
+      "reviewer": "api-http",
+      "bytes": 2040,
+      "lines": 81,
+      "sha256": "9e76fd7a3dc2bba62f88f2770c0ae55b81f4d554b32556de09901b56dfd1f7e0",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/application/gateway_test.go",
+      "reviewer": "api-http",
+      "bytes": 6890,
+      "lines": 221,
+      "sha256": "dcb8e87a98afc432bc0008affb9ef18bdbe65ac253131ce24279f43518267ff0",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/application/models.go",
+      "reviewer": "api-http",
+      "bytes": 4514,
+      "lines": 168,
+      "sha256": "ca62cc4ac41f69f8cd2c4dcca011d6b3cfe77e711b696995d674f8b662ba6cca",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/application/models_test.go",
+      "reviewer": "api-http",
+      "bytes": 13518,
+      "lines": 435,
+      "sha256": "f92821cb0602b396db35ca3af8aa24f9e56f502be546e5d662e024406c55e233",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/buildinfo/info.go",
+      "reviewer": "cli-service",
+      "bytes": 1011,
+      "lines": 40,
+      "sha256": "933fe8b14e166c98ee2b007444aa8aef35b7f261921ee13c92e1cbd95cf981d3",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/domain/completion.go",
+      "reviewer": "api-http",
+      "bytes": 1300,
+      "lines": 45,
+      "sha256": "68b5b361829e1b4f3ef71d7b61ab5c21c81c05af98576500b973434b7c1c6273",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/domain/errors.go",
+      "reviewer": "api-http",
+      "bytes": 415,
+      "lines": 9,
+      "sha256": "6cf7b4561d4f2db33150daed68b4dcf363ae0d709df4175600577c094cecd380",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/process/command_test.go",
+      "reviewer": "process-lifecycle",
+      "bytes": 4569,
+      "lines": 135,
+      "sha256": "f60a31b363e939e2a575f07af00e764540142d40c1634883f77e355e551aac5a",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/process/command_windows_test.go",
+      "reviewer": "process-lifecycle",
+      "bytes": 2129,
+      "lines": 67,
+      "sha256": "673a58a19a808ea82eddbf00c25a957adc7c736e2960c51f97f2a85f26c860bf",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/process/process.go",
+      "reviewer": "process-lifecycle",
+      "bytes": 1371,
+      "lines": 42,
+      "sha256": "030019dd5a2fb07a5d1519e3ec105909c59fa97d119e1358ddb37fde8a20e0f7",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/process/process_darwin_test.go",
+      "reviewer": "process-lifecycle",
+      "bytes": 1391,
+      "lines": 61,
+      "sha256": "976a7cd3ea5eb17662c3a6e5dd51be2a8b043e3515955ea57e9fc57b53be1578",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/process/process_other.go",
+      "reviewer": "process-lifecycle",
+      "bytes": 211,
+      "lines": 12,
+      "sha256": "4c62837b3552b1acc8d078c6626699ea97ba1699a514e09e6825bb5458a44e12",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/process/process_unix.go",
+      "reviewer": "process-lifecycle",
+      "bytes": 1090,
+      "lines": 46,
+      "sha256": "78f3097cd77c25a10ef9d0bd83cef4411f3a3869be0915198ea1d79a1ec09ff9",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/process/process_unix_test.go",
+      "reviewer": "process-lifecycle",
+      "bytes": 3957,
+      "lines": 130,
+      "sha256": "d891ac37936390ef892923bff98956a634c5f3db94d889a05b1b52266544e51c",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/process/process_windows.go",
+      "reviewer": "process-lifecycle",
+      "bytes": 4760,
+      "lines": 140,
+      "sha256": "246499096f0cba8546ca43860ffa484b8e96e4275ab0eb20a21003255196ce08",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/testutil/entrypoint.go",
+      "reviewer": "process-lifecycle",
+      "bytes": 1986,
+      "lines": 56,
+      "sha256": "5ebcabd754164b45cdf6aa71153a86bd269853e319ca5ce8bc8e934e09703e28",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/testutil/process_other.go",
+      "reviewer": "process-lifecycle",
+      "bytes": 184,
+      "lines": 9,
+      "sha256": "2f60055c0399edb6f212791115359fccb04e641bae7ac4c60470dd0174dc6993",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/testutil/process_unix.go",
+      "reviewer": "process-lifecycle",
+      "bytes": 570,
+      "lines": 27,
+      "sha256": "b933477458e6a8670e50013605819b726346e879867c2b124e1f2c97e97cb389",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "internal/testutil/process_windows.go",
+      "reviewer": "process-lifecycle",
+      "bytes": 450,
+      "lines": 20,
+      "sha256": "62c3653ae2946e695fba5c042da33d14bd87a5770b2bd1b20fab31899c67d662",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "setup.sh",
+      "reviewer": "delivery",
+      "bytes": 2846,
+      "lines": 75,
+      "sha256": "5ac94c04f03936816fff7eb9320b6aae5f3293f8a8ad7109709e32e8c385e4ad",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "tools/acceptance/logs.go",
+      "reviewer": "delivery",
+      "bytes": 745,
+      "lines": 31,
+      "sha256": "927901c89ace29de1e0e5d527f52dcafe6846f786732c2c3a0c16f7368b23a62",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "tools/acceptance/logs_test.go",
+      "reviewer": "delivery",
+      "bytes": 2035,
+      "lines": 72,
+      "sha256": "c65675facae20895b743a86056a681f008e00be31b2b44c15f30acccc4aa8eaf",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "tools/acceptance/main.go",
+      "reviewer": "delivery",
+      "bytes": 8625,
+      "lines": 249,
+      "sha256": "5c5743176eb558de52dc7f597592815cb3aa35ea05f98aee322d1e0708bee5d2",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "tools/acceptance/main_test.go",
+      "reviewer": "delivery",
+      "bytes": 3083,
+      "lines": 93,
+      "sha256": "35e9111c66cdb9c51812152b3f04e9f1f8fd42f3ab7242ca22226433d5125528",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "tools/acceptance/process_other.go",
+      "reviewer": "delivery",
+      "bytes": 205,
+      "lines": 12,
+      "sha256": "e9228cbcaa3cb589c18caa0678020b1f8ec57547cc2f93e7376f833021ceb736",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "tools/acceptance/process_unix.go",
+      "reviewer": "delivery",
+      "bytes": 1266,
+      "lines": 55,
+      "sha256": "6dd9f308b6b40600dcae6e74a51ab4da0f7cefaca39ab63627c55cd369b20ef1",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "tools/acceptance/process_unix_test.go",
+      "reviewer": "delivery",
+      "bytes": 5793,
+      "lines": 185,
+      "sha256": "30ae4755972d0bde1b342818aeea30098bbd5dda904a9579db4c68cd24c7ec05",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "tools/browser/acceptance.mjs",
+      "reviewer": "delivery",
+      "bytes": 13932,
+      "lines": 258,
+      "sha256": "28611f681abc0a4d842bb5beb452e533e3169906520fdf3d2b4c03d5b44dc4d6",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "tools/browser/package-lock.json",
+      "reviewer": "delivery",
+      "bytes": 1185,
+      "lines": 42,
+      "sha256": "442cd3082f3c43913dbe70be0d294451fe5f94d86ba5d9c610cfd1e6ee18554e",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "tools/browser/package.json",
+      "reviewer": "delivery",
+      "bytes": 199,
+      "lines": 11,
+      "sha256": "6be33381c49c84a3acadcf771af91264bd198e87d20bc1e9fc1cdf0ec7b6ba3d",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "tools/project-openapi/contract.go",
+      "reviewer": "delivery",
+      "bytes": 7943,
+      "lines": 116,
+      "sha256": "2ebc1fb4cd751e3657177e459b6acf68bcbf47f86455078b087a54f4f4f1eb6d",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "tools/project-openapi/main.go",
+      "reviewer": "delivery",
+      "bytes": 8297,
+      "lines": 251,
+      "sha256": "ca54ae8d00ba4e3c6ed2f7263605ad9f306daac22b2590c58a8f6c115a16a41f",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "tools/project-openapi/main_test.go",
+      "reviewer": "delivery",
+      "bytes": 3456,
+      "lines": 99,
+      "sha256": "cec0f43e7c7796fcbbfaac5985148d8f76784cdb2cf6d5e234cdfa809e1f7ad1",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "tools/project-openapi/testdata/README.md",
+      "reviewer": "delivery",
+      "bytes": 1387,
+      "lines": 29,
+      "sha256": "44f3f25c17f23045bf40039aa67b00fc77a1f284d92ec9915155cca05aeccb50",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "tools/project-openapi/testdata/openai-85a23866.json.gz",
+      "reviewer": "delivery",
+      "bytes": 512176,
+      "sha256": "1a5eb1b9b94d5e5acc45c8783f63ed23f34d96dd33cde5e5066f10873facc000",
+      "format": "gzip",
+      "review_status": "provenance-and-projection-relevant-schemas",
+      "raw_newline_count": 2056,
+      "decompressed_lines": 136346,
+      "decompressed_bytes": 5134224,
+      "decompressed_sha256": "0e4dc3d7f52cc7d7c41940587b5ae23c0e3173bd4b4384f9d673ee90185ebafb",
+      "review_limit": "Entire upstream specification not semantically reviewed."
+    },
+    {
+      "path": "tools/releaseverify/main.go",
+      "reviewer": "delivery",
+      "bytes": 10494,
+      "lines": 307,
+      "sha256": "f91c1ac28736566d894ab63680daf95125303fb9bc7d2c615aeccdf384b84dfd",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "tools/releaseverify/main_test.go",
+      "reviewer": "delivery",
+      "bytes": 7290,
+      "lines": 189,
+      "sha256": "ba4ad207266ad9960c74e09839d6b2a8fd61b8ceb5c7720bc985b269255b063c",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "tools/releaseverify/smoke.go",
+      "reviewer": "delivery",
+      "bytes": 9773,
+      "lines": 306,
+      "sha256": "a5237487d42cad4c4099d4374fb9eed4549da860ea1aa4ad5b10a0900aaf8756",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "tools/setup/canonical_test.go",
+      "reviewer": "delivery",
+      "bytes": 852,
+      "lines": 29,
+      "sha256": "d1f0d8559df3d25e1b45093326cffd8f87de107c3e6e0d74362f4df18b894648",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "tools/setup/install_test.go",
+      "reviewer": "delivery",
+      "bytes": 6092,
+      "lines": 189,
+      "sha256": "edfbf46b9126895b86e5982a2434981affc959ff3578037000470b9afa303b0b",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "tools/setup/setup_test.go",
+      "reviewer": "delivery",
+      "bytes": 10786,
+      "lines": 298,
+      "sha256": "cece5259171b831626b953c3cb2c7fa569f6311d684acce029c8c8e23910f6e3",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "tools/systemd/ci.sh",
+      "reviewer": "delivery",
+      "bytes": 2344,
+      "lines": 46,
+      "sha256": "af54a106f46171c923323ae916f08a7e97fa388108e22159824b7d95f016dea7",
+      "format": "text",
+      "review_status": "completed"
+    },
+    {
+      "path": "tools/systemd/lifecycle_test.go",
+      "reviewer": "delivery",
+      "bytes": 18311,
+      "lines": 494,
+      "sha256": "4c32d58bdb088487556d114a514e04784491718952f659a8dfa3276b346dd8ca",
+      "format": "text",
+      "review_status": "completed"
+    }
+  ],
+  "round": 1,
+  "reviewer_status": {
+    "api-http": "completed",
+    "providers": "completed",
+    "process-lifecycle": "completed",
+    "cli-service": "completed",
+    "delivery": "completed",
+    "docs-examples": "completed"
+  },
+  "coverage_limits": [
+    "157 first-party/text files fully read by their assigned reviewers; two third-party assets received scoped inspection.",
+    "Fresh conversation-turn contexts were requested; host/project instruction exclusion is unverified."
+  ],
+  "resolution": {
+    "status": "resolved",
+    "accepted_applied": [
+      "cli-r1-2",
+      "providers-r1-1",
+      "delivery-r1-1",
+      "cli-r1-1",
+      "delivery-r1-2",
+      "process-r1-1",
+      "api-r1-1",
+      "api-r1-2"
+    ],
+    "unapplied": [],
+    "next_round": "not run; explicit confirmation required",
+    "consecutive_clean_rounds": 0,
+    "record": "73da315-loop-resolution.md"
+  }
+}
