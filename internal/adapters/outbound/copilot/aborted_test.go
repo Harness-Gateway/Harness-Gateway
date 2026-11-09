@@ -77,8 +77,22 @@ func TestAbortedIdleHTTPFailureCleansUpAndRecovers(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
-				if running, err := testutil.ProcessRunning(pid); err != nil || running {
-					t.Fatalf("aborted CLI retained: pid=%d running=%t err=%v", pid, running, err)
+				// Closing a Windows Job Object terminates batch-shim descendants
+				// asynchronously. Require bounded retirement, as in the existing
+				// descendant cleanup regression, rather than an immediate snapshot.
+				deadline := time.Now().Add(2 * time.Second)
+				for {
+					running, err := testutil.ProcessRunning(pid)
+					if err != nil {
+						t.Fatal(err)
+					}
+					if !running {
+						break
+					}
+					if time.Now().After(deadline) {
+						t.Fatalf("aborted CLI %d survived cleanup", pid)
+					}
+					time.Sleep(10 * time.Millisecond)
 				}
 				t.Setenv("HARNESS_GATEWAY_COPILOT_TEST", "normal")
 				if recovered := request(false); recovered.Code != http.StatusOK || !strings.Contains(recovered.Body.String(), "hello world") {
