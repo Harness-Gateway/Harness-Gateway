@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Confirm macOS zombie-only groups across their bounded exit transition before
+  classifying cleanup EPERM, preserving real permission errors and owned identity.
 - Give acceptance descendants TERM grace after independent command-leader exit,
   preserving command status and process-group ownership until cleanup finishes.
 - Retire browser-acceptance gateways on targeted Unix SIGINT/SIGTERM, retain interrupted

@@ -80,14 +80,31 @@ func waitForExit(pid int) error {
 // Darwin killpg may return EPERM when every remaining member is a zombie.
 // The leader remains unreaped throughout this inspection, preventing reuse.
 func zombieOnlyGroup(pid int) bool {
-	members, err := unix.SysctlKinfoProcSlice("kern.proc.pgrp", pid)
-	if err != nil || len(members) == 0 {
-		return false
-	}
-	for _, member := range members {
-		if member.Proc.P_stat != darwinZombie {
+	return waitForZombieGroup(func() ([]unix.KinfoProc, error) {
+		return unix.SysctlKinfoProcSlice("kern.proc.pgrp", pid)
+	}, 250*time.Millisecond)
+}
+
+func waitForZombieGroup(inspect func() ([]unix.KinfoProc, error), window time.Duration) bool {
+	deadline := time.Now().Add(window)
+	for {
+		members, err := inspect()
+		if err != nil {
 			return false
 		}
+		allZombies := len(members) > 0
+		for _, member := range members {
+			allZombies = allZombies && member.Proc.P_stat == darwinZombie
+		}
+		if allZombies {
+			return true
+		}
+		// killpg and sysctl observe different exit stages. The owned leader
+		// stays unreaped while an exiting group becomes a zombie-only snapshot.
+		// Only re-inspect: never send another signal or suppress a live group.
+		if !time.Now().Before(deadline) {
+			return false
+		}
+		time.Sleep(time.Millisecond)
 	}
-	return true
 }
