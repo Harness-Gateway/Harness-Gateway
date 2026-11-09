@@ -1,0 +1,13 @@
+{
+  "codex_runtime_version": "codex-cli 0.167.0",
+  "copilot_runtime_version": "GitHub Copilot CLI 1.0.105.\nRun 'copilot update' to check for updates.",
+  "copilot_probe_command": [
+    "copilot",
+    "--no-auto-update",
+    "--version"
+  ],
+  "original_metadata_copilot_version_scope": "plain --version selects cached wrapper runtime; not the bundled runtime used by the adapter",
+  "adapter_source": "internal/adapters/outbound/copilot/bridge.go",
+  "adapter_source_sha256": "a62744d24a892f9fe1126d3cd3c93915d87b2a95ed81cd0c3cf0b7dd102bae9f",
+  "timing_impact": "none: the production adapter already disables auto-update on direct and HTTP requests"
+}

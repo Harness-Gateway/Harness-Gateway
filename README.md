@@ -774,6 +774,16 @@ The SDK's known already-closed TCP writer diagnostic is classified as debug;
 unexpected diagnostics remain visible as errors. Spring AI acceptance checks JSON
 log records through normal, streaming, and failed Copilot requests.
 
+### Performance measurements
+
+Use the [live throughput benchmark](tools/benchmark/README.md) to compare Codex
+and Copilot through HTTP/SSE and directly through their provider adapters.
+It records provider-reported end-to-end output TPS, first-text latency, duration,
+and raw per-request evidence. Authenticated runs consume account allowance;
+ordinary Go tests and the synthetic transport benchmark do not.
+Recorded measurements and their qualification limits are in
+[performance results](docs/performance/README.md).
+
 ### CLI launcher tests
 
 Source builds support native Windows executables, npm `.cmd`/`.bat` entry points,

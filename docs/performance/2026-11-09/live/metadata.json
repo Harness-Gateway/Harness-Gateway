@@ -1,0 +1,145 @@
+{
+  "arch": "amd64",
+  "baseline": "same provider adapters and per-request CLI protocols, bypassing application/HTTP; not interactive CLI mode",
+  "build": {
+    "GoVersion": "go1.27.3",
+    "Path": "github.com/harness-gateway/harness-gateway/tools/benchmark",
+    "Main": {
+      "Path": "github.com/harness-gateway/harness-gateway",
+      "Version": "v0.1.13+dirty"
+    },
+    "Deps": [
+      {
+        "Path": "github.com/coder/websocket",
+        "Version": "v1.8.15",
+        "Sum": "h1:6B2JPeOGlpff2Uz6vOEH1Vzpi0iUz20A+lPVhPHtNUA="
+      },
+      {
+        "Path": "github.com/github/copilot-sdk/go",
+        "Version": "v1.0.28",
+        "Sum": "h1:p9205uladSUScyM7B+AbdaGLbcQGSTbx3U+bSH1YXZ4="
+      },
+      {
+        "Path": "github.com/go-logr/logr",
+        "Version": "v1.4.3",
+        "Sum": "h1:CjnDlHq8ikf6E492q6eKboGOC0T8CDaOvkHCIg8idEI="
+      },
+      {
+        "Path": "github.com/go-logr/stdr",
+        "Version": "v1.2.2",
+        "Sum": "h1:hSWxHoqTgW2S2qGc0LTAI563KZ5YKYRhT3MFKZMbjag="
+      },
+      {
+        "Path": "github.com/google/jsonschema-go",
+        "Version": "v0.4.2",
+        "Sum": "h1:tmrUohrwoLZZS/P3x7ex0WAVknEkBZM46iALbcqoRA8="
+      },
+      {
+        "Path": "github.com/google/uuid",
+        "Version": "v1.6.0",
+        "Sum": "h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0="
+      },
+      {
+        "Path": "go.opentelemetry.io/auto/sdk",
+        "Version": "v1.1.0",
+        "Sum": "h1:cH53jehLUN6UFLY71z+NDOiNJqDdPRaXzTel0sJySYA="
+      },
+      {
+        "Path": "go.opentelemetry.io/otel",
+        "Version": "v1.35.0",
+        "Sum": "h1:xKWKPxrxB6OtMCbmMY021CqC45J+3Onta9MqjhnusiQ="
+      },
+      {
+        "Path": "go.opentelemetry.io/otel/metric",
+        "Version": "v1.35.0",
+        "Sum": "h1:0znxYu2SNyuMSQT4Y9WDWej0VpcsxkuklLa4/siN90M="
+      },
+      {
+        "Path": "go.opentelemetry.io/otel/trace",
+        "Version": "v1.35.0",
+        "Sum": "h1:dPpEfJu1sDIqruz7BHFG3c7528f6ddfSWfFDVt/xgMs="
+      },
+      {
+        "Path": "golang.org/x/sys",
+        "Version": "v0.47.0",
+        "Sum": "h1:o7XGOvZQCADBQQ4Y7VNq2dRWQR7JmOUW8Kxx4ZsNgWs="
+      }
+    ],
+    "Settings": [
+      {
+        "Key": "-buildmode",
+        "Value": "exe"
+      },
+      {
+        "Key": "-compiler",
+        "Value": "gc"
+      },
+      {
+        "Key": "CGO_ENABLED",
+        "Value": "1"
+      },
+      {
+        "Key": "CGO_CFLAGS"
+      },
+      {
+        "Key": "CGO_CPPFLAGS"
+      },
+      {
+        "Key": "CGO_CXXFLAGS"
+      },
+      {
+        "Key": "CGO_LDFLAGS"
+      },
+      {
+        "Key": "GOARCH",
+        "Value": "amd64"
+      },
+      {
+        "Key": "GOOS",
+        "Value": "linux"
+      },
+      {
+        "Key": "GOAMD64",
+        "Value": "v1"
+      },
+      {
+        "Key": "vcs",
+        "Value": "git"
+      },
+      {
+        "Key": "vcs.revision",
+        "Value": "192e0a0a45f99d07b5e37001ff17169f64220743"
+      },
+      {
+        "Key": "vcs.time",
+        "Value": "2026-11-09T10:44:15Z"
+      },
+      {
+        "Key": "vcs.modified",
+        "Value": "true"
+      }
+    ]
+  },
+  "cli_paths": {
+    "codex": "/home/maurizio/.local/bin/codex",
+    "copilot": "/home/maurizio/.local/bin/copilot"
+  },
+  "cli_versions": {
+    "codex": "codex-cli 0.167.0",
+    "copilot": "GitHub Copilot CLI 1.0.107.\nRun 'copilot update' to check for updates."
+  },
+  "concurrency": 1,
+  "go_version": "go1.27.3",
+  "http": "in-process production handler over numeric loopback TCP/SSE; service and installed binary not used",
+  "logical_cpus": 8,
+  "model": "gpt-6.1-sol",
+  "os": "linux",
+  "p95_definition": "nearest rank, descriptive only; small sample sizes have weak tail precision",
+  "prompt": "Write exactly 40 numbered lines explaining basic Go programming concepts. Each line must contain 8 to 12 words after its number. Output only those lines, without headings, code fences, tool calls, or introductory text.",
+  "reasoning_effort": "low",
+  "samples_per_group": 10,
+  "started": "2026-11-09T14:45:20.69247564Z",
+  "timeout_seconds": 180,
+  "tps_definition": "provider output-token usage / full request wall seconds, including CLI startup, inference and cleanup; may include reasoning tokens; not visible-text decoding TPS",
+  "warmups_per_group": 1
+}

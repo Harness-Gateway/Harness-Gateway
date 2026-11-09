@@ -1,0 +1,11 @@
+{
+  "tools/benchmark/main.go": "e3dfbd30a86152ad2207140e81761d33eb6c0a139ace37bdcee8b7457b3f005e",
+  "tools/benchmark/main_test.go": "786859336677a0ccc32b1b7df31c80aebab28497009a40ff955a24fe4c66cba7",
+  "tools/benchmark/README.md": "a223b72b12b934fa2cfc3c842aba1f32edb5541cab6e0d2dcd30ee75f996ed18",
+  "go.mod": "823870fb98175d4b03949a57f5f68c0673ca948ffd391b3af9ed70b9615d09c8",
+  "go.sum": "989238514c14fd2ab367b50d549a064f9147df80dda7cb0c1e732527ab1ed872",
+  "internal/adapters/outbound/codex/codex.go": "da3a8aff3207ec5b32b3f3cbe7ce3d4a7b9f6fc889b8b1b2362ebbaf152b2d3d",
+  "internal/adapters/outbound/copilot/copilot.go": "e996f02a603c9900655d210340ba9534dc6b415661d8c73752a5b5feaed8eeb4",
+  "internal/adapters/inbound/openai/handler.go": "777180ccb66161d28c0381a71719ce7433cc6342f22501e0f91df01792273810",
+  "internal/application/gateway.go": "9e76fd7a3dc2bba62f88f2770c0ae55b81f4d554b32556de09901b56dfd1f7e0"
+}

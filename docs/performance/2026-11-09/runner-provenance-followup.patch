@@ -1,0 +1,69 @@
+--- a/tools/benchmark/main.go
++++ b/tools/benchmark/main.go
+@@ -34,6 +34,7 @@
+ 	"github.com/harness-gateway/harness-gateway/internal/adapters/outbound/copilot"
+ 	"github.com/harness-gateway/harness-gateway/internal/application"
+ 	"github.com/harness-gateway/harness-gateway/internal/domain"
++	"github.com/harness-gateway/harness-gateway/internal/process"
+ )
+ 
+ const benchmarkPrompt = "Write exactly 40 numbered lines explaining basic Go programming concepts. Each line must contain 8 to 12 words after its number. Output only those lines, without headings, code fences, tool calls, or introductory text."
+@@ -259,6 +260,43 @@
+ 	return os.WriteFile(path, append(data, '\n'), 0600)
+ }
+ 
++type versionOutput struct{ data []byte }
++
++func (v *versionOutput) Write(data []byte) (int, error) {
++	if len(v.data)+len(data) > 4096 {
++		return 0, errors.New("CLI version output exceeds 4 KiB")
++	}
++	v.data = append(v.data, data...)
++	return len(data), nil
++}
++
++func cliVersion(ctx context.Context, path, name string) (string, error) {
++	if err := ctx.Err(); err != nil {
++		return "", err
++	}
++	args := []string{"--version"}
++	if name == "copilot" {
++		// The adapter uses the bundled runtime, not an automatically selected
++		// update. Query that exact runtime for meaningful benchmark provenance.
++		args = []string{"--no-auto-update", "--version"}
++	}
++	cmd := exec.Command(path, args...)
++	cmd.WaitDelay = 200 * time.Millisecond
++	var output versionOutput
++	cmd.Stdout, cmd.Stderr = &output, io.Discard
++	child, err := process.Start(cmd)
++	if err != nil {
++		return "", err
++	}
++	stopOnCancel := context.AfterFunc(ctx, func() { _ = child.Stop() })
++	waitErr := child.Wait()
++	stopOnCancel()
++	if err := errors.Join(ctx.Err(), waitErr, child.Stop()); err != nil {
++		return "", err
++	}
++	return strings.TrimSpace(string(output.data)), nil
++}
++
+ func main() {
+ 	live := flag.Bool("live", false, "required: use authenticated providers and account allowance")
+ 	count := flag.Int("samples", 10, "measured requests per provider and route (1..100)")
+@@ -290,12 +328,12 @@
+ 		}
+ 		paths[name] = path
+ 		vctx, cancel := context.WithTimeout(ctx, 15*time.Second)
+-		data, err := exec.CommandContext(vctx, path, "--version").CombinedOutput()
++		version, err := cliVersion(vctx, path, name)
+ 		cancel()
+ 		if err != nil {
+ 			return fmt.Errorf("%s version: %w", name, err)
+ 		}
+-		versions[name] = strings.TrimSpace(string(data))
++		versions[name] = version
+ 	}
+ 	if err := os.Mkdir(output, 0700); err != nil {
+ 		return err

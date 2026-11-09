@@ -1,0 +1,16 @@
+goos: linux
+goarch: amd64
+pkg: github.com/harness-gateway/harness-gateway/tools/benchmark
+cpu: Intel(R) Core(TM) i7-10610U CPU @ 1.80GHz
+BenchmarkTransport/direct-8         	  101334	     13132 ns/op	    1840 B/op	      72 allocs/op
+BenchmarkTransport/direct-8         	   87218	     17938 ns/op	    1840 B/op	      72 allocs/op
+BenchmarkTransport/direct-8         	   73639	     15014 ns/op	    1840 B/op	      72 allocs/op
+BenchmarkTransport/direct-8         	   99235	     19381 ns/op	    1840 B/op	      72 allocs/op
+BenchmarkTransport/direct-8         	   91510	     14430 ns/op	    1840 B/op	      72 allocs/op
+BenchmarkTransport/http-8           	    1082	   1118963 ns/op	  124164 B/op	     648 allocs/op
+BenchmarkTransport/http-8           	    1062	   1131993 ns/op	  126799 B/op	     649 allocs/op
+BenchmarkTransport/http-8           	     930	   1282215 ns/op	  126408 B/op	     648 allocs/op
+BenchmarkTransport/http-8           	     782	   1963178 ns/op	  125189 B/op	     647 allocs/op
+BenchmarkTransport/http-8           	    1046	   1206460 ns/op	  125775 B/op	     649 allocs/op
+PASS
+ok  	github.com/harness-gateway/harness-gateway/tools/benchmark	13.696s

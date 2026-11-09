@@ -1,0 +1,28 @@
+/tmp/harness-gateway-benchmark-20261109: go1.27.3
+	path	github.com/harness-gateway/harness-gateway/tools/benchmark
+	mod	github.com/harness-gateway/harness-gateway	v0.1.13+dirty	
+	dep	github.com/coder/websocket	v1.8.15	h1:6B2JPeOGlpff2Uz6vOEH1Vzpi0iUz20A+lPVhPHtNUA=
+	dep	github.com/github/copilot-sdk/go	v1.0.28	h1:p9205uladSUScyM7B+AbdaGLbcQGSTbx3U+bSH1YXZ4=
+	dep	github.com/go-logr/logr	v1.4.3	h1:CjnDlHq8ikf6E492q6eKboGOC0T8CDaOvkHCIg8idEI=
+	dep	github.com/go-logr/stdr	v1.2.2	h1:hSWxHoqTgW2S2qGc0LTAI563KZ5YKYRhT3MFKZMbjag=
+	dep	github.com/google/jsonschema-go	v0.4.2	h1:tmrUohrwoLZZS/P3x7ex0WAVknEkBZM46iALbcqoRA8=
+	dep	github.com/google/uuid	v1.6.0	h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
+	dep	go.opentelemetry.io/auto/sdk	v1.1.0	h1:cH53jehLUN6UFLY71z+NDOiNJqDdPRaXzTel0sJySYA=
+	dep	go.opentelemetry.io/otel	v1.35.0	h1:xKWKPxrxB6OtMCbmMY021CqC45J+3Onta9MqjhnusiQ=
+	dep	go.opentelemetry.io/otel/metric	v1.35.0	h1:0znxYu2SNyuMSQT4Y9WDWej0VpcsxkuklLa4/siN90M=
+	dep	go.opentelemetry.io/otel/trace	v1.35.0	h1:dPpEfJu1sDIqruz7BHFG3c7528f6ddfSWfFDVt/xgMs=
+	dep	golang.org/x/sys	v0.47.0	h1:o7XGOvZQCADBQQ4Y7VNq2dRWQR7JmOUW8Kxx4ZsNgWs=
+	build	-buildmode=exe
+	build	-compiler=gc
+	build	CGO_ENABLED=1
+	build	CGO_CFLAGS=
+	build	CGO_CPPFLAGS=
+	build	CGO_CXXFLAGS=
+	build	CGO_LDFLAGS=
+	build	GOARCH=amd64
+	build	GOOS=linux
+	build	GOAMD64=v1
+	build	vcs=git
+	build	vcs.revision=192e0a0a45f99d07b5e37001ff17169f64220743
+	build	vcs.time=2026-11-09T10:44:15Z
+	build	vcs.modified=true

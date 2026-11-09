@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "requests": 44,
+  "excluded_warmups": 4,
+  "measured_requests": 40,
+  "failures": 0,
+  "group_counts": {
+    "codex/direct": 10,
+    "codex/http": 10,
+    "copilot/direct": 10,
+    "copilot/http": 10
+  },
+  "all_metrics_recomputed_from_raw_samples": true,
+  "measured_runner_reconstructed_from_version_probe_patch": true,
+  "production_sources_unchanged": true,
+  "measured_binary_sha256": "d5177056de845278d343e73a6dd2b68bcf2977213d6a6f2a2fb570b2f4ff68ee"
+}

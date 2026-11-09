@@ -1,0 +1,66 @@
+codex direct round=0 warmup=true elapsed=26.064s tokens=&{22281 570 22851} error=""
+2026/11/09 15:46:05 Failed to close JSON-RPC writer: close tcp 127.0.0.1:47186->127.0.0.1:44523: use of closed network connection
+copilot direct round=0 warmup=true elapsed=18.998s tokens=&{3105 537 3642} error=""
+codex http   round=0 warmup=true elapsed=30.280s tokens=&{22281 559 22840} error=""
+2026/11/09 15:46:54 Failed to close JSON-RPC writer: close tcp 127.0.0.1:32986->127.0.0.1:38561: use of closed network connection
+copilot http   round=0 warmup=true elapsed=18.176s tokens=&{3105 546 3651} error=""
+2026/11/09 15:47:11 Failed to close JSON-RPC writer: close tcp 127.0.0.1:38314->127.0.0.1:34071: use of closed network connection
+copilot http   round=1 warmup=false elapsed=17.766s tokens=&{3105 546 3651} error=""
+codex http   round=1 warmup=false elapsed=25.705s tokens=&{21452 565 22017} error=""
+2026/11/09 15:47:54 Failed to close JSON-RPC writer: close tcp 127.0.0.1:33412->127.0.0.1:42357: use of closed network connection
+copilot direct round=1 warmup=false elapsed=17.031s tokens=&{3105 526 3631} error=""
+codex direct round=1 warmup=false elapsed=27.270s tokens=&{21452 587 22039} error=""
+codex direct round=2 warmup=false elapsed=25.467s tokens=&{21452 540 21992} error=""
+2026/11/09 15:49:05 Failed to close JSON-RPC writer: close tcp 127.0.0.1:55180->127.0.0.1:44313: use of closed network connection
+copilot direct round=2 warmup=false elapsed=17.865s tokens=&{3105 536 3641} error=""
+codex http   round=2 warmup=false elapsed=24.920s tokens=&{21452 546 21998} error=""
+2026/11/09 15:49:50 Failed to close JSON-RPC writer: close tcp 127.0.0.1:49214->127.0.0.1:36361: use of closed network connection
+copilot http   round=2 warmup=false elapsed=19.962s tokens=&{3105 577 3682} error=""
+2026/11/09 15:50:09 Failed to close JSON-RPC writer: close tcp 127.0.0.1:51510->127.0.0.1:45855: use of closed network connection
+copilot http   round=3 warmup=false elapsed=19.472s tokens=&{3105 552 3657} error=""
+codex http   round=3 warmup=false elapsed=24.449s tokens=&{22281 538 22819} error=""
+2026/11/09 15:50:52 Failed to close JSON-RPC writer: close tcp 127.0.0.1:49984->127.0.0.1:33607: use of closed network connection
+copilot direct round=3 warmup=false elapsed=18.404s tokens=&{3105 526 3631} error=""
+codex direct round=3 warmup=false elapsed=25.214s tokens=&{21452 569 22021} error=""
+codex direct round=4 warmup=false elapsed=32.413s tokens=&{21452 571 22023} error=""
+2026/11/09 15:52:07 Failed to close JSON-RPC writer: close tcp 127.0.0.1:45856->127.0.0.1:44981: use of closed network connection
+copilot direct round=4 warmup=false elapsed=17.353s tokens=&{3105 538 3643} error=""
+codex http   round=4 warmup=false elapsed=26.336s tokens=&{21452 600 22052} error=""
+2026/11/09 15:52:51 Failed to close JSON-RPC writer: close tcp 127.0.0.1:53446->127.0.0.1:39947: use of closed network connection
+copilot http   round=4 warmup=false elapsed=18.001s tokens=&{3105 533 3638} error=""
+2026/11/09 15:53:10 Failed to close JSON-RPC writer: close tcp 127.0.0.1:41822->127.0.0.1:38405: use of closed network connection
+copilot http   round=5 warmup=false elapsed=18.797s tokens=&{3105 536 3641} error=""
+codex http   round=5 warmup=false elapsed=24.868s tokens=&{21452 544 21996} error=""
+2026/11/09 15:53:52 Failed to close JSON-RPC writer: close tcp 127.0.0.1:49324->127.0.0.1:46591: use of closed network connection
+copilot direct round=5 warmup=false elapsed=16.648s tokens=&{3105 536 3641} error=""
+codex direct round=5 warmup=false elapsed=22.504s tokens=&{21452 571 22023} error=""
+codex direct round=6 warmup=false elapsed=25.518s tokens=&{21452 582 22034} error=""
+2026/11/09 15:54:58 Failed to close JSON-RPC writer: close tcp 127.0.0.1:33104->127.0.0.1:39735: use of closed network connection
+copilot direct round=6 warmup=false elapsed=18.205s tokens=&{3105 555 3660} error=""
+codex http   round=6 warmup=false elapsed=24.844s tokens=&{22281 544 22825} error=""
+2026/11/09 15:55:42 Failed to close JSON-RPC writer: close tcp 127.0.0.1:54972->127.0.0.1:37089: use of closed network connection
+copilot http   round=6 warmup=false elapsed=18.837s tokens=&{3105 531 3636} error=""
+2026/11/09 15:56:03 Failed to close JSON-RPC writer: close tcp 127.0.0.1:48198->127.0.0.1:33205: use of closed network connection
+copilot http   round=7 warmup=false elapsed=20.984s tokens=&{3105 605 3710} error=""
+codex http   round=7 warmup=false elapsed=26.349s tokens=&{22281 582 22863} error=""
+2026/11/09 15:56:47 Failed to close JSON-RPC writer: close tcp 127.0.0.1:56798->127.0.0.1:42903: use of closed network connection
+copilot direct round=7 warmup=false elapsed=17.904s tokens=&{3105 535 3640} error=""
+codex direct round=7 warmup=false elapsed=25.359s tokens=&{21452 553 22005} error=""
+codex direct round=8 warmup=false elapsed=25.119s tokens=&{21452 582 22034} error=""
+2026/11/09 15:57:57 Failed to close JSON-RPC writer: close tcp 127.0.0.1:42782->127.0.0.1:43993: use of closed network connection
+copilot direct round=8 warmup=false elapsed=19.450s tokens=&{3105 539 3644} error=""
+codex http   round=8 warmup=false elapsed=24.353s tokens=&{21452 573 22025} error=""
+2026/11/09 15:58:40 Failed to close JSON-RPC writer: close tcp 127.0.0.1:33704->127.0.0.1:33743: use of closed network connection
+copilot http   round=8 warmup=false elapsed=18.439s tokens=&{3105 528 3633} error=""
+2026/11/09 15:58:59 Failed to close JSON-RPC writer: close tcp 127.0.0.1:55986->127.0.0.1:44237: use of closed network connection
+copilot http   round=9 warmup=false elapsed=19.448s tokens=&{3105 567 3672} error=""
+codex http   round=9 warmup=false elapsed=27.210s tokens=&{22281 573 22854} error=""
+2026/11/09 15:59:45 Failed to close JSON-RPC writer: close tcp 127.0.0.1:54886->127.0.0.1:38269: use of closed network connection
+copilot direct round=9 warmup=false elapsed=18.665s tokens=&{3105 583 3688} error=""
+codex direct round=9 warmup=false elapsed=24.100s tokens=&{21452 528 21980} error=""
+codex direct round=10 warmup=false elapsed=22.081s tokens=&{21452 540 21992} error=""
+2026/11/09 16:00:49 Failed to close JSON-RPC writer: close tcp 127.0.0.1:36762->127.0.0.1:34293: use of closed network connection
+copilot direct round=10 warmup=false elapsed=18.290s tokens=&{3105 537 3642} error=""
+codex http   round=10 warmup=false elapsed=23.188s tokens=&{21452 536 21988} error=""
+2026/11/09 16:01:31 Failed to close JSON-RPC writer: close tcp 127.0.0.1:54600->127.0.0.1:44939: use of closed network connection
+copilot http   round=10 warmup=false elapsed=18.106s tokens=&{3105 541 3646} error=""

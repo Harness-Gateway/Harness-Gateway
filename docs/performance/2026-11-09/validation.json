@@ -1,0 +1,32 @@
+{
+  "source_base": "192e0a0a45f99d07b5e37001ff17169f64220743",
+  "changes": "benchmark tooling and documentation only; production implementation unchanged",
+  "checks": [
+    {
+      "command": "go fmt ./...",
+      "exit_code": 0
+    },
+    {
+      "command": "go vet ./...",
+      "exit_code": 0
+    },
+    {
+      "command": "go test ./...",
+      "exit_code": 0
+    },
+    {
+      "command": "go build ./cmd/harness-gateway",
+      "exit_code": 0
+    },
+    {
+      "command": "go build -o /tmp/harness-gateway-benchmark-verified-20261109 ./tools/benchmark",
+      "exit_code": 0
+    }
+  ],
+  "tests_passed": 701,
+  "test_packages": 17,
+  "source_sha256_after_provenance_fix": {
+    "tools/benchmark/main.go": "1cd1b074557f895dc8354c4592659d4e8b61e6b7ada3db2b6f62401088cda555",
+    "tools/benchmark/main_test.go": "a67042e134b270d4329a7e3b5f01e9c3ef11c18da2a3947bc9690ebcd6e68700"
+  }
+}

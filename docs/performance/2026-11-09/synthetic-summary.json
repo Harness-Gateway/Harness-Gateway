@@ -1,0 +1,17 @@
+{
+  "direct": {
+    "median_ns_per_op": 15014,
+    "min_ns_per_op": 13132,
+    "max_ns_per_op": 19381,
+    "median_bytes_per_op": 1840,
+    "median_allocs_per_op": 72
+  },
+  "http": {
+    "median_ns_per_op": 1206460,
+    "min_ns_per_op": 1118963,
+    "max_ns_per_op": 1963178,
+    "median_bytes_per_op": 125775,
+    "median_allocs_per_op": 648
+  },
+  "median_http_minus_direct_ns": 1191446
+}

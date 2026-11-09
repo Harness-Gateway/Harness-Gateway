@@ -1,0 +1,106 @@
+[
+  {
+    "provider": "codex",
+    "route": "direct",
+    "success": 10,
+    "failures": 0,
+    "duration_seconds": {
+      "median": 25.286470387500003,
+      "p95_nearest_rank": 32.412591953,
+      "min": 22.080840863,
+      "max": 32.412591953
+    },
+    "first_text_seconds": {
+      "median": 6.2478779095,
+      "p95_nearest_rank": 14.068104813,
+      "min": 5.145877725,
+      "max": 14.068104813
+    },
+    "end_to_end_output_tps": {
+      "median": 22.237978560315156,
+      "p95_nearest_rank": 25.37351972338468,
+      "min": 17.616610261468153,
+      "max": 25.37351972338468
+    },
+    "aggregate_output_tokens_per_second": 22.047199067015566,
+    "output_tokens": 5623
+  },
+  {
+    "provider": "codex",
+    "route": "http",
+    "success": 10,
+    "failures": 0,
+    "duration_seconds": {
+      "median": 24.89397464,
+      "p95_nearest_rank": 27.210426311,
+      "min": 23.188134948,
+      "max": 27.210426311
+    },
+    "first_text_seconds": {
+      "median": 6.356837473,
+      "p95_nearest_rank": 9.439574396,
+      "min": 5.320766602,
+      "max": 9.439574396
+    },
+    "end_to_end_output_tps": {
+      "median": 21.992555031217364,
+      "p95_nearest_rank": 23.528456408411788,
+      "min": 21.058104472562448,
+      "max": 23.528456408411788
+    },
+    "aggregate_output_tokens_per_second": 22.20649727089061,
+    "output_tokens": 5601
+  },
+  {
+    "provider": "copilot",
+    "route": "direct",
+    "success": 10,
+    "failures": 0,
+    "duration_seconds": {
+      "median": 18.0542407555,
+      "p95_nearest_rank": 19.45009902,
+      "min": 16.64760543,
+      "max": 19.45009902
+    },
+    "first_text_seconds": {
+      "median": 7.0145222595,
+      "p95_nearest_rank": 8.115271826,
+      "min": 6.391754324,
+      "max": 8.115271826
+    },
+    "end_to_end_output_tps": {
+      "median": 30.245045889978584,
+      "p95_nearest_rank": 32.19682267541585,
+      "min": 27.711941180647006,
+      "max": 32.19682267541585
+    },
+    "aggregate_output_tokens_per_second": 30.09226526705235,
+    "output_tokens": 5411
+  },
+  {
+    "provider": "copilot",
+    "route": "http",
+    "success": 10,
+    "failures": 0,
+    "duration_seconds": {
+      "median": 18.8173901695,
+      "p95_nearest_rank": 20.984290809,
+      "min": 17.766486719,
+      "max": 20.984290809
+    },
+    "first_text_seconds": {
+      "median": 7.535402444000001,
+      "p95_nearest_rank": 8.630948734,
+      "min": 5.686258435,
+      "max": 8.630948734
+    },
+    "end_to_end_output_tps": {
+      "median": 28.868292247133965,
+      "p95_nearest_rank": 30.732018582835043,
+      "min": 28.188471412233184,
+      "max": 30.732018582835043
+    },
+    "aggregate_output_tokens_per_second": 29.060105620030622,
+    "output_tokens": 5516
+  }
+]
